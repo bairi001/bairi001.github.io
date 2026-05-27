@@ -10,6 +10,29 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
+<style>
+.recruit-quick-pay { margin-top: 46px; }
+.recruit-quick-pay .section-header { margin-bottom: 26px; }
+.recruit-pay-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.recruit-pay-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 18px; box-shadow: var(--shadow-sm); }
+.recruit-pay-label { font-size: 0.74rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 8px; }
+.recruit-pay-value { font-family: var(--font-heading); font-size: 1.08rem; font-weight: 700; color: var(--accent-dark); line-height: 1.55; letter-spacing: 0.02em; }
+.recruit-info-table th { padding-top: 22px; padding-bottom: 22px; }
+.recruit-info-table td { padding-top: 22px; padding-bottom: 22px; line-height: 2.05; }
+.recruit-income-table .recruit-total-row th,
+.recruit-income-table .recruit-total-row td { background: var(--gold-light); padding-top: 26px; padding-bottom: 26px; }
+.recruit-income-total { display: inline-block; font-family: var(--font-heading); font-size: 1.55rem; font-weight: 700; color: var(--accent-dark); line-height: 1.35; letter-spacing: 0.03em; }
+.recruit-income-note { margin-top: 18px; font-size: 0.82rem; color: var(--text-sub); line-height: 1.9; }
+@media (max-width: 900px) { .recruit-pay-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) {
+  .recruit-pay-grid { grid-template-columns: 1fr; }
+  .recruit-info-table th,
+  .recruit-info-table td { display: block; width: 100%; white-space: normal; }
+  .recruit-info-table th { padding: 18px 0 4px; color: var(--accent-dark); }
+  .recruit-info-table td { padding: 0 0 20px; line-height: 2; }
+  .recruit-income-total { font-size: 1.36rem; }
+}
+</style>
 </head>
 <body>
 
@@ -90,6 +113,30 @@
         <p>遅番でしっかり勤務したい方にも配慮した条件を整えています。</p>
       </div>
     </div>
+    <div class="recruit-quick-pay fade-up">
+      <div class="section-header center">
+        <span class="section-en">Pay Summary</span>
+        <h2 class="section-title">給与・インセンティブ早見</h2>
+      </div>
+      <div class="recruit-pay-grid">
+        <div class="recruit-pay-card">
+          <div class="recruit-pay-label">正社員・契約社員</div>
+          <div class="recruit-pay-value">月給250,000円〜320,000円</div>
+        </div>
+        <div class="recruit-pay-card">
+          <div class="recruit-pay-label">アルバイト・パート</div>
+          <div class="recruit-pay-value">時給1,400円〜1,700円</div>
+        </div>
+        <div class="recruit-pay-card">
+          <div class="recruit-pay-label">業務委託</div>
+          <div class="recruit-pay-value">業務委託50％〜</div>
+        </div>
+        <div class="recruit-pay-card">
+          <div class="recruit-pay-label">インセンティブ</div>
+          <div class="recruit-pay-value">指名料・深夜料金バックあり</div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -101,7 +148,7 @@
       <h2 class="section-title">募集要項</h2>
     </div>
     <div class="company-highlight fade-up">
-      <table class="info-table">
+      <table class="info-table recruit-info-table">
         <tr><th>募集職種</th><td>セラピスト</td></tr>
         <tr><th>雇用形態</th><td>正社員 / 契約社員 / アルバイト・パート / 業務委託</td></tr>
         <tr><th>勤務地</th><td>東京都大田区蒲田5-12-3 北島ビル4F<br>蒲田駅東口徒歩1分</td></tr>
@@ -127,13 +174,14 @@
       <p class="section-lead">遅番中心・経験者の場合の一例です。勤務条件や実績により変動し、金額を確約するものではありません。</p>
     </div>
     <div class="company-highlight fade-up">
-      <table class="info-table">
+      <table class="info-table recruit-income-table">
         <tr><th>基本給</th><td>月給270,000円</td></tr>
         <tr><th>指名料</th><td>指名料30件 × 1,000円 = 30,000円</td></tr>
         <tr><th>深夜料金</th><td>深夜料金バック 800円 × 20件 = 16,000円</td></tr>
         <tr><th>インセンティブ</th><td>業績インセンティブ 10,000円</td></tr>
-        <tr><th>月収例</th><td><strong>月収326,000円</strong></td></tr>
+        <tr class="recruit-total-row"><th>月収例</th><td><span class="recruit-income-total">月収326,000円</span></td></tr>
       </table>
+      <p class="recruit-income-note">上記は勤務条件や実績に応じた月収例です。金額を確約するものではありません。</p>
     </div>
   </div>
 </section>
@@ -212,7 +260,7 @@
       <p class="section-lead">勤務日数や時間、ブランクについてもお気軽にご相談ください。</p>
     </div>
     <div class="cta-cards fade-up">
-      <a href="#" class="cta-card"><div class="cta-card-icon">💬</div><h3>LINEで応募・見学相談</h3><p>採用担当まで</p></a>
+      <a href="#" class="cta-card" id="lineEntryLink"><div class="cta-card-icon">💬</div><h3>LINEで応募・見学相談</h3><p>採用担当まで</p></a>
       <a href="tel:0368746808" class="cta-card"><div class="cta-card-icon">📞</div><h3>電話で問い合わせ</h3><p>03-6874-6808</p></a>
       <a href="shop.html" class="cta-card"><div class="cta-card-icon">📍</div><h3>店舗情報を見る</h3><p>蒲田駅東口徒歩1分</p></a>
     </div>
@@ -244,6 +292,7 @@ const h=document.getElementById('siteHeader');window.addEventListener('scroll',(
 const btn=document.getElementById('hamburger'),nav=document.getElementById('mobileNav');btn.addEventListener('click',()=>{btn.classList.toggle('active');nav.classList.toggle('open');document.body.style.overflow=nav.classList.contains('open')?'hidden':'';});function closeNav(){btn.classList.remove('active');nav.classList.remove('open');document.body.style.overflow='';}
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('is-visible')}),{threshold:0.08,rootMargin:'0px 0px -30px 0px'});document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
 document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{q.closest('.faq-item').classList.toggle('open');});});
+const lineEntry=document.getElementById('lineEntryLink');if(lineEntry&&lineEntry.getAttribute('href')==='#'){lineEntry.addEventListener('click',e=>{e.preventDefault();alert('LINE応募リンクは準備中です。お電話またはお問い合わせよりご連絡ください。');});}
 </script>
 </body>
 </html>
