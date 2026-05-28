@@ -10,8 +10,64 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
+<style>
+.menu-page .section > .container,
+.menu-page .cta-banner > .container { max-width: 1080px; }
+.menu-page .page-header .section-lead { margin-top: 18px; max-width: 760px; }
+.menu-jump { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.menu-jump a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 18px; border: 1px solid var(--border); border-radius: 999px; background: var(--bg-card); color: var(--text-main); font-size: 0.92rem; font-weight: 600; box-shadow: var(--shadow-sm); }
+.menu-set-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.menu-set-card,
+.menu-course-card,
+.menu-option-card,
+.menu-fee-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); }
+.menu-set-card h3,
+.menu-course-card h3,
+.menu-option-card h3,
+.menu-fee-card h3 { margin: 0 0 10px; color: var(--accent-dark); font-size: 1.08rem; line-height: 1.5; }
+.menu-desc { color: var(--text-sub); line-height: 1.9; margin: 10px 0 0; }
+.menu-price-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-top: 18px; }
+.menu-time { color: var(--text-muted); font-size: 0.88rem; font-weight: 600; }
+.menu-price { color: var(--accent-dark); font-family: var(--font-heading); font-size: 1.55rem; font-weight: 700; line-height: 1.2; }
+.menu-course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.menu-price-list { display: grid; gap: 10px; margin-top: 18px; }
+.menu-price-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.menu-price-row:last-child { border-bottom: 0; }
+.menu-price-row span:first-child { color: var(--text-main); font-weight: 600; }
+.menu-price-row strong { color: var(--accent-dark); font-family: var(--font-heading); font-size: 1.22rem; white-space: nowrap; }
+.menu-combo-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-sm); }
+.menu-combo-price { margin-top: 16px; color: var(--accent-dark); font-size: 1.18rem; font-weight: 700; }
+.menu-option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.menu-option-card,
+.menu-fee-card { padding: 20px; }
+.menu-option-card .menu-price,
+.menu-fee-card .menu-price { font-size: 1.28rem; margin-top: 10px; display: block; }
+.menu-fee-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.menu-note { background: var(--gold-light); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; color: var(--text-sub); line-height: 1.9; }
+.menu-page .cta-card p { line-height: 1.7; }
+@media (max-width: 900px) {
+  .menu-set-grid,
+  .menu-course-grid,
+  .menu-option-grid,
+  .menu-fee-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .menu-jump { gap: 10px; }
+  .menu-jump a { flex: 1 1 calc(50% - 10px); padding: 10px 12px; font-size: 0.88rem; }
+  .menu-set-grid,
+  .menu-course-grid,
+  .menu-option-grid,
+  .menu-fee-grid { grid-template-columns: 1fr; }
+  .menu-set-card,
+  .menu-course-card,
+  .menu-combo-box,
+  .menu-note { padding: 22px 18px; }
+  .menu-price { font-size: 1.42rem; }
+  .menu-price-row { align-items: flex-start; }
+}
+</style>
 </head>
-<body>
+<body class="menu-page">
 
 <!-- HEADER -->
 <header class="site-header" id="siteHeader">
@@ -46,192 +102,191 @@
   <div class="container">
     <span class="section-en">Menu & Price</span>
     <h1 class="section-title">メニュー・料金</h1>
+    <p class="section-lead">蒲田駅東口徒歩1分。足つぼ・整体ボディケア・アロマトリートメントを中心に、お疲れに合わせて選べるメニューをご用意しています。<br>English menu available / English-friendly.</p>
+    <div class="menu-jump" aria-label="メニュー内ナビゲーション">
+      <a href="#popular">人気セット</a>
+      <a href="#basic">基本コース</a>
+      <a href="#option">オプション</a>
+      <a href="#contact">ご予約</a>
+    </div>
     <div class="breadcrumb"><a href="/">ホーム</a><span>›</span>メニュー・料金</div>
   </div>
 </div>
 
-<!-- MENU LIST -->
+<!-- POPULAR SETS -->
+<section class="section" id="popular">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-en">Recommended Sets</span>
+      <h2 class="section-title">人気セット・おすすめコース</h2>
+    </div>
+    <div class="menu-set-grid fade-up">
+      <div class="menu-set-card">
+        <h3>おためしコース</h3>
+        <p class="menu-desc">整体30分 + 足裏30分</p>
+        <div class="menu-price-line"><span class="menu-time">60分</span><span class="menu-price">4,800円</span></div>
+      </div>
+      <div class="menu-set-card">
+        <h3>疲れリセットコース</h3>
+        <p class="menu-desc">整体30分 + 足裏30分 + ヘッド10分</p>
+        <div class="menu-price-line"><span class="menu-time">70分</span><span class="menu-price">5,500円</span></div>
+      </div>
+      <div class="menu-set-card">
+        <h3>足むくみ・肩まわりケア</h3>
+        <p class="menu-desc">整体40分 + 足裏40分</p>
+        <div class="menu-price-line"><span class="menu-time">80分</span><span class="menu-price">6,280円</span></div>
+      </div>
+      <div class="menu-set-card">
+        <h3>大満足コース</h3>
+        <p class="menu-desc">整体60分 + 足裏30分</p>
+        <div class="menu-price-line"><span class="menu-time">90分</span><span class="menu-price">6,800円</span></div>
+      </div>
+      <div class="menu-set-card">
+        <h3>アロマオイル30分 + 足裏30分</h3>
+        <p class="menu-desc">短時間でオイルと足裏を組み合わせたい方へ。</p>
+        <div class="menu-price-line"><span class="menu-time">60分</span><span class="menu-price">5,300円</span></div>
+      </div>
+      <div class="menu-set-card">
+        <h3>アロマオイル60分 + 足裏30分</h3>
+        <p class="menu-desc">足元から全身までゆったりケアします。</p>
+        <div class="menu-price-line"><span class="menu-time">90分</span><span class="menu-price">7,800円</span></div>
+      </div>
+      <div class="menu-set-card">
+        <h3>アロマオイル90分 + 足裏30分</h3>
+        <p class="menu-desc">長めの時間でしっかりリラックスしたい方へ。</p>
+        <div class="menu-price-line"><span class="menu-time">120分</span><span class="menu-price">10,500円</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BASIC COURSES -->
+<section class="section section-alt" id="basic">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-en">Basic Courses</span>
+      <h2 class="section-title">基本コース</h2>
+    </div>
+    <div class="menu-course-grid fade-up">
+      <div class="menu-course-card">
+        <h3>ツボ整体 / Body Care</h3>
+        <p class="menu-desc">首肩まわり、腰まわり、背中など、お疲れの箇所に合わせて丁寧にもみほぐします。</p>
+        <div class="menu-price-list">
+          <div class="menu-price-row"><span>30分（上半身 / 下半身）</span><strong>2,400円</strong></div>
+          <div class="menu-price-row"><span>60分</span><strong>3,980円</strong></div>
+          <div class="menu-price-row"><span>90分</span><strong>6,800円</strong></div>
+        </div>
+      </div>
+      <div class="menu-course-card">
+        <h3>足裏リフレクソロジー / Foot Reflexology</h3>
+        <p class="menu-desc">足裏からふくらはぎまで、歩き疲れや足の重だるさに合わせて丁寧にケアします。</p>
+        <div class="menu-price-list">
+          <div class="menu-price-row"><span>30分</span><strong>2,800円</strong></div>
+          <div class="menu-price-row"><span>45分</span><strong>3,980円</strong></div>
+          <div class="menu-price-row"><span>60分</span><strong>4,980円</strong></div>
+        </div>
+      </div>
+      <div class="menu-course-card">
+        <h3>アロマトリートメント / Aroma Treatment</h3>
+        <p class="menu-desc">オイルを使用し、ゆったりとしたリズムで全身をリラックスへ導くコースです。</p>
+        <div class="menu-price-list">
+          <div class="menu-price-row"><span>30分（上半身 / 下半身）</span><strong>2,980円</strong></div>
+          <div class="menu-price-row"><span>60分</span><strong>4,980円</strong></div>
+          <div class="menu-price-row"><span>90分</span><strong>7,800円</strong></div>
+          <div class="menu-price-row"><span>120分</span><strong>9,980円</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section">
-  <div class="container">
-    <div class="section-header fade-up">
-      <span class="section-en">Reflexology</span>
-      <h2 class="section-title">足裏リフレクソロジー</h2>
-      <p class="section-lead">足裏の反射区を丁寧に刺激し、全身の血行促進・疲労回復をサポートします。</p>
-    </div>
-    <div class="menu-grid fade-up">
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>足裏ベーシック</h3>
-          <p>足裏全体の反射区を刺激する基本コース。短時間でリフレッシュしたい方に。</p>
-          <span class="menu-card-time">施術時間：約30分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">2,800</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>足裏しっかりコース</h3>
-          <p>足裏に加え、ふくらはぎ・膝下まで丁寧にケア。むくみや冷えが気になる方に。</p>
-          <span class="menu-card-time">施術時間：約60分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">4,800</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section section-alt">
-  <div class="container">
-    <div class="section-header fade-up">
-      <span class="section-en">Body Care</span>
-      <h2 class="section-title">整体ボディケア</h2>
-      <p class="section-lead">肩こり・腰痛・背中の張りなど、慢性的な不調を全身のバランスから整えます。</p>
-    </div>
-    <div class="menu-grid fade-up">
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>ボディケア 40分</h3>
-          <p>気になる部位を中心にほぐす集中コース。お昼休みや仕事帰りにも。</p>
-          <span class="menu-card-time">施術時間：約40分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">2,980</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>ボディケア 60分</h3>
-          <p>全身をバランスよくケア。肩こり・腰痛の根本にアプローチします。</p>
-          <span class="menu-card-time">施術時間：約60分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">3,980</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>ボディケア 90分</h3>
-          <p>じっくり全身をほぐすロングコース。深いリラクゼーションをお求めの方に。</p>
-          <span class="menu-card-time">施術時間：約90分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">6,800</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="section-header fade-up">
-      <span class="section-en">Aroma Treatment</span>
-      <h2 class="section-title">アロマトリートメント</h2>
-      <p class="section-lead">天然エッセンシャルオイルを使用したオイルトリートメント。心身ともにリフレッシュしていただけます。</p>
-    </div>
-    <div class="menu-grid fade-up">
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>アロマ 60分</h3>
-          <p>背面を中心としたオイルトリートメント。やさしい香りに包まれてリラックス。</p>
-          <span class="menu-card-time">施術時間：約60分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">4,980</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>アロマ 90分</h3>
-          <p>全身をくまなくケアするプレミアムコース。脚・腕・デコルテまで丁寧に。</p>
-          <span class="menu-card-time">施術時間：約90分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">7,800</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section section-alt">
   <div class="container">
     <div class="section-header fade-up">
       <span class="section-en">Combination</span>
-      <h2 class="section-title">組み合わせ・セットコース</h2>
-      <p class="section-lead">足裏・整体・アロマを自由に組み合わせることも可能です。</p>
+      <h2 class="section-title">組み合わせ自由</h2>
     </div>
-    <div class="menu-grid fade-up">
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>トータルケア 90分</h3>
-          <p>足裏＋整体またはアロマの組み合わせ。全身の疲れをまとめてケアします。</p>
-          <span class="menu-card-time">施術時間：約90分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">6,980</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-      <div class="menu-card">
-        <div class="menu-card-body">
-          <h3>プレミアムコース 120分</h3>
-          <p>足裏＋整体＋アロマのフルコース。日頃の疲れを徹底的にリセットします。</p>
-          <span class="menu-card-time">施術時間：約120分</span>
-        </div>
-        <div class="menu-card-price">
-          <span class="menu-price-num">9,500</span><span class="menu-price-yen">円〜</span>
-          <span class="menu-price-tax">（税込）</span>
-        </div>
-      </div>
-    </div>
-    <div class="notice fade-up">
-      <strong>料金について：</strong>上記の料金は目安です。詳しくはHotPepperまたはお電話にてご確認ください。<br>
-      <strong>※</strong> 23:00〜翌2:00は深夜料金（¥800）を頂戴いたします。<br>
-      <strong>※</strong> 指名料：¥500〜<br>
-      <strong>※</strong> 当店は健康増進・リラクゼーションを目的とした施術を提供しております。医療行為は行っておりません。
+    <div class="menu-combo-box fade-up">
+      <p class="menu-desc">基本コースやオプションを組み合わせて、お疲れに合わせた内容でご利用いただけます。</p>
+      <div class="menu-combo-price">延長料金：10分 / 1,000円</div>
     </div>
   </div>
 </section>
 
-<!-- FLOW -->
+<!-- OPTIONS -->
+<section class="section section-alt" id="option">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-en">Options</span>
+      <h2 class="section-title">オプションコース</h2>
+    </div>
+    <div class="menu-option-grid fade-up">
+      <div class="menu-option-card">
+        <h3>アロマふくらはぎ・太もも</h3>
+        <span class="menu-price">10分 / 1,000円</span>
+      </div>
+      <div class="menu-option-card">
+        <h3>デコルテ</h3>
+        <span class="menu-price">10分 / 1,000円</span>
+      </div>
+      <div class="menu-option-card">
+        <h3>腸セラピーコース</h3>
+        <span class="menu-price">10分 / 1,000円</span>
+      </div>
+      <div class="menu-option-card">
+        <h3>角質ケア</h3>
+        <span class="menu-price">10分 / 1,000円</span>
+      </div>
+      <div class="menu-option-card">
+        <h3>手・腕マッサージ</h3>
+        <span class="menu-price">10分 / 1,000円</span>
+      </div>
+      <div class="menu-option-card">
+        <h3>眼精疲労ヘッドケア</h3>
+        <span class="menu-price">10分 / 1,000円</span>
+      </div>
+      <div class="menu-option-card">
+        <h3>フェイシャル</h3>
+        <span class="menu-price">40分 / 4,000円</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="container">
-    <div class="section-header center fade-up">
-      <span class="section-en">Flow</span>
-      <h2 class="section-title">ご利用の流れ</h2>
+    <div class="section-header fade-up">
+      <span class="section-en">Additional Fees</span>
+      <h2 class="section-title">追加料金</h2>
     </div>
-    <div class="flow-steps fade-up">
-      <div class="flow-step">
-        <div class="flow-num">1</div>
-        <h3>ご予約</h3>
-        <p>HotPepper・LINE・お電話にてご予約ください。</p>
+    <div class="menu-fee-grid fade-up">
+      <div class="menu-fee-card">
+        <h3>指名料金</h3>
+        <span class="menu-price">500円</span>
       </div>
-      <div class="flow-step">
-        <div class="flow-num">2</div>
-        <h3>ご来店・カウンセリング</h3>
-        <p>お身体の状態やご希望をお伺いし、最適なプランをご提案します。</p>
+      <div class="menu-fee-card">
+        <h3>店長指名</h3>
+        <span class="menu-price">1,000円</span>
       </div>
-      <div class="flow-step">
-        <div class="flow-num">3</div>
-        <h3>施術</h3>
-        <p>清潔な空間で丁寧に施術いたします。途中のご要望もお気軽にどうぞ。</p>
+      <div class="menu-fee-card">
+        <h3>深夜料金（23:00以降）</h3>
+        <span class="menu-price">800円</span>
       </div>
-      <div class="flow-step">
-        <div class="flow-num">4</div>
-        <h3>アフターケア</h3>
-        <p>施術後のお身体の状態を確認し、日常のケアアドバイスをお伝えします。</p>
-      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-en">Notes</span>
+      <h2 class="section-title">料金についての注意</h2>
+    </div>
+    <div class="menu-note fade-up">
+      表示価格は店頭メニューをもとに掲載しております。<br>
+      キャンペーン・予約サイト掲載メニューとは内容や価格が異なる場合があります。<br>
+      詳しくはHotPepper、LINE、またはお電話にてご確認ください。<br>
+      当店の施術はリラクゼーションを目的としたものであり、医療行為ではありません。
     </div>
   </div>
 </section>
@@ -242,13 +297,13 @@
     <div class="section-header center fade-up">
       <span class="section-en">Reservation</span>
       <h2 class="section-title">ご予約・お問い合わせ</h2>
-      <p class="section-lead">お気軽にご連絡ください。ご相談のみのお問い合わせも歓迎しております。</p>
+      <p class="section-lead">メニュー選びに迷う場合も、お気軽にご相談ください。</p>
     </div>
     <div class="cta-cards fade-up">
       <a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener" class="cta-card">
-        <div class="cta-card-icon">🌐</div><h3>HotPepper</h3><p>ネット予約</p></a>
+        <div class="cta-card-icon">🌐</div><h3>HotPepperで予約</h3><p>ネット予約</p></a>
       <a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" class="cta-card"><div class="cta-card-icon">💬</div><h3>LINE 予約・相談</h3><p>LINE追加後、「予約」と送信してください。</p></a>
-      <a href="tel:03-6874-6808" class="cta-card"><div class="cta-card-icon">📞</div><h3>お電話</h3><p>03-6874-6808</p></a>
+      <a href="tel:03-6874-6808" class="cta-card"><div class="cta-card-icon">📞</div><h3>電話で問い合わせ</h3><p>03-6874-6808</p></a>
     </div>
   </div>
 </section>
