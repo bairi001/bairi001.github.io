@@ -43,41 +43,29 @@
   <a href="#contact" class="mobile-cta" onclick="closeNav()">ご予約</a>
 </div>
 
-<section class="hero" aria-label="身悠晏メインビジュアル">
-  <div class="hero-slider" id="heroSlider">
-    <div class="hero-slide is-active" style="--slide-position:center 42%; --slide-position-mobile:center 48%;">
-      <img src="assets/img/mqad3qmqad3qmqad.png" alt="整体・首肩・全身ケア">
-      <img src="assets/img/shinyuuan-kamata-logo.png" alt="身悠晏 蒲田" class="hero-logo-overlay">
-    </div>
-    <div class="hero-slide" style="--slide-position:center 56%; --slide-position-mobile:center 62%;">
-      <img src="assets/img/ChatGPT Image 2025年10月17日 22_42_26.png" alt="足裏リフレ・足つぼ">
-      <img src="assets/img/shinyuuan-kamata-logo.png" alt="身悠晏 蒲田" class="hero-logo-overlay">
-    </div>
-    <div class="hero-slide" style="--slide-position:center 50%; --slide-position-mobile:center 54%;">
-      <img src="assets/img/fooj45fooj45fooj.png" alt="ホットストーン・アロマ">
-      <img src="assets/img/shinyuuan-kamata-logo.png" alt="身悠晏 蒲田" class="hero-logo-overlay">
-    </div>
-    <div class="hero-panel fade-up">
-      <span class="hero-kicker">蒲田駅東口徒歩1分</span>
-      <h1>身悠晏 Shin Yuu An</h1>
-      <p class="hero-desc">足裏・整体・アロマリンパのリラクゼーションサロン</p>
-      <div class="trust-tags">
-        <span>11:00〜翌2:00</span>
-        <span>当日予約可</span>
-        <span>個室空間</span>
-        <span>エレベーターあり</span>
-      </div>
-      <div class="hero-actions">
-        <a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener" class="btn btn-accent">HotPepperで予約</a>
-        <a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" class="btn btn-green-outline">LINEで予約・相談</a>
-        <a href="tel:03-6874-6808" class="btn btn-outline">電話する</a>
-      </div>
-    </div>
-    <div class="hero-dots" aria-label="スライド切り替え">
-      <button class="hero-dot is-active" type="button" aria-label="整体・首肩・全身ケア"></button>
-      <button class="hero-dot" type="button" aria-label="足裏リフレ・足つぼ"></button>
-      <button class="hero-dot" type="button" aria-label="ホットストーン・アロマ"></button>
-    </div>
+<section class="hero-slider" id="heroSlider" aria-label="身悠晏メインビジュアル">
+  <div class="slide active">
+    <img src="assets/images/hero-seitai.jpg" alt="蒲田 整体 首肩ケア">
+  </div>
+  <div class="slide">
+    <img src="assets/images/hero-ashiura.jpg" alt="蒲田 足裏リフレ 足つぼ">
+  </div>
+  <div class="slide">
+    <img src="assets/images/hero-aroma.jpg" alt="蒲田 アロマ ホットストーン">
+  </div>
+  <div class="slider-dots" aria-label="スライド切り替え">
+    <button class="slider-dot active" type="button" aria-label="首・肩・全身を心地よくゆるめる整体ケア"></button>
+    <button class="slider-dot" type="button" aria-label="足裏からすっきり軽やかに"></button>
+    <button class="slider-dot" type="button" aria-label="ホットストーンとアロマで深くほどける癒やし時間"></button>
+  </div>
+</section>
+
+<section class="hero-info">
+  <p>蒲田駅東口徒歩1分｜11:00〜翌2:00｜当日予約可｜個室空間｜エレベーターあり</p>
+  <div class="hero-cta">
+    <a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener" class="btn-primary">HotPepperで予約</a>
+    <a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" class="btn-secondary">LINEで予約・相談</a>
+    <a href="tel:0368746808" class="btn-secondary">電話する</a>
   </div>
 </section>
 
@@ -170,7 +158,7 @@
 const h=document.getElementById('siteHeader');window.addEventListener('scroll',()=>h.classList.toggle('scrolled',scrollY>10));
 const btn=document.getElementById('hamburger'),nav=document.getElementById('mobileNav');btn.addEventListener('click',()=>{btn.classList.toggle('active');nav.classList.toggle('open');document.body.style.overflow=nav.classList.contains('open')?'hidden':'';});function closeNav(){btn.classList.remove('active');nav.classList.remove('open');document.body.style.overflow='';}
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('is-visible')}),{threshold:0.08,rootMargin:'0px 0px -30px 0px'});document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
-const slider=document.getElementById('heroSlider');if(slider){const slides=[...slider.querySelectorAll('.hero-slide')],dots=[...slider.querySelectorAll('.hero-dot')];let current=0,timer;const show=i=>{current=i;slides.forEach((s,n)=>s.classList.toggle('is-active',n===i));dots.forEach((d,n)=>d.classList.toggle('is-active',n===i));};const play=()=>timer=setInterval(()=>show((current+1)%slides.length),5000);dots.forEach((d,i)=>d.addEventListener('click',()=>{clearInterval(timer);show(i);play();}));slider.addEventListener('mouseenter',()=>clearInterval(timer));slider.addEventListener('mouseleave',play);play();}
+const slider=document.getElementById('heroSlider');if(slider){const slides=[...slider.querySelectorAll('.slide')],dots=[...slider.querySelectorAll('.slider-dot')];let current=0,timer;const show=i=>{current=i;slides.forEach((s,n)=>s.classList.toggle('active',n===i));dots.forEach((d,n)=>d.classList.toggle('active',n===i));};const play=()=>timer=setInterval(()=>show((current+1)%slides.length),5000);dots.forEach((d,i)=>d.addEventListener('click',()=>{clearInterval(timer);show(i);play();}));slider.addEventListener('mouseenter',()=>clearInterval(timer));slider.addEventListener('mouseleave',play);play();}
 </script>
 <div class="mobile-fixed-cta" aria-label="固定予約ボタン">
   <a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener">HPB予約</a>
