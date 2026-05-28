@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -25,8 +25,8 @@
       <a href="/">ホーム</a>
       <a href="menu.html">メニュー</a>
       <a href="shop.html">店舗情報</a>
-      <a href="recruit.html">採用</a>
       <a href="faq.html" class="current">FAQ</a>
+      <a href="recruit.html">採用</a>
       <a href="index.html#contact" class="nav-cta">ご予約</a>
     </nav>
     <button class="hamburger" id="hamburger" aria-label="メニューを開く"><span></span><span></span><span></span></button>
@@ -36,9 +36,9 @@
   <a href="/" onclick="closeNav()">ホーム</a>
   <a href="menu.html" onclick="closeNav()">メニュー</a>
   <a href="shop.html" onclick="closeNav()">店舗情報</a>
-  <a href="recruit.html" onclick="closeNav()">採用情報</a>
-  <a href="faq.html" onclick="closeNav()">よくある質問</a>
-  <a href="index.html#contact" class="mobile-cta" onclick="closeNav()">ご予約・お問い合わせ</a>
+  <a href="faq.html" onclick="closeNav()">FAQ</a>
+  <a href="recruit.html" onclick="closeNav()">採用</a>
+  <a href="index.html#contact" class="mobile-cta" onclick="closeNav()">ご予約</a>
 </div>
 
 <!-- PAGE HEADER -->
@@ -62,6 +62,24 @@
           <span class="faq-toggle-icon">＋</span>
         </button>
         <div class="faq-a"><div class="faq-a-inner">予約優先制となっております。空きがあれば当日のご来店も可能ですが、確実にご案内するためにも事前のご予約をおすすめしております。ご予約はHotPepper・LINE・お電話にて承ります。</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span class="faq-q-label">Q.</span>
+          <span class="faq-q-text">予約なしでも利用できますか？</span>
+          <span class="faq-toggle-icon">＋</span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">空きがあればご案内可能ですが、当日でも事前予約がおすすめです。</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span class="faq-q-label">Q.</span>
+          <span class="faq-q-text">エレベーターはありますか？</span>
+          <span class="faq-toggle-icon">＋</span>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">はい、北島ビル入口よりエレベーターで4階までお越しいただけます。</div></div>
       </div>
 
       <div class="faq-item">
@@ -142,7 +160,7 @@
           <span class="faq-q-text">施術は医療行為ですか？</span>
           <span class="faq-toggle-icon">＋</span>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">当店の施術は健康増進・リラクゼーションを目的としたものであり、医療行為ではございません。体調に不安がある方は、医療機関の受診をおすすめいたします。</div></div>
+        <div class="faq-a"><div class="faq-a-inner">当店の施術はリラクゼーションを目的としたものであり、医療行為ではございません。体調に不安がある方は、医療機関の受診をおすすめいたします。</div></div>
       </div>
 
     </div>
@@ -159,9 +177,9 @@
     </div>
     <div class="cta-cards fade-up">
       <a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener" class="cta-card">
-        <div class="cta-card-icon">🌐</div><h3>HotPepper</h3><p>ネット予約</p></a>
-      <a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" class="cta-card"><div class="cta-card-icon">💬</div><h3>LINE 予約・相談</h3><p>LINE追加後、「予約」と送信してください。</p></a>
-      <a href="tel:03-6874-6808" class="cta-card"><div class="cta-card-icon">📞</div><h3>お電話</h3><p>03-6874-6808</p></a>
+        <div class="cta-card-icon">HPB</div><h3>HotPepper</h3><p>ネット予約</p></a>
+      <a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" class="cta-card"><div class="cta-card-icon">LINE</div><h3>LINE予約・相談</h3><p>LINE追加後、「予約」と送信してください。</p></a>
+      <a href="tel:03-6874-6808" class="cta-card"><div class="cta-card-icon">TEL</div><h3>お電話</h3><p>03-6874-6808</p></a>
     </div>
   </div>
 </section>
@@ -193,5 +211,10 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targe
 // FAQ accordion
 document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{const i=b.parentElement,w=i.classList.contains('open');document.querySelectorAll('.faq-item').forEach(x=>x.classList.remove('open'));if(!w)i.classList.add('open');});});
 </script>
+<div class="mobile-fixed-cta" aria-label="固定予約ボタン">
+  <a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener">HPB予約</a>
+  <a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener">LINE相談</a>
+  <a href="tel:03-6874-6808">電話</a>
+</div>
 </body>
 </html>
