@@ -124,21 +124,20 @@
       </div>
     </section>
 
-    <section class="menu-section fade-up" id="option">
-      <div class="menu-photo"><img src="assets/img/menu-option.jpg" alt="オプション"></div>
+    <section class="menu-section menu-section-options fade-up" id="option">
       <div class="menu-content">
         <span class="section-en">Options</span>
         <h2>オプション</h2>
         <p>基本コースに合わせて、気になる箇所を短時間で追加できます。</p>
-        <table class="price-table">
-          <tr><th>アロマふくらはぎ・太もも</th><td>10分 / 1,000円</td></tr>
-          <tr><th>デコルテ</th><td>10分 / 1,000円</td></tr>
-          <tr><th>腸セラピー</th><td>10分 / 1,000円</td></tr>
-          <tr><th>角質ケア</th><td>10分 / 1,000円</td></tr>
-          <tr><th>手・腕マッサージ</th><td>10分 / 1,000円</td></tr>
-          <tr><th>眼精疲労ヘッドケア</th><td>10分 / 1,000円</td></tr>
-          <tr><th>フェイシャル</th><td>40分 / 4,000円</td></tr>
-        </table>
+        <div class="option-grid">
+          <article class="option-card"><span>Leg</span><h3>アロマふくらはぎ・太もも</h3><p>10分 / <strong>1,000円</strong></p></article>
+          <article class="option-card"><span>Decollete</span><h3>デコルテ</h3><p>10分 / <strong>1,000円</strong></p></article>
+          <article class="option-card"><span>Body</span><h3>腸セラピー</h3><p>10分 / <strong>1,000円</strong></p></article>
+          <article class="option-card"><span>Foot</span><h3>角質ケア</h3><p>10分 / <strong>1,000円</strong></p></article>
+          <article class="option-card"><span>Hand</span><h3>手・腕マッサージ</h3><p>10分 / <strong>1,000円</strong></p></article>
+          <article class="option-card"><span>Head</span><h3>眼精疲労ヘッドケア</h3><p>10分 / <strong>1,000円</strong></p></article>
+          <article class="option-card"><span>Facial</span><h3>フェイシャル</h3><p>40分 / <strong>4,000円</strong></p></article>
+        </div>
         <div class="menu-actions"><a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener" class="btn-primary">HotPepperでこのメニューを見る</a><a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" class="btn-secondary">LINEで相談する</a></div>
       </div>
     </section>
@@ -169,7 +168,7 @@
     <div class="cta-cards fade-up">
       <a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener" class="cta-card"><span class="cta-card-icon">HPB</span><h3>HotPepperで予約</h3><p>空き状況とクーポンを確認</p></a>
       <a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" class="cta-card"><span class="cta-card-icon">LINE</span><h3>LINEで相談</h3><p>LINE追加後、「予約」と送信してください。</p></a>
-      <a href="tel:03-6874-6808" class="cta-card"><span class="cta-card-icon">TEL</span><h3>電話する</h3><p>03-6874-6808</p></a>
+      <a href="tel:0368746808" class="cta-card"><span class="cta-card-icon">TEL</span><h3>電話する</h3><p>03-6874-6808</p></a>
     </div>
   </div>
 </section>
@@ -184,7 +183,7 @@
   </div>
 </footer>
 
-<div class="mobile-fixed-cta" aria-label="固定予約ボタン"><a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener">HotPepper予約</a><a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener">LINE相談</a><a href="tel:03-6874-6808">電話</a></div>
+<div class="mobile-fixed-cta" aria-label="固定予約ボタン"><a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener">HotPepper予約</a><a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener">LINE相談</a><a href="tel:0368746808">電話</a></div>
 <script>
 const h=document.getElementById('siteHeader');window.addEventListener('scroll',()=>h.classList.toggle('scrolled',scrollY>10));
 const btn=document.getElementById('hamburger'),nav=document.getElementById('mobileNav');btn.addEventListener('click',()=>{btn.classList.toggle('active');nav.classList.toggle('open');document.body.style.overflow=nav.classList.contains('open')?'hidden':'';});function closeNav(){btn.classList.remove('active');nav.classList.remove('open');document.body.style.overflow='';}
