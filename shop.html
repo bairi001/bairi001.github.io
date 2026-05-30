@@ -10,6 +10,49 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
+<style>
+/* Shop page precision fixes: prevent awkward Japanese breaks and make info tags/card layout deliberate. */
+.shop-info-table th { width: 118px; padding-right: 18px; }
+.shop-info-table td { line-height: 1.72; }
+.info-chip-list { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.info-chip {
+  min-height: 32px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(251, 248, 243, 0.92);
+  border: 1px solid rgba(74, 55, 40, 0.14);
+  color: #4A3728;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.45;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+.shop-convenience-grid { grid-template-columns: repeat(2, minmax(190px, 1fr)); gap: 14px; }
+.shop-convenience-grid .mini-card {
+  min-height: 76px;
+  padding: 14px 18px;
+  font-size: 0.95rem;
+  line-height: 1.58;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+.access-card { overflow: hidden; }
+.access-summary-text { word-break: keep-all; overflow-wrap: normal; line-break: strict; }
+@media (max-width: 600px) {
+  .shop-info-table th,
+  .shop-info-table td { display: block; width: 100%; }
+  .shop-info-table th { padding: 10px 0 2px; }
+  .shop-info-table td { padding: 4px 0 12px; }
+  .shop-convenience-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .shop-convenience-grid .mini-card { min-height: 64px; padding: 10px 8px; font-size: 0.78rem; line-height: 1.48; }
+  .info-chip { font-size: 0.76rem; padding: 5px 9px; }
+}
+</style>
 </head>
 <body>
 <header class="site-header" id="siteHeader">
@@ -53,9 +96,9 @@
           <tr><th>施術内容</th><td><div class="info-chip-list"><span class="info-chip">足裏リフレクソロジー</span><span class="info-chip">整体ボディケア</span><span class="info-chip">アロマトリートメント</span><span class="info-chip">ドライヘッドスパ</span></div></td></tr>
         </table>
         <div class="shop-convenience-grid">
-          <div class="mini-card">蒲田駅東口徒歩1分</div>
-          <div class="mini-card">北島ビル4F</div>
-          <div class="mini-card">エレベーターあり</div>
+          <div class="mini-card">蒲田駅東口<br>徒歩1分</div>
+          <div class="mini-card">北島ビル<br>4F</div>
+          <div class="mini-card">エレベーター<br>あり</div>
           <div class="mini-card">当日予約可</div>
         </div>
       </div>
