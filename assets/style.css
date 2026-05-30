@@ -21,6 +21,7 @@
   --font-en: "Cormorant Garamond", Georgia, serif;
   --max-w: 1120px;
   --header-h: 74px;
+  --flow-texture: url("img/bg-water-soft.svg");
 }
 
 html {
@@ -46,11 +47,11 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.22;
-  background-image:
-    linear-gradient(115deg, transparent 0 48%, rgba(107, 143, 131, 0.12) 49%, transparent 50%),
-    linear-gradient(65deg, transparent 0 52%, rgba(185, 154, 99, 0.11) 53%, transparent 54%);
-  background-size: 260px 180px;
+  opacity: 0.58;
+  background-image: var(--flow-texture);
+  background-size: 360px 280px;
+  background-position: center top;
+  mix-blend-mode: multiply;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -64,8 +65,19 @@ button, input, textarea { font: inherit; }
 }
 
 .section { padding: 86px 0; }
-.section-soft { background: rgba(251, 248, 243, 0.72); }
-.section-card { background: var(--card); }
+.section-soft {
+  background:
+    linear-gradient(rgba(251, 248, 243, 0.82), rgba(251, 248, 243, 0.82)),
+    var(--flow-texture);
+  background-size: auto, 420px 326px;
+  background-position: center, center top;
+}
+.section-card {
+  background:
+    linear-gradient(rgba(241, 234, 225, 0.9), rgba(241, 234, 225, 0.9)),
+    var(--flow-texture);
+  background-size: auto, 420px 326px;
+}
 
 .site-header {
   position: fixed;
@@ -217,7 +229,11 @@ button, input, textarea { font: inherit; }
 
 .page-header {
   padding: calc(var(--header-h) + 54px) 0 50px;
-  background: linear-gradient(180deg, var(--bg-soft), var(--bg));
+  background:
+    linear-gradient(180deg, rgba(251, 248, 243, 0.93), rgba(247, 243, 238, 0.94)),
+    var(--flow-texture);
+  background-size: auto, 420px 326px;
+  background-position: center, center top;
   border-bottom: 1px solid rgba(185, 154, 99, 0.16);
 }
 
@@ -1100,6 +1116,15 @@ button, input, textarea { font: inherit; }
 
 @media (max-width: 600px) {
   body { padding-bottom: 92px; }
+  body::before {
+    opacity: 0.34;
+    background-size: 440px 342px;
+  }
+  .section-soft,
+  .section-card,
+  .page-header {
+    background-size: auto, 520px 404px;
+  }
   .container,
   .header-inner { width: min(100% - 36px, var(--max-w)); }
   .site-logo {

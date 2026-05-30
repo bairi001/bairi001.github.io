@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="280" viewBox="0 0 360 280">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-28 54 C38 28 91 84 154 55 S276 24 388 58" stroke="#7B9790" stroke-width="1.1" opacity="0.13"/>
+    <path d="M-34 92 C35 62 96 120 165 88 S286 58 392 94" stroke="#C4AE8A" stroke-width="0.9" opacity="0.12"/>
+    <path d="M-30 134 C42 102 88 160 158 132 S278 104 390 136" stroke="#7B9790" stroke-width="1" opacity="0.10"/>
+    <path d="M-36 178 C36 146 94 204 168 174 S284 146 392 180" stroke="#C4AE8A" stroke-width="0.85" opacity="0.10"/>
+    <path d="M-28 220 C48 190 96 246 164 218 S282 188 388 222" stroke="#7B9790" stroke-width="1" opacity="0.11"/>
+    <path d="M35 36 C58 46 74 58 91 76" stroke="#7B9790" stroke-width="0.7" opacity="0.07"/>
+    <path d="M72 38 C62 52 55 65 48 82" stroke="#C4AE8A" stroke-width="0.65" opacity="0.07"/>
+    <path d="M230 118 C252 130 268 145 286 164" stroke="#7B9790" stroke-width="0.7" opacity="0.065"/>
+    <path d="M270 118 C260 134 252 150 244 168" stroke="#C4AE8A" stroke-width="0.65" opacity="0.065"/>
+    <path d="M120 205 C142 214 158 228 176 245" stroke="#7B9790" stroke-width="0.7" opacity="0.06"/>
+    <path d="M158 204 C148 218 140 234 132 250" stroke="#C4AE8A" stroke-width="0.65" opacity="0.06"/>
+  </g>
+</svg>
