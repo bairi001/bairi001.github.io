@@ -11,46 +11,119 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <style>
-/* Shop page precision fixes: prevent awkward Japanese breaks and make info tags/card layout deliberate. */
-.shop-info-table th { width: 118px; padding-right: 18px; }
-.shop-info-table td { line-height: 1.72; }
-.info-chip-list { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+/* Shop page final layout: fix table/card imbalance and make the information box deliberate. */
+body::before {
+  opacity: 0.07;
+  background-size: 560px 410px;
+}
+.company-highlight {
+  padding: 34px 32px 30px;
+}
+.company-highlight .section-header {
+  margin-bottom: 30px;
+}
+.company-highlight .section-title {
+  font-size: clamp(1.5rem, 2vw, 2.05rem);
+}
+.shop-info-table {
+  display: block;
+  width: 100%;
+  border-collapse: separate;
+}
+.shop-info-table tbody {
+  display: block;
+  width: 100%;
+  border-top: 1px solid rgba(74, 55, 40, 0.10);
+}
+.shop-info-table tr {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  column-gap: 28px;
+  align-items: center;
+  width: 100%;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(74, 55, 40, 0.10);
+}
+.shop-info-table th,
+.shop-info-table td {
+  display: block;
+  width: auto;
+  padding: 0 !important;
+  border-bottom: 0 !important;
+  line-height: 1.65;
+}
+.shop-info-table th {
+  color: #3F332B;
+  font-size: 0.86rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.shop-info-table td {
+  color: #6F655D;
+  font-size: 0.88rem;
+  min-width: 0;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+.info-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 9px;
+  align-items: center;
+}
 .info-chip {
-  min-height: 32px;
-  padding: 5px 12px;
+  min-height: 30px;
+  padding: 4px 11px;
   border-radius: 999px;
-  background: rgba(251, 248, 243, 0.92);
-  border: 1px solid rgba(74, 55, 40, 0.14);
+  background: rgba(251, 248, 243, 0.96);
+  border: 1px solid rgba(74, 55, 40, 0.13);
   color: #4A3728;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 1.4;
   white-space: nowrap;
   word-break: keep-all;
   overflow-wrap: normal;
   line-break: strict;
 }
-.shop-convenience-grid { grid-template-columns: repeat(2, minmax(190px, 1fr)); gap: 14px; }
+.shop-convenience-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
 .shop-convenience-grid .mini-card {
-  min-height: 76px;
-  padding: 14px 18px;
-  font-size: 0.95rem;
-  line-height: 1.58;
+  min-height: 58px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.86);
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.5;
   white-space: normal;
   word-break: keep-all;
   overflow-wrap: normal;
   line-break: strict;
+  box-shadow: none;
 }
 .access-card { overflow: hidden; }
 .access-summary-text { word-break: keep-all; overflow-wrap: normal; line-break: strict; }
 @media (max-width: 600px) {
+  body::before { opacity: 0.04; background-size: 620px 460px; }
+  .company-highlight { padding: 24px 18px 20px; }
+  .shop-info-table tr {
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+    padding: 10px 0;
+  }
   .shop-info-table th,
-  .shop-info-table td { display: block; width: 100%; }
-  .shop-info-table th { padding: 10px 0 2px; }
-  .shop-info-table td { padding: 4px 0 12px; }
-  .shop-convenience-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .shop-convenience-grid .mini-card { min-height: 64px; padding: 10px 8px; font-size: 0.78rem; line-height: 1.48; }
-  .info-chip { font-size: 0.76rem; padding: 5px 9px; }
+  .shop-info-table td { width: 100%; }
+  .shop-info-table th { font-size: 0.8rem; }
+  .shop-info-table td { font-size: 0.84rem; }
+  .info-chip { font-size: 0.74rem; padding: 4px 9px; }
+  .shop-convenience-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .shop-convenience-grid .mini-card { min-height: 54px; padding: 9px 6px; font-size: 0.75rem; line-height: 1.42; }
 }
 </style>
 </head>
