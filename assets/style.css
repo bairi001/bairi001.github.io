@@ -21,7 +21,7 @@
   --font-en: "Cormorant Garamond", Georgia, serif;
   --max-w: 1120px;
   --header-h: 74px;
-  --flow-texture: url("img/bg-water-soft.svg");
+  --flow-texture: url("img/bg-waterwood-flow.svg");
 }
 
 html {
@@ -47,9 +47,9 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.58;
+  opacity: 0.052;
   background-image: var(--flow-texture);
-  background-size: 360px 280px;
+  background-size: 420px 320px;
   background-position: center top;
   mix-blend-mode: multiply;
 }
@@ -67,16 +67,16 @@ button, input, textarea { font: inherit; }
 .section { padding: 86px 0; }
 .section-soft {
   background:
-    linear-gradient(rgba(251, 248, 243, 0.82), rgba(251, 248, 243, 0.82)),
+    linear-gradient(rgba(251, 248, 243, 0.955), rgba(251, 248, 243, 0.955)),
     var(--flow-texture);
-  background-size: auto, 420px 326px;
+  background-size: auto, 420px 320px;
   background-position: center, center top;
 }
 .section-card {
   background:
-    linear-gradient(rgba(241, 234, 225, 0.9), rgba(241, 234, 225, 0.9)),
+    linear-gradient(rgba(241, 234, 225, 0.965), rgba(241, 234, 225, 0.965)),
     var(--flow-texture);
-  background-size: auto, 420px 326px;
+  background-size: auto, 420px 320px;
 }
 
 .site-header {
@@ -230,9 +230,9 @@ button, input, textarea { font: inherit; }
 .page-header {
   padding: calc(var(--header-h) + 54px) 0 50px;
   background:
-    linear-gradient(180deg, rgba(251, 248, 243, 0.93), rgba(247, 243, 238, 0.94)),
+    linear-gradient(180deg, rgba(251, 248, 243, 0.972), rgba(247, 243, 238, 0.974)),
     var(--flow-texture);
-  background-size: auto, 420px 326px;
+  background-size: auto, 420px 320px;
   background-position: center, center top;
   border-bottom: 1px solid rgba(185, 154, 99, 0.16);
 }
@@ -655,9 +655,45 @@ button, input, textarea { font: inherit; }
 .shop-info-table th,
 .shop-info-table td { padding: 14px 0; }
 
-.shop-info-table td { overflow-wrap: anywhere; }
+.shop-info-table th { width: 132px; }
 
-.shop-convenience-grid,
+.shop-info-table td {
+  min-width: 0;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+
+.info-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.info-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 5px 12px;
+  border: 1px solid rgba(74, 55, 40, 0.12);
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--heading);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+
+.shop-convenience-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
 .hygiene-grid,
 .recruit-pay-grid {
   display: grid;
@@ -667,13 +703,21 @@ button, input, textarea { font: inherit; }
 }
 
 .mini-card {
-  padding: 18px;
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 18px;
   border: 1px solid rgba(185, 154, 99, 0.18);
   border-radius: var(--radius-md);
   background: var(--bg-soft);
   color: var(--heading);
   font-weight: 800;
   text-align: center;
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
 }
 
 .access-steps {
@@ -973,6 +1017,73 @@ button, input, textarea { font: inherit; }
   line-height: 1.65;
 }
 
+.recruit-consult-box {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  border: 1px solid rgba(185, 154, 99, 0.18);
+  border-radius: var(--radius-lg);
+  background: var(--card-white);
+  box-shadow: var(--shadow-soft);
+}
+
+.recruit-consult-box p { color: var(--muted); }
+
+.recruit-income-grid,
+.recruit-welcome-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.recruit-income-card {
+  padding: 20px;
+  border: 1px solid rgba(74, 55, 40, 0.12);
+  border-radius: var(--radius-md);
+  background: var(--card-white);
+  box-shadow: var(--shadow-soft);
+}
+
+.recruit-income-card h3 {
+  color: var(--heading);
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.recruit-income-card p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.75;
+}
+
+.recruit-note {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+.recruit-mid-cta { justify-content: center; margin-top: 26px; }
+
+.recruit-welcome-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.recruit-welcome-item {
+  padding: 16px 18px;
+  border: 1px solid rgba(74, 55, 40, 0.12);
+  border-radius: var(--radius-md);
+  background: var(--bg-soft);
+  color: var(--heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.recruit-photo-grid { margin-top: 28px; }
+
 .prose {
   max-width: 820px;
   margin: 0 auto;
@@ -1110,6 +1221,8 @@ button, input, textarea { font: inherit; }
   .shop-convenience-grid,
   .hygiene-grid,
   .recruit-pay-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .recruit-income-grid,
+  .recruit-welcome-grid { grid-template-columns: 1fr; }
   .cta-cards { grid-template-columns: 1fr; max-width: 380px; }
   .footer-top { flex-direction: column; }
 }
@@ -1117,13 +1230,13 @@ button, input, textarea { font: inherit; }
 @media (max-width: 600px) {
   body { padding-bottom: 92px; }
   body::before {
-    opacity: 0.34;
-    background-size: 440px 342px;
+    opacity: 0.03;
+    background-size: 520px 396px;
   }
   .section-soft,
   .section-card,
   .page-header {
-    background-size: auto, 520px 404px;
+    background-size: auto, 560px 426px;
   }
   .container,
   .header-inner { width: min(100% - 36px, var(--max-w)); }
@@ -1171,9 +1284,9 @@ button, input, textarea { font: inherit; }
   .workstyle-grid,
   .flow-steps,
   .flow-steps.four,
-  .shop-convenience-grid,
   .hygiene-grid,
   .recruit-pay-grid { grid-template-columns: 1fr; }
+  .shop-convenience-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .card,
   .service-card,
   .step-card,
@@ -1198,6 +1311,14 @@ button, input, textarea { font: inherit; }
     width: 100%;
     padding: 10px 0;
     white-space: normal;
+  }
+  .shop-info-table th { width: 100%; }
+  .shop-info-table td { overflow-wrap: normal; }
+  .info-chip { font-size: 0.78rem; padding: 5px 10px; }
+  .mini-card {
+    min-height: 72px;
+    padding: 13px 10px;
+    font-size: 0.82rem;
   }
   .info-table th { padding-bottom: 0; }
   .price-table th,
@@ -1229,6 +1350,9 @@ button, input, textarea { font: inherit; }
     border: 0;
     box-shadow: none;
   }
+  .recruit-consult-box,
+  .recruit-income-card { padding: 20px 18px; }
+  .recruit-welcome-item { padding: 14px 15px; font-size: 0.86rem; }
   .recruit-requirements-table,
   .recruit-requirements-table tbody,
   .recruit-requirements-table tr,
