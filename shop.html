@@ -11,10 +11,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <style>
-body::before { opacity: 0.07; background-size: 560px 410px; }
+body::before { opacity: .07; background-size: 560px 410px; }
 .company-highlight { padding: 34px 32px 30px; }
 .company-highlight .section-header { margin-bottom: 30px; }
-.company-highlight .section-title { font-size: clamp(1.5rem, 2vw, 2.05rem); }
+.company-highlight .section-title { font-size: clamp(1.5rem,2vw,2.05rem); }
 .shop-info-table { display: block; width: 100%; border-collapse: separate; }
 .shop-info-table tbody { display: block; width: 100%; border-top: 1px solid rgba(74,55,40,.10); }
 .shop-info-table tr { display: grid; grid-template-columns: 96px minmax(0,1fr); column-gap: 28px; align-items: center; width: 100%; padding: 11px 0; border-bottom: 1px solid rgba(74,55,40,.10); }
@@ -27,25 +27,18 @@ body::before { opacity: 0.07; background-size: 560px 410px; }
 .shop-convenience-grid .mini-card { min-height: 58px; padding: 10px 14px; border-radius: 14px; background: rgba(255,253,248,.86); font-size: .86rem; font-weight: 800; line-height: 1.5; white-space: normal; word-break: keep-all; overflow-wrap: normal; line-break: strict; box-shadow: none; }
 .shop-access-column { display: flex; flex-direction: column; gap: 18px; }
 .map-wrapper { margin-bottom: 0 !important; }
-.access-card { overflow: hidden; padding: 24px 26px 26px; }
+.access-card { overflow: visible; padding: 24px 26px 26px; }
 .access-card h3 { margin-bottom: 14px; line-height: 1.45; }
 .access-card p { margin-bottom: 16px; line-height: 1.9; }
 .access-card p:last-child { margin-bottom: 0; }
-.access-summary-text { word-break: keep-all; overflow-wrap: normal; line-break: strict; }
-.access-steps { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; margin-top: 16px; }
-.access-steps li { min-height: 84px; padding: 16px 18px 16px 52px; line-height: 1.85; word-break: keep-all; overflow-wrap: normal; line-break: strict; }
-@media (max-width: 900px) { .access-steps { grid-template-columns: 1fr; gap: 13px; } .access-steps li { min-height: auto; } }
-@media (max-width: 600px) { body::before { opacity: .04; background-size: 620px 460px; } .company-highlight { padding: 24px 18px 20px; } .shop-info-table tr { grid-template-columns: 1fr; row-gap: 4px; padding: 10px 0; } .shop-info-table th,.shop-info-table td { width: 100%; } .shop-info-table th { font-size: .8rem; } .shop-info-table td { font-size: .84rem; } .info-chip { font-size: .74rem; padding: 4px 9px; } .shop-convenience-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; } .shop-convenience-grid .mini-card { min-height: 54px; padding: 9px 6px; font-size: .75rem; line-height: 1.42; } .shop-access-column { gap: 18px; } .access-card { padding: 22px 18px 24px; } .access-card h3 { margin-bottom: 14px; } .access-card p { margin-bottom: 16px; line-height: 1.9; } }
+.access-summary-text { word-break: normal; overflow-wrap: break-word; line-break: auto; }
+.access-steps { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 16px; }
+.access-steps li { display: grid; grid-template-columns: 30px minmax(0,1fr); gap: 11px; align-items: start; min-height: auto; padding: 14px 16px; line-height: 1.78; white-space: normal; word-break: normal; overflow-wrap: break-word; line-break: auto; }
+@media (max-width:600px){ body::before{opacity:.04;background-size:620px 460px;} .company-highlight{padding:24px 18px 20px;} .shop-info-table tr{grid-template-columns:1fr;row-gap:4px;padding:10px 0;} .shop-info-table th,.shop-info-table td{width:100%;} .shop-info-table th{font-size:.8rem;} .shop-info-table td{font-size:.84rem;} .info-chip{font-size:.74rem;padding:4px 9px;} .shop-convenience-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;} .shop-convenience-grid .mini-card{min-height:54px;padding:9px 6px;font-size:.75rem;line-height:1.42;} .shop-access-column{gap:18px;} .access-card{padding:22px 18px 24px;} .access-card p{margin-bottom:16px;line-height:1.9;} .access-steps li{padding:13px 14px;line-height:1.75;} }
 </style>
 </head>
 <body>
-<header class="site-header" id="siteHeader">
-  <div class="header-inner">
-    <a href="/" class="site-logo"><span class="logo-mark">身悠晏</span><span class="logo-divider"></span><span class="logo-tagline">Shin Yuu An<br>Relaxation Salon</span></a>
-    <nav class="main-nav" aria-label="メインナビゲーション"><a href="/">ホーム</a><a href="menu.html">メニュー</a><a href="shop.html" class="current">店舗情報</a><a href="faq.html">FAQ</a><a href="recruit.html">採用</a><a href="index.html#contact" class="nav-cta">ご予約</a></nav>
-    <button class="hamburger" id="hamburger" aria-label="メニューを開く"><span></span><span></span><span></span></button>
-  </div>
-</header>
+<header class="site-header" id="siteHeader"><div class="header-inner"><a href="/" class="site-logo"><span class="logo-mark">身悠晏</span><span class="logo-divider"></span><span class="logo-tagline">Shin Yuu An<br>Relaxation Salon</span></a><nav class="main-nav" aria-label="メインナビゲーション"><a href="/">ホーム</a><a href="menu.html">メニュー</a><a href="shop.html" class="current">店舗情報</a><a href="faq.html">FAQ</a><a href="recruit.html">採用</a><a href="index.html#contact" class="nav-cta">ご予約</a></nav><button class="hamburger" id="hamburger" aria-label="メニューを開く"><span></span><span></span><span></span></button></div></header>
 <div class="mobile-nav" id="mobileNav"><a href="/" onclick="closeNav()">ホーム</a><a href="menu.html" onclick="closeNav()">メニュー</a><a href="shop.html" onclick="closeNav()">店舗情報</a><a href="faq.html" onclick="closeNav()">FAQ</a><a href="recruit.html" onclick="closeNav()">採用</a><a href="index.html#contact" class="mobile-cta" onclick="closeNav()">ご予約</a></div>
 <div class="page-header"><div class="container"><span class="section-en">Shop Information</span><h1 class="section-title">店舗情報・アクセス</h1><p class="section-lead">蒲田駅東口から徒歩1分。北島ビル4F、エレベーターでお越しいただけます。</p><div class="breadcrumb"><a href="/">ホーム</a><span>›</span>店舗情報・アクセス</div></div></div>
 <section class="section"><div class="container"><div class="two-col fade-up"><div class="company-highlight"><div class="section-header"><span class="section-en">Information</span><h2 class="section-title">基本情報</h2></div><table class="info-table shop-info-table"><tr><th>店舗名</th><td>身悠晏（Shin Yuu An）</td></tr><tr><th>住所</th><td>〒144-0052<br>東京都大田区蒲田5-12-3 北島ビル4F</td></tr><tr><th>電話番号</th><td><a href="tel:0368746808">03-6874-6808</a></td></tr><tr><th>営業時間</th><td>11:00〜翌2:00</td></tr><tr><th>定休日</th><td>1月1日</td></tr><tr><th>予約方法</th><td><div class="info-chip-list"><span class="info-chip">HotPepper</span><span class="info-chip">LINE予約・相談</span><a href="tel:0368746808" class="info-chip">お電話</a><span class="info-chip">予約優先制</span></div></td></tr><tr><th>お支払い</th><td>現金 / クレジットカード / PayPay</td></tr><tr><th>施術内容</th><td><div class="info-chip-list"><span class="info-chip">足裏リフレクソロジー</span><span class="info-chip">整体ボディケア</span><span class="info-chip">アロマトリートメント</span><span class="info-chip">ドライヘッドスパ</span></div></td></tr></table><div class="shop-convenience-grid"><div class="mini-card">蒲田駅東口<br>徒歩1分</div><div class="mini-card">北島ビル<br>4F</div><div class="mini-card">エレベーター<br>あり</div><div class="mini-card">当日予約可</div></div></div><div class="shop-access-column"><div class="map-wrapper"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3245.6042901546602!2d139.7170054!3d35.563473900000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188b190e8f1093%3A0xfc05fc07cb9903cb!2z6Lqr5oKg5pmPIFNoaW4gWXV1IEFu!5e0!3m2!1sja!2sjp!4v1774817781588!5m2!1sja!2sjp" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="身悠晏 Google Map"></iframe></div><div class="access-card"><h3>アクセス</h3><p class="access-summary-text">JR蒲田駅東口から徒歩1分。ファミリーマート隣の北島ビル4Fです。</p><ol class="access-steps"><li>JR蒲田駅東口を出て左へ進みます。</li><li>三菱UFJ銀行とマクドナルドの間の道を直進します。</li><li>ファミリーマート隣の北島ビル入口へお進みください。</li><li>エレベーターで4階へお越しください。</li></ol></div><div class="access-card"><h3>迷いやすい方へ</h3><p>初めてのお客様は、北島ビル1階入口の看板を目印にお越しください。迷われた場合はお電話ください。</p><p><a href="tel:0368746808" class="btn-secondary">電話する</a></p></div></div></div></div></section>
