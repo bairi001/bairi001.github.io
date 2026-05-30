@@ -1,22 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320">
-  <rect width="420" height="320" fill="none"/>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M-30 78C44 30 92 118 164 70S278 52 450 92" stroke="#6B8F83" stroke-width="1.15"/>
-    <path d="M-22 122C54 72 118 156 190 108S310 86 452 134" stroke="#6B8F83" stroke-width="0.9"/>
-    <path d="M-36 176C34 136 116 202 182 160S300 138 458 188" stroke="#6B8F83" stroke-width="1.05"/>
-    <path d="M-26 232C42 188 112 258 196 214S316 194 454 242" stroke="#6B8F83" stroke-width="0.85"/>
-    <path d="M38 286C96 244 162 302 230 266S334 250 430 282" stroke="#6B8F83" stroke-width="0.75"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <rect width="720" height="520" fill="none"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1">
+    <!-- soft diagonal water flow: intentionally irregular, non-geometric, non-diamond -->
+    <path d="M-80 118 C70 28 156 188 286 90 S520 34 804 146" stroke="#6B8F83" stroke-width="0.95" opacity="0.72"/>
+    <path d="M-92 192 C64 102 178 244 316 158 S568 104 812 218" stroke="#6B8F83" stroke-width="0.72" opacity="0.58"/>
+    <path d="M-70 276 C88 184 198 334 344 236 S592 182 818 304" stroke="#6B8F83" stroke-width="0.86" opacity="0.66"/>
+    <path d="M-88 372 C70 280 214 430 368 328 S604 286 804 394" stroke="#6B8F83" stroke-width="0.66" opacity="0.5"/>
+    <path d="M-40 468 C118 372 232 520 390 424 S612 384 786 486" stroke="#6B8F83" stroke-width="0.62" opacity="0.44"/>
 
-    <path d="M72 42C106 74 130 104 154 146" stroke="#B99A63" stroke-width="0.75"/>
-    <path d="M111 88C98 91 86 98 76 108" stroke="#B99A63" stroke-width="0.55"/>
-    <path d="M125 108C140 108 153 113 165 124" stroke="#B99A63" stroke-width="0.55"/>
+    <!-- subtle gathering curves, giving a calm 'water collects' feeling -->
+    <path d="M118 82 C174 128 196 176 206 236 C213 286 244 328 300 354" stroke="#6B8F83" stroke-width="0.5" opacity="0.35"/>
+    <path d="M548 64 C492 136 462 204 456 274 C452 338 418 386 360 420" stroke="#6B8F83" stroke-width="0.48" opacity="0.32"/>
 
-    <path d="M304 34C276 82 262 120 258 166" stroke="#B99A63" stroke-width="0.7"/>
-    <path d="M282 86C296 88 309 94 320 104" stroke="#B99A63" stroke-width="0.52"/>
-    <path d="M267 126C252 130 239 138 228 150" stroke="#B99A63" stroke-width="0.52"/>
+    <!-- extremely light wood/leaf-vein hints; abstract, not a leaf pattern -->
+    <path d="M172 154 C200 176 222 202 240 238" stroke="#B99A63" stroke-width="0.48" opacity="0.42"/>
+    <path d="M198 184 C184 188 172 196 160 210" stroke="#B99A63" stroke-width="0.38" opacity="0.32"/>
+    <path d="M214 206 C232 206 248 214 262 228" stroke="#B99A63" stroke-width="0.36" opacity="0.3"/>
 
-    <path d="M206 250C232 222 258 204 294 188" stroke="#B99A63" stroke-width="0.65"/>
-    <path d="M246 218C238 206 229 197 218 190" stroke="#B99A63" stroke-width="0.5"/>
-    <path d="M268 205C282 204 295 208 306 216" stroke="#B99A63" stroke-width="0.5"/>
+    <path d="M482 246 C454 280 436 314 424 360" stroke="#B99A63" stroke-width="0.44" opacity="0.36"/>
+    <path d="M458 290 C474 292 488 300 500 314" stroke="#B99A63" stroke-width="0.34" opacity="0.28"/>
+    <path d="M438 330 C420 334 406 344 394 358" stroke="#B99A63" stroke-width="0.34" opacity="0.28"/>
   </g>
 </svg>
