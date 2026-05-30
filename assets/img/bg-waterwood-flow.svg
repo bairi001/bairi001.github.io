@@ -1,24 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
-  <rect width="720" height="520" fill="none"/>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1">
-    <!-- refined waterwood flow: calm diagonal streams, no geometric X / diamond pattern -->
-    <path d="M-80 118 C70 28 156 188 286 90 S520 34 804 146" stroke="#6B8F83" stroke-width="1.05" opacity="0.82"/>
-    <path d="M-92 192 C64 102 178 244 316 158 S568 104 812 218" stroke="#6B8F83" stroke-width="0.8" opacity="0.68"/>
-    <path d="M-70 276 C88 184 198 334 344 236 S592 182 818 304" stroke="#6B8F83" stroke-width="0.95" opacity="0.76"/>
-    <path d="M-88 372 C70 280 214 430 368 328 S604 286 804 394" stroke="#6B8F83" stroke-width="0.72" opacity="0.6"/>
-    <path d="M-40 468 C118 372 232 520 390 424 S612 384 786 486" stroke="#6B8F83" stroke-width="0.68" opacity="0.54"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="540" viewBox="0 0 760 540">
+  <rect width="760" height="540" fill="none"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- calm waterwood flow: visible enough through light cream overlays, still restrained -->
+    <path d="M-90 98 C78 2 168 174 306 78 S548 18 846 132" stroke="#5F887B" stroke-width="1.65" opacity="0.92"/>
+    <path d="M-110 174 C62 70 192 224 338 138 S592 82 856 204" stroke="#5F887B" stroke-width="1.28" opacity="0.82"/>
+    <path d="M-86 258 C88 156 216 326 370 220 S628 166 850 292" stroke="#5F887B" stroke-width="1.48" opacity="0.86"/>
+    <path d="M-104 352 C76 252 226 424 394 312 S642 270 850 382" stroke="#5F887B" stroke-width="1.18" opacity="0.74"/>
+    <path d="M-48 462 C124 356 252 526 422 410 S644 372 820 478" stroke="#5F887B" stroke-width="1.05" opacity="0.66"/>
 
-    <!-- subtle gathering curves; light 'water collects' feeling without obvious symbols -->
-    <path d="M118 82 C174 128 196 176 206 236 C213 286 244 328 300 354" stroke="#6B8F83" stroke-width="0.56" opacity="0.45"/>
-    <path d="M548 64 C492 136 462 204 456 274 C452 338 418 386 360 420" stroke="#6B8F83" stroke-width="0.54" opacity="0.42"/>
+    <!-- soft gathering curves: subtle 'water collects' direction, not symbols -->
+    <path d="M126 68 C188 118 214 178 224 242 C232 300 266 342 328 374" stroke="#5F887B" stroke-width="0.82" opacity="0.56"/>
+    <path d="M584 52 C518 132 488 204 480 284 C474 352 436 408 372 446" stroke="#5F887B" stroke-width="0.78" opacity="0.52"/>
 
-    <!-- very light wood/leaf-vein hints; abstract, calm, not a plant wallpaper -->
-    <path d="M172 154 C200 176 222 202 240 238" stroke="#B99A63" stroke-width="0.5" opacity="0.48"/>
-    <path d="M198 184 C184 188 172 196 160 210" stroke="#B99A63" stroke-width="0.4" opacity="0.36"/>
-    <path d="M214 206 C232 206 248 214 262 228" stroke="#B99A63" stroke-width="0.38" opacity="0.34"/>
+    <!-- abstract wood/leaf-vein hints: slight growth feeling, no plant wallpaper -->
+    <path d="M178 142 C212 168 236 202 254 246" stroke="#B08B50" stroke-width="0.72" opacity="0.58"/>
+    <path d="M204 178 C188 184 174 196 160 214" stroke="#B08B50" stroke-width="0.56" opacity="0.44"/>
+    <path d="M222 206 C244 206 264 216 282 234" stroke="#B08B50" stroke-width="0.52" opacity="0.42"/>
 
-    <path d="M482 246 C454 280 436 314 424 360" stroke="#B99A63" stroke-width="0.48" opacity="0.42"/>
-    <path d="M458 290 C474 292 488 300 500 314" stroke="#B99A63" stroke-width="0.36" opacity="0.33"/>
-    <path d="M438 330 C420 334 406 344 394 358" stroke="#B99A63" stroke-width="0.36" opacity="0.33"/>
+    <path d="M512 238 C478 278 456 320 442 372" stroke="#B08B50" stroke-width="0.68" opacity="0.52"/>
+    <path d="M486 292 C506 294 522 304 536 322" stroke="#B08B50" stroke-width="0.5" opacity="0.42"/>
+    <path d="M462 338 C440 344 424 356 410 374" stroke="#B08B50" stroke-width="0.5" opacity="0.42"/>
   </g>
 </svg>
