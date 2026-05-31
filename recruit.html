@@ -17,9 +17,10 @@
 .recruit-hero-note{max-width:880px;margin:18px auto 0;padding:16px 18px;border:1px solid rgba(176,139,88,.28);border-radius:8px;background:rgba(255,255,255,.72);color:var(--text);font-weight:700;line-height:1.7}
 .recruit-section-narrow{max-width:1120px;margin:0 auto}
 .recruit-point-grid,.salary-grid,.income-example-grid,.benefit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.recruit-point-card,.salary-card,.income-example-card,.benefit-card{background:#fff;border:1px solid rgba(176,139,88,.18);border-radius:8px;padding:24px;box-shadow:0 18px 48px rgba(45,37,30,.06)}
+.recruit-point-card,.salary-card,.income-example-card,.benefit-card{background:#fff;border:1px solid rgba(176,139,88,.18);border-left:4px solid #6B9E92;border-radius:8px;padding:24px;box-shadow:0 18px 48px rgba(45,37,30,.06)}
 .recruit-point-card span,.salary-card span,.income-example-card span,.benefit-card span{display:block;margin-bottom:10px;font-family:var(--en);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
 .recruit-point-card h3,.salary-card h3,.income-example-card h3,.benefit-card h3{margin:0;color:var(--text);font-size:1.08rem;line-height:1.65;letter-spacing:0}
+.recruit-point-card p{margin:10px 0 0;color:var(--muted);font-size:.98rem;line-height:1.8}
 .salary-card{display:flex;flex-direction:column;gap:14px}
 .salary-main{font-size:1.7rem;line-height:1.35;font-weight:800;color:#8d5f28;letter-spacing:0}
 .salary-card p,.benefit-card p{margin:0;color:var(--muted);line-height:1.8;font-size:.98rem}
@@ -31,9 +32,9 @@
 .income-lines{padding:20px 22px;display:grid;gap:10px;color:var(--text);font-size:1rem;line-height:1.7}
 .income-line{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(45,37,30,.08);padding-bottom:10px}
 .income-line span:first-child{color:var(--muted)}
-.income-total{margin:6px 22px 22px;padding:16px;border-radius:8px;background:#2f473d;color:#fff;font-weight:800;font-size:1.25rem;text-align:center;letter-spacing:0}
+.income-total{margin:6px 22px 22px;padding:16px;border-radius:8px;background:#2f473d;color:#fff;font-weight:800;font-size:1.32rem;text-align:center;letter-spacing:0}
 .requirement-block{display:grid;gap:18px}
-.requirement-item{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;padding:22px 0;border-bottom:1px solid rgba(45,37,30,.1)}
+.requirement-item{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;padding:22px 0 22px 18px;border-bottom:1px solid rgba(45,37,30,.1);border-left:3px solid #6B9E92}
 .requirement-item:last-child{border-bottom:0}
 .requirement-item h3{margin:0;color:#8d5f28;font-size:1rem;line-height:1.6;letter-spacing:0}
 .requirement-item div{color:var(--text);line-height:1.9;font-size:1rem}
@@ -43,7 +44,7 @@
 .recruit-cta-note{width:100%;color:var(--text);font-weight:700;line-height:1.7;margin:4px 0 0}
 .recruit-entry-box .recruit-cta-note{margin-top:12px}
 @media (max-width:900px){.recruit-point-grid,.salary-grid,.income-example-grid,.benefit-grid{grid-template-columns:1fr 1fr}.requirement-item{grid-template-columns:1fr;gap:8px}.salary-main{font-size:1.45rem}}
-@media (max-width:640px){.recruit-hero-copy{text-align:left;font-size:1rem;line-height:1.85}.recruit-point-grid,.salary-grid,.income-example-grid,.benefit-grid{grid-template-columns:1fr}.recruit-point-card,.salary-card,.benefit-card{padding:20px}.income-line{display:block}.income-line strong{display:block;margin-top:4px}.recruit-cta-row .btn-primary,.recruit-cta-row .btn-secondary{width:100%;text-align:center}.recruit-highlight-box{padding:22px}.requirement-item{padding:18px 0}}
+@media (max-width:640px){.recruit-hero-copy{text-align:left;font-size:1rem;line-height:1.85}.recruit-point-grid,.salary-grid,.income-example-grid,.benefit-grid{grid-template-columns:1fr}.recruit-point-card,.salary-card,.benefit-card{padding:20px}.income-line{display:block}.income-line strong{display:block;margin-top:4px}.recruit-cta-row .btn-primary,.recruit-cta-row .btn-secondary{width:100%;text-align:center}.recruit-highlight-box{padding:22px}.requirement-item{padding:18px 0 18px 14px}}
 </style>
 </head>
 <body>
@@ -65,7 +66,7 @@
     <span class="section-en">Recruit</span>
     <h1 class="recruit-hero-title">蒲田駅東口徒歩1分｜セラピスト募集</h1>
     <p class="recruit-hero-copy">身悠晏では、足つぼ・もみほぐし・整体ボディケア・アロマトリートメントを中心に、お客様一人ひとりに合わせた丁寧な施術を大切にしています。</p>
-    <p class="recruit-hero-copy">目黒で8年培ったサロン運営の経験をもとに、蒲田でも長く安心して働ける環境づくりを進めています。</p>
+    <p class="recruit-hero-copy">目黒で8年の運営実績を持つサロンが蒲田へ移転。これまでの経験を活かし、長く安心して働ける環境づくりを進めています。</p>
     <p class="recruit-hero-copy">経験者の方、ブランクのある方、まずは店舗見学から相談したい方も歓迎いたします。</p>
     <p class="recruit-hero-note">LINE追加後、「応募」と送信してください。</p>
     <div class="feature-tags">
@@ -105,12 +106,12 @@
       <h2 class="section-title">身悠晏で働くポイント</h2>
     </div>
     <div class="recruit-point-grid fade-up">
-      <article class="recruit-point-card"><span>Access</span><h3>蒲田駅東口徒歩1分で通いやすい</h3></article>
-      <article class="recruit-point-card"><span>Room</span><h3>落ち着いた個室空間で施術に集中しやすい</h3></article>
-      <article class="recruit-point-card"><span>Nomination</span><h3>指名料は全額バック</h3></article>
-      <article class="recruit-point-card"><span>Night</span><h3>23時以降の深夜料金800円も全額バック</h3></article>
-      <article class="recruit-point-card"><span>Skill</span><h3>足つぼ、整体、アロマの経験を活かせる</h3></article>
-      <article class="recruit-point-card"><span>Visit</span><h3>店舗見学から相談OK</h3></article>
+      <article class="recruit-point-card"><span>Access</span><h3>蒲田駅東口徒歩1分</h3><p>通勤しやすく、遅番勤務の方にも便利な立地です。</p></article>
+      <article class="recruit-point-card"><span>Experience</span><h3>目黒で8年の運営実績</h3><p>これまでのサロン運営経験を活かし、蒲田でも安心して働ける環境づくりを進めています。</p></article>
+      <article class="recruit-point-card"><span>Nomination</span><h3>指名料全額バック</h3><p>指名料はスタッフへ全額還元します。</p></article>
+      <article class="recruit-point-card"><span>Night</span><h3>23時以降の深夜料金800円バック</h3><p>23時以降の深夜料金800円も全額バックします。</p></article>
+      <article class="recruit-point-card"><span>Skill</span><h3>経験者優遇</h3><p>足つぼ、整体、アロマなどの経験を活かせます。</p></article>
+      <article class="recruit-point-card"><span>Visit</span><h3>店舗見学OK</h3><p>応募前に店内の雰囲気を確認したい方も相談可能です。</p></article>
     </div>
   </div>
 </section>
@@ -145,7 +146,7 @@
         <span>Commission</span>
         <h3>業務委託</h3>
         <div class="salary-main">施術売上の50％〜</div>
-        <p>経験・対応メニュー・勤務条件・指名実績により相談</p>
+        <p>経験・対応メニュー・勤務日数・指名実績により相談。指名実績や勤務条件により歩合優遇も相談可能です。</p>
       </article>
     </div>
   </div>
@@ -185,7 +186,7 @@
       <article class="income-example-card">
         <h3>アルバイト・パート例</h3>
         <div class="income-lines">
-          <div class="income-line"><span>週4日・1日7時間勤務</span><strong>時給1,500円</strong></div>
+          <div class="income-line"><span>週4日・1日7時間勤務の場合</span><strong>時給1,500円</strong></div>
           <div class="income-line"><span>1,500円 × 7時間 × 16日</span><strong>168,000円</strong></div>
           <div class="income-line"><span>指名料10件 × 1,000円</span><strong>10,000円</strong></div>
           <div class="income-line"><span>深夜料金バック 800円 × 8件</span><strong>6,400円</strong></div>
@@ -195,11 +196,11 @@
       <article class="income-example-card">
         <h3>業務委託例</h3>
         <div class="income-lines">
-          <div class="income-line"><span>施術売上600,000円 × 50％</span><strong>300,000円</strong></div>
-          <div class="income-line"><span>指名料10件 × 1,000円</span><strong>10,000円</strong></div>
+          <div class="income-line"><span>施術売上700,000円 × 50％</span><strong>350,000円</strong></div>
+          <div class="income-line"><span>指名料20件 × 1,000円</span><strong>20,000円</strong></div>
           <div class="income-line"><span>深夜料金バック 800円 × 20件</span><strong>16,000円</strong></div>
         </div>
-        <div class="income-total">報酬例326,000円</div>
+        <div class="income-total">報酬例386,000円</div>
       </article>
     </div>
   </div>
@@ -234,7 +235,7 @@
         <div class="requirement-item"><h3>仕事内容</h3><div><p>足つぼ、もみほぐし、整体ボディケア、アロマトリートメント、ドライヘッドスパ、フェイシャル等の施術、施術前後の準備・片付けなど。</p><p>お客様一人ひとりのお疲れやご希望に合わせて、丁寧な施術と接客を行っていただきます。</p></div></div>
         <div class="requirement-item"><h3>勤務時間</h3><div><p>11:00〜翌2:00の間でシフト制</p><p>シフト例：<br>早番：13:00〜22:00<br>遅番：17:00〜翌2:00</p><ul><li>実働時間・休憩時間はシフトにより調整</li><li>最終受付状況により終了時間が前後する場合があります。</li><li>アルバイト・パートは週2日〜、1日5時間〜相談可</li><li>勤務時間・曜日は相談可</li></ul></div></div>
         <div class="requirement-item"><h3>応募条件</h3><div><ul><li>リラクゼーションサロンでの施術経験がある方歓迎</li><li>足つぼ、もみほぐし、整体、アロマ経験者優遇</li><li>ブランク相談可</li><li>土日・遅番に入れる方歓迎</li><li>日本で就労可能な在留資格をお持ちの方</li><li>中国語・英語・韓国語での簡単な接客ができる方歓迎</li></ul></div></div>
-        <div class="requirement-item"><h3>待遇</h3><div><ul><li>交通費支給（上限20,000円 / 月）</li><li>制服貸与</li><li>社会保険は法令に基づき加入</li><li>指名料全額バック</li><li>深夜料金バックあり</li><li>店舗見学OK</li><li>LINE応募OK</li></ul></div></div>
+        <div class="requirement-item"><h3>待遇</h3><div><ul><li>交通費支給（条件あり）</li><li>制服貸与</li><li>社会保険は法令に基づき加入</li><li>指名料全額バック</li><li>深夜料金バックあり</li><li>店舗見学OK</li><li>LINE応募OK</li></ul></div></div>
         <div class="requirement-item"><h3>応募方法</h3><div>LINE追加後、「応募」と送信してください。担当より確認のうえご連絡します。</div></div>
       </div>
     </div>
@@ -267,6 +268,7 @@
       <div class="faq-item"><button class="faq-q"><span class="faq-q-label">Q.</span><span class="faq-q-text">ブランクがあっても応募できますか？</span><span class="faq-toggle-icon">＋</span></button><div class="faq-a"><div class="faq-a-inner">はい。施術経験がある方であればご相談可能です。ブランクの期間は問いません。技術確認のうえ、無理のない形でご相談させていただきます。</div></div></div>
       <div class="faq-item"><button class="faq-q"><span class="faq-q-label">Q.</span><span class="faq-q-text">業務委託も相談できますか？</span><span class="faq-toggle-icon">＋</span></button><div class="faq-a"><div class="faq-a-inner">はい。経験、対応メニュー、勤務可能な曜日・時間帯により相談可能です。</div></div></div>
       <div class="faq-item"><button class="faq-q"><span class="faq-q-label">Q.</span><span class="faq-q-text">未経験でも応募できますか？</span><span class="faq-toggle-icon">＋</span></button><div class="faq-a"><div class="faq-a-inner">現在は経験者の方を優先しております。未経験の方は研修体制や募集状況により個別にご相談となります。</div></div></div>
+      <div class="faq-item"><button class="faq-q"><span class="faq-q-label">Q.</span><span class="faq-q-text">外国籍でも応募できますか？</span><span class="faq-toggle-icon">＋</span></button><div class="faq-a"><div class="faq-a-inner">日本で就労可能な在留資格をお持ちの方であれば、国籍は問いません。</div></div></div>
     </div>
   </div>
 </section>
@@ -292,7 +294,7 @@
   </div>
 </footer>
 
-<div class="mobile-fixed-cta" aria-label="固定応募ボタン"><a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener">LINEで応募</a><a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener">見学相談</a><a href="tel:0368746808">電話</a></div>
+<div class="mobile-fixed-cta" aria-label="固定応募ボタン"><a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener">LINEで応募する</a><a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener">店舗見学を相談する</a><a href="tel:0368746808">電話</a></div>
 <script>
 const h=document.getElementById('siteHeader');window.addEventListener('scroll',()=>h.classList.toggle('scrolled',scrollY>10));
 const btn=document.getElementById('hamburger'),nav=document.getElementById('mobileNav');btn.addEventListener('click',()=>{btn.classList.toggle('active');nav.classList.toggle('open');document.body.style.overflow=nav.classList.contains('open')?'hidden':'';});function closeNav(){btn.classList.remove('active');nav.classList.remove('open');document.body.style.overflow='';}
