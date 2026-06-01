@@ -39,10 +39,14 @@
 .requirement-item div{color:var(--text);line-height:1.9;font-size:1rem}
 .requirement-item p{margin:0 0 10px}
 .requirement-item ul{margin:0;padding-left:1.2em;color:var(--text);line-height:1.9}
+.recruit-entry-box{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:28px;align-items:center}
+.recruit-entry-box>div:first-child{min-width:0}
+.recruit-entry-box h2,.recruit-entry-box p{word-break:normal;overflow-wrap:normal;line-break:strict}
 .recruit-cta-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.recruit-entry-box .recruit-cta-row{justify-content:flex-start;align-items:flex-start}
 .recruit-cta-note{width:100%;color:var(--text);font-weight:700;line-height:1.7;margin:4px 0 0}
 .recruit-entry-box .recruit-cta-note{margin-top:12px}
-@media (max-width:900px){.recruit-point-grid,.salary-grid,.income-example-grid,.benefit-grid{grid-template-columns:1fr 1fr}.requirement-item{grid-template-columns:1fr;gap:8px}.salary-main{font-size:1.45rem}}
+@media (max-width:900px){.recruit-entry-box{grid-template-columns:1fr}.recruit-entry-box .recruit-cta-row{width:100%}.recruit-entry-box .btn-primary,.recruit-entry-box .btn-secondary{width:100%;text-align:center}.recruit-point-grid,.salary-grid,.income-example-grid,.benefit-grid{grid-template-columns:1fr 1fr}.requirement-item{grid-template-columns:1fr;gap:8px}.salary-main{font-size:1.45rem}}
 @media (max-width:640px){.recruit-hero-copy{text-align:left;font-size:1rem;line-height:1.85}.recruit-point-grid,.salary-grid,.income-example-grid,.benefit-grid{grid-template-columns:1fr}.recruit-point-card,.salary-card,.benefit-card{padding:20px}.income-line{display:block}.income-line strong{display:block;margin-top:4px}.recruit-cta-row .btn-primary,.recruit-cta-row .btn-secondary{width:100%;text-align:center}.recruit-highlight-box{padding:22px}.requirement-item{padding:18px 0 18px 14px}}
 </style>
 </head>
