@@ -87,3 +87,119 @@ body{color:var(--text);background-color:var(--bg);background-image:url("data:ima
 /* V2.3 — readable language control and safer mobile conversion bar */
 @media(min-width:901px){.main-nav .nav-lang{min-width:88px;min-height:44px;justify-content:center;padding:10px 14px;font-family:var(--font-body);font-size:.78rem!important;letter-spacing:.02em}}
 @media(max-width:700px){body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}.mobile-fixed-cta{bottom:calc(8px + env(safe-area-inset-bottom));height:auto;padding:6px;border:1px solid rgba(33,72,61,.12);border-radius:18px;box-shadow:0 -6px 26px rgba(32,54,46,.12)}.mobile-fixed-cta a{min-height:48px}}
+
+/* V2.4 — unified water-and-wood brand system */
+:root{
+  --bg:#f2f9f8;
+  --bg-soft:#f2f9f8;
+  --surface:#f2f9f8;
+  --card:#f2f9f8;
+  --card2:rgba(23,126,137,.08);
+  --text:#0e3a43;
+  --heading:#0e3a43;
+  --muted:rgba(14,58,67,.78);
+  --line:rgba(23,126,137,.22);
+  --goldline:rgba(23,126,137,.28);
+  --accent:#177e89;
+  --accent2:#0e3a43;
+  --gold:#7BA23F;
+  --footer:#0e3a43;
+  --shadow:0 18px 46px rgba(14,58,67,.09);
+  --flow:url("img/seigaiha.svg");
+}
+body{background:#f2f9f8;color:#0e3a43;background-image:none}
+body::before{display:none}
+.section,.section-soft{background-color:#f2f9f8;background-image:none}
+.section-soft{background-color:rgba(23,126,137,.045)}
+.section-soft,.cta-banner{border-top:3px solid transparent;border-image:linear-gradient(90deg,#177e89,#2b6ea3) 1}
+
+.site-header{height:82px;background:rgba(242,249,248,.96);border-bottom:1px solid rgba(23,126,137,.24)}
+.site-header.scrolled{background:rgba(242,249,248,.98);box-shadow:0 8px 28px rgba(14,58,67,.09)}
+.site-header::after{content:"";position:absolute;z-index:0;right:12px;top:2px;width:120px;height:68px;background:url("img/wakamatsu.svg") center/contain no-repeat;opacity:.15;pointer-events:none}
+.site-header .header-inner{position:relative;z-index:1}
+.site-logo .logo-mark,.logo-mark{color:#0e3a43}
+.site-logo .logo-divider{background:rgba(23,126,137,.38)}
+.site-logo .logo-tagline,.main-nav a{color:rgba(14,58,67,.78)}
+.main-nav a:hover,.main-nav a.current{color:#0e3a43}
+.main-nav a::after{background:#7BA23F}
+.main-nav .nav-cta{background:#0e3a43;border-color:#0e3a43;color:#fff}
+.main-nav .nav-cta:hover{background:#177e89;border-color:#177e89;color:#fff}
+.main-nav .nav-lang{border:1px solid #0e3a43;color:#0e3a43;background:#f2f9f8}
+.mobile-lang-pill{display:none}
+.mobile-language-action{gap:9px!important;background:#0e3a43!important;color:#fff!important;border:1px solid #0e3a43!important}
+.mobile-language-action .globe-icon{width:18px;height:18px;flex:0 0 auto}
+
+.premium-hero{background-color:#f2f9f8;background-image:linear-gradient(rgba(242,249,248,.95),rgba(242,249,248,.95)),url("img/seigaiha.svg");background-size:auto,120px 60px}
+.premium-hero::before{display:none}
+.premium-hero-copy{background:transparent}
+.premium-kicker{color:#2b6ea3}
+.premium-hero h1,.premium-hero h1 em{color:#0e3a43}
+.premium-hero-lead,.premium-facts,.premium-language,.premium-language a{color:rgba(14,58,67,.78)}
+.premium-facts li{border-color:rgba(23,126,137,.24)}
+.btn-text{color:#177e89;border-color:#0e3a43}
+.btn-text:hover{color:#0e3a43;border-color:#0e3a43}
+.premium-hero-visual{background:#177e89}
+.premium-hero-visual::after{background:linear-gradient(90deg,rgba(242,249,248,.18),transparent 25%),linear-gradient(0deg,rgba(14,58,67,.12),transparent 48%)}
+.premium-hero-seal{border-color:rgba(242,249,248,.74);background:rgba(14,58,67,.78);color:#fff}
+
+.en-hero{position:relative}
+.en-hero::after{content:"";position:absolute;inset:0;z-index:1;background:url("img/seigaiha.svg") center/120px 60px repeat;opacity:.05;pointer-events:none}
+.en-hero .en-hero-shade{z-index:1;background:linear-gradient(90deg,rgba(14,58,67,.76),rgba(14,58,67,.26))}
+.en-hero .en-hero-text{z-index:2}
+.hero-info{background:#f2f9f8;border-bottom-color:rgba(23,126,137,.22)}
+
+.trust-ribbon{background:#0e3a43;color:#fff;border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#177e89,#2b6ea3) 1}
+.trust-ribbon strong{color:#f2f9f8}
+.trust-badge{background:rgba(23,126,137,.08)!important;border-color:rgba(23,126,137,.28)!important;color:#0e3a43!important}
+.review-score .rs-stars,.review-card .rc-stars{color:#177e89}
+.review-score .rs-link{color:#0e3a43;border-color:#7BA23F}
+.rs-num,.price,.flow-num{color:#0e3a43}
+.service-card-num,.card-kicker{display:inline-flex;align-items:center;min-height:28px;padding:4px 10px;border-left:3px solid #7BA23F;background:rgba(123,162,63,.14);color:#0e3a43}
+.section-en{color:#2b6ea3}
+.section-title,.service-card h3,.card h3,.access-card h3,.info-panel h3,.menu-section h2,.recruit-entry-box h2{color:#0e3a43}
+.section-title::after{height:3px;background:#7BA23F}
+.section-lead,.service-card p,.card p,.access-card p,.info-panel p,.menu-section p{color:rgba(14,58,67,.78)}
+.service-editorial .service-card,.review-score,.review-card,.recommend-card,.step-card,.info-panel,.gallery-item,.card,.menu-section,.faq-item,.access-card{background:rgba(242,249,248,.96);border-color:rgba(23,126,137,.24)}
+.service-editorial .service-card:hover{border-color:#177e89}
+.service-editorial .service-card-num{color:#0e3a43}
+.service-editorial .service-card h3{color:#0e3a43}
+.service-editorial .service-card p{color:rgba(14,58,67,.78)}
+.service-editorial .service-card>a{color:#0e3a43;border-color:#177e89}
+.feature-tags span,.pill{background:#f2f9f8;border-color:rgba(23,126,137,.26);color:#0e3a43}
+.btn-primary,.btn-accent{background:#0e3a43;border-color:#0e3a43;color:#fff}
+.btn-primary:hover,.btn-accent:hover{background:#177e89;border-color:#177e89;color:#fff}
+.btn-secondary,.btn-outline,.btn-green-outline{background:#f2f9f8;border-color:#0e3a43;color:#0e3a43}
+.btn-secondary:hover,.btn-outline:hover,.btn-green-outline:hover{background:#0e3a43;border-color:#0e3a43;color:#fff}
+.notice{border-left-color:#7BA23F}
+.option-card span,.workstyle-card span,.faq-q-label{color:#2b6ea3}
+.cta-banner{background:#0e3a43}
+.cta-banner .section-en{color:#f2f9f8}
+.cta-banner .section-title::after{background:#7BA23F}
+
+.site-footer{position:relative;padding:0 0 36px;background:#0e3a43;color:rgba(242,249,248,.76);border-top:0}
+.site-footer::before{content:"";display:block;height:72px;margin-bottom:54px;background-color:#0e3a43;background-image:linear-gradient(rgba(14,58,67,.72),rgba(14,58,67,.72)),url("img/seigaiha.svg");background-size:auto,120px 60px;background-position:center,center bottom}
+.site-footer::after{content:"";position:absolute;left:max(18px,calc((100% - var(--max-w))/2));top:8px;width:90px;height:55px;background:url("img/wakamatsu.svg") center/contain no-repeat;opacity:.18;pointer-events:none}
+.site-footer>.container{position:relative;z-index:1}
+.footer-brand .logo-mark,.footer-nav-col h4{color:#f2f9f8}
+.footer-brand-sub,.footer-address,.footer-nav-col a,.footer-bottom{color:rgba(242,249,248,.72)}
+
+@media(max-width:700px){
+  .site-header{height:68px}
+  .site-header::after{right:58px;top:2px;width:92px;height:58px;opacity:.15}
+  .header-inner{gap:10px}
+  .mobile-lang-pill{display:inline-flex;align-items:center;justify-content:center;min-width:58px;min-height:40px;margin-left:auto;padding:8px 14px;border:1px solid #0e3a43;border-radius:999px;background:#0e3a43;color:#fff;font-size:.8rem;font-weight:800;letter-spacing:.08em;box-shadow:0 7px 18px rgba(14,58,67,.13)}
+  .hamburger{flex:0 0 40px;background:#f2f9f8;border:1px solid rgba(23,126,137,.22)}
+  .mobile-nav{background:rgba(242,249,248,.98);border-bottom-color:rgba(23,126,137,.24)}
+  .premium-hero{margin-top:68px}
+  .premium-facts li,.premium-facts li:first-child{border-color:rgba(23,126,137,.22)}
+  .mobile-fixed-cta{background:rgba(242,249,248,.97);border-color:rgba(23,126,137,.26);box-shadow:0 -6px 26px rgba(14,58,67,.13)}
+  .mobile-fixed-cta a:first-child{background:#0e3a43;color:#fff}
+  .mobile-fixed-cta a:nth-child(2){background:#f2f9f8;color:#0e3a43}
+  .mobile-fixed-cta a:last-child{background:rgba(43,110,163,.10);color:#0e3a43}
+  .en-page .mobile-fixed-cta{grid-template-columns:minmax(0,1.55fr) minmax(92px,.75fr)}
+  .en-page .mobile-fixed-cta a:first-child{background:#25D366;color:#0e3a43}
+  .en-page .mobile-fixed-cta a:nth-child(2){background:#0e3a43;color:#fff}
+  .site-footer::before{margin-bottom:38px}
+  .footer-top{padding-inline:22px}
+  .footer-bottom{padding-inline:22px}
+}
