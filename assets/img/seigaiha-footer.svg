@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="80" height="40" viewBox="0 0 80 40">
   <defs>
     <pattern id="seigaiha" width="80" height="40" patternUnits="userSpaceOnUse">
-      <g stroke="#177E89" stroke-width="1.6" fill="#F6F8F4">
+      <g stroke="#8FD0CD" stroke-width="1.6" fill="#0E3A43">
         <circle cx="0" cy="20" r="40"/><circle cx="0" cy="20" r="30" fill="none"/><circle cx="0" cy="20" r="20" fill="none"/><circle cx="0" cy="20" r="10" fill="none"/>
         <circle cx="80" cy="20" r="40"/><circle cx="80" cy="20" r="30" fill="none"/><circle cx="80" cy="20" r="20" fill="none"/><circle cx="80" cy="20" r="10" fill="none"/>
         <circle cx="40" cy="40" r="40"/><circle cx="40" cy="40" r="30" fill="none"/><circle cx="40" cy="40" r="20" fill="none"/><circle cx="40" cy="40" r="10" fill="none"/>
