@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Booking Request | Shin Yuu An Massage in Kamata</title>
+<meta name="description" content="Send a multilingual WhatsApp booking request to Shin Yuu An, 1 minute from JR Kamata Station. Choose your treatment, preferred date and time. Open daily until 2:00 AM.">
+<link rel="canonical" href="https://shinyuuan.jp/booking.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;600;700&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<style>
+:root{
+  --ink:#0e3a43;
+  --sea:#177e89;
+  --sea-deep:#0f6972;
+  --lake:#2b6ea3;
+  --mint:#f2f9f8;
+  --mint-soft:#e9f5f1;
+  --paper:#fbfefd;
+  --leaf:#7ba23f;
+  --line:rgba(23,126,137,.19);
+  --line-strong:rgba(23,126,137,.34);
+  --muted:#58747a;
+  --wa:#128c5a;
+  --wa-hover:#0d7449;
+  --shadow:0 24px 70px rgba(14,58,67,.08);
+  --font-heading:"Shippori Mincho","Noto Serif JP","Hiragino Mincho ProN",serif;
+  --font-body:"Noto Sans JP","Yu Gothic","Hiragino Kaku Gothic ProN","PingFang SC",sans-serif;
+  --font-en:"Cormorant Garamond",Georgia,serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{min-width:320px;background:var(--mint);color:var(--ink);font-family:var(--font-body);line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:url("assets/img/seigaiha-waterwood.svg") center top/760px auto repeat;opacity:.62;pointer-events:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button,select,input[type="date"]{cursor:pointer}
+fieldset{min-width:0;border:0}
+a{color:inherit;text-decoration:none}
+.skip-link{position:fixed;left:12px;top:-80px;z-index:100;padding:10px 14px;background:var(--ink);color:#fff}
+.skip-link:focus{top:12px}
+.booking-shell{display:grid;grid-template-columns:minmax(370px,38%) minmax(0,62%);min-height:100svh}
+.story{position:sticky;top:0;align-self:start;min-height:100svh;display:flex;flex-direction:column;background:rgba(242,249,248,.95);border-right:1px solid var(--line)}
+.story-copy{padding:42px clamp(32px,4vw,66px) 28px}
+.brand{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.brand-kanji{font-family:var(--font-heading);font-size:1.72rem;font-weight:700;letter-spacing:.16em;color:var(--ink);white-space:nowrap}
+.brand-divider{width:1px;height:38px;background:var(--line-strong)}
+.brand-en{font-family:var(--font-en);font-size:.88rem;font-weight:600;line-height:1.35;letter-spacing:.16em;color:var(--muted)}
+.kicker{margin-bottom:16px;color:var(--lake);font-family:var(--font-en);font-size:.78rem;font-weight:600;letter-spacing:.3em}
+.story h1{font-family:var(--font-heading);font-size:clamp(1.72rem,2.6vw,2.55rem);font-weight:600;line-height:1.55;letter-spacing:.08em;color:var(--ink)}
+.story-lead{margin-top:18px;color:var(--muted);font-size:.9rem;line-height:1.9}
+.story-photo{width:100%;aspect-ratio:1.58/1;overflow:hidden;background:#dcebea}
+.story-photo img{width:100%;height:100%;object-fit:cover;object-position:center 53%;filter:saturate(.85) contrast(.98)}
+.trust-list{display:grid;gap:14px;padding:22px clamp(32px,4vw,66px) 28px}
+.trust-item{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+.trust-num{font-family:var(--font-en);font-size:1.12rem;color:var(--lake)}
+.trust-item strong{display:block;font-family:var(--font-heading);font-size:.86rem;letter-spacing:.035em}
+.trust-item span:last-child{display:block;margin-top:2px;color:var(--muted);font-size:.75rem;line-height:1.5}
+.story-foot{margin-top:auto;padding:0 clamp(32px,4vw,66px) 28px;color:var(--muted);font-size:.74rem}
+.story-foot a{border-bottom:1px solid var(--line-strong);padding-bottom:2px}
+.form-side{min-width:0;padding:30px clamp(26px,5vw,82px) 52px;background:rgba(251,254,253,.74)}
+.form-wrap{max-width:820px;margin:0 auto}
+.language-switch{display:flex;justify-content:flex-end;gap:8px;margin-bottom:28px}
+.language-switch button{min-width:88px;min-height:46px;padding:10px 16px;border:1px solid var(--line-strong);background:rgba(251,254,253,.88);font-size:.84rem;font-weight:700;letter-spacing:.03em}
+.language-switch button:hover{border-color:var(--sea);color:var(--sea-deep)}
+.language-switch button.active{background:var(--sea);border-color:var(--sea);color:#fff}
+.language-switch button:focus-visible,.guest-button:focus-visible,.addon-item:focus-within,.nomination-item:focus-within{outline:3px solid rgba(43,110,163,.28);outline-offset:2px}
+.form-intro{padding-bottom:20px;border-bottom:1px solid var(--line)}
+.form-intro .eyebrow{color:var(--lake);font-family:var(--font-en);font-size:.78rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase}
+.form-intro h2{margin-top:6px;font-family:var(--font-heading);font-size:clamp(1.52rem,2.5vw,2.2rem);font-weight:600;letter-spacing:.055em;line-height:1.5}
+.form-intro p{max-width:650px;margin-top:10px;color:var(--muted);font-size:.88rem;line-height:1.85}
+.form-section{padding:22px 0;border-bottom:1px solid var(--line)}
+.field-label,.section-label{display:flex;align-items:baseline;gap:9px;margin-bottom:9px;font-family:var(--font-heading);font-size:.94rem;font-weight:700;letter-spacing:.025em}
+.required{color:var(--sea);font-family:var(--font-body);font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+select,input[type="date"],input[type="text"],textarea{width:100%;min-height:52px;padding:13px 16px;border:1px solid var(--line-strong);border-radius:3px;background:rgba(255,255,255,.88);font-size:16px;line-height:1.5;box-shadow:0 6px 20px rgba(14,58,67,.025)}
+input[type="date"]{appearance:auto;-webkit-appearance:auto}
+textarea{min-height:96px;resize:vertical;cursor:text}
+select:focus,input:focus,textarea:focus{outline:3px solid rgba(43,110,163,.18);border-color:var(--lake);background:#fff}
+.date-time-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.hint{margin-top:8px;color:var(--muted);font-size:.76rem;line-height:1.7}
+.hint strong{color:var(--sea-deep)}
+.guest-buttons{display:flex;flex-wrap:wrap;gap:10px}
+.guest-button{min-width:58px;min-height:48px;padding:9px 15px;border:1px solid var(--line-strong);border-radius:3px;background:rgba(255,255,255,.82);font-size:.92rem;font-weight:700}
+.guest-button:hover{border-color:var(--sea)}
+.guest-button.active{background:var(--sea);border-color:var(--sea);color:#fff}
+.extras-toggle{width:100%;padding:0;background:transparent;color:var(--ink);font-family:var(--font-heading);font-size:.94rem;font-weight:700;text-align:left;cursor:pointer}
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-top:15px}
+.addon-item,.nomination-item{display:flex;align-items:flex-start;gap:10px;min-height:46px;padding:10px 12px;border:1px solid var(--line);background:rgba(255,255,255,.56);font-size:.79rem;line-height:1.5}
+.addon-item input,.nomination-item input{width:18px;height:18px;margin-top:1px;accent-color:var(--sea);flex:0 0 auto}
+.addon-copy{display:flex;justify-content:space-between;gap:12px;width:100%}
+.addon-copy small{color:var(--muted);font-size:.72rem;white-space:nowrap}
+.nomination-title{margin-top:16px;margin-bottom:8px;color:var(--muted);font-size:.75rem;font-weight:700}
+.nomination-options{display:flex;flex-wrap:wrap;gap:8px}
+.nomination-item{flex:1 1 170px}
+.identity-grid{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:18px}
+.identity-field{min-width:0}
+.preview{min-height:118px;padding:16px;border:1px solid var(--line-strong);border-left:3px solid var(--lake);border-radius:2px;background:rgba(233,245,241,.66);color:var(--ink);font-size:.82rem;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.estimate{margin-top:8px;color:var(--muted);font-size:.75rem}
+.submit-button{width:100%;min-height:58px;margin-top:20px;padding:14px 20px;border:0;border-radius:3px;background:var(--wa);color:#fff;font-size:1rem;font-weight:700;letter-spacing:.02em;box-shadow:0 14px 32px rgba(18,140,90,.18);transition:background .18s,transform .18s}
+.submit-button:hover:not(:disabled){background:var(--wa-hover);transform:translateY(-1px)}
+.submit-button:disabled{background:#aaccc0;color:rgba(255,255,255,.9);box-shadow:none;cursor:not-allowed}
+.confirm-line{margin-top:12px;color:var(--ink);font-family:var(--font-heading);font-size:.82rem;font-weight:700;text-align:center}
+.policy{margin-top:16px;border:1px solid var(--line);background:rgba(255,255,255,.52)}
+.policy summary{padding:12px 14px;color:var(--sea-deep);font-size:.76rem;font-weight:700;cursor:pointer}
+.policy-copy{padding:0 14px 14px;color:var(--muted);font-size:.72rem;line-height:1.75}
+.policy-copy p+p{margin-top:7px}
+.booking-footer{margin-top:22px;color:var(--muted);font-size:.7rem;text-align:center}
+.booking-footer a{color:var(--lake);border-bottom:1px solid var(--line-strong)}
+@media(min-width:981px){
+  .form-side{padding-top:20px;padding-bottom:30px}
+  .language-switch{margin-bottom:14px}
+  .language-switch button{min-height:42px}
+  .form-intro{padding-bottom:12px}
+  .form-intro h2{font-size:clamp(1.45rem,2.2vw,1.95rem)}
+  .form-intro p{margin-top:6px;line-height:1.65}
+  .form-section{padding:14px 0}
+  .field-label,.section-label{margin-bottom:6px}
+  select,input[type="date"],input[type="text"],textarea{min-height:46px;padding:10px 14px}
+  textarea{min-height:46px;max-height:70px}
+  .hint{margin-top:5px;line-height:1.5}
+  .guest-button{min-height:42px}
+  .preview{min-height:86px;padding:13px}
+  .submit-button{min-height:52px;margin-top:14px}
+  .confirm-line{margin-top:8px}
+  .policy{margin-top:10px}
+  .booking-footer{margin-top:14px}
+}
+@media(max-width:980px){
+  .booking-shell{grid-template-columns:1fr}
+  .story{position:relative;min-height:0;border-right:0;border-bottom:1px solid var(--line)}
+  .story-copy{padding:30px 26px 24px}
+  .brand{margin-bottom:20px}
+  .story-photo{aspect-ratio:16/9}
+  .trust-list{grid-template-columns:repeat(3,1fr);padding:20px 26px}
+  .story-foot{padding:0 26px 22px}
+  .form-side{padding:24px 26px 46px}
+}
+@media(max-width:640px){
+  .story-copy{padding:24px 20px 22px}
+  .brand-kanji{font-size:1.35rem}
+  .brand-en{font-size:.75rem}
+  .story h1{font-size:1.72rem}
+  .story-photo{aspect-ratio:4/3}
+  .story-photo img{object-position:50% center}
+  .trust-list{grid-template-columns:1fr;padding:18px 20px;gap:11px}
+  .trust-item{grid-template-columns:28px 1fr}
+  .story-foot{padding:0 20px 20px}
+  .form-side{padding:20px 18px 38px}
+  .language-switch{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:22px}
+  .language-switch button{min-width:0;min-height:48px;padding:9px 6px}
+  .date-time-grid,.extras-grid{grid-template-columns:1fr}
+  .identity-grid{grid-template-columns:1fr}
+  .form-section{padding:20px 0}
+  .guest-button{flex:1;min-width:54px}
+  .addon-copy{gap:8px}
+  .submit-button{font-size:.93rem}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SWGGKR9K9W"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-SWGGKR9K9W');</script>
+</head>
+<body>
+<a class="skip-link" href="#bookingForm">Skip to booking form</a>
+<main class="booking-shell">
+  <aside class="story" aria-label="Shin Yuu An salon information">
+    <div class="story-copy">
+      <a class="brand" href="/" aria-label="Shin Yuu An home">
+        <span class="brand-kanji">身悠晏</span><span class="brand-divider" aria-hidden="true"></span><span class="brand-en">Shin Yuu An<br>Relaxation Salon</span>
+      </a>
+      <p class="kicker">KAMATA · TOKYO</p>
+      <h1 data-i18n="storyTitle">A quiet moment<br>for your tired body.</h1>
+      <p class="story-lead" data-i18n="storyLead">Foot reflexology, body care and aroma oil treatments, one minute from JR Kamata Station.</p>
+    </div>
+    <figure class="story-photo">
+      <img src="assets/img/booking-treatment-waterwood.svg" width="1200" height="1006" alt="Relaxation body care treatment at Shin Yuu An" data-alt-key="photoAlt">
+    </figure>
+    <div class="trust-list">
+      <div class="trust-item"><span class="trust-num">01</span><div><strong data-i18n="trustAccess">1 min from JR Kamata Station</strong><span data-i18n="trustAccessSub">East Exit, walk 1 minute</span></div></div>
+      <div class="trust-item"><span class="trust-num">02</span><div><strong data-i18n="trustHours">Open daily</strong><span data-i18n="trustHoursSub">11:00 AM – 2:00 AM (next day)</span></div></div>
+      <div class="trust-item"><span class="trust-num">03</span><div><strong data-i18n="trustSpace">Private room space · Female friendly</strong><span data-i18n="trustSpaceSub">A calm environment for relaxation</span></div></div>
+    </div>
+    <p class="story-foot"><a href="/" data-i18n="backHome">← Back to the official website</a></p>
+  </aside>
+
+  <section class="form-side">
+    <div class="form-wrap">
+      <nav class="language-switch" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true" class="active">English</button>
+        <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+        <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
+      </nav>
+      <header class="form-intro">
+        <p class="eyebrow" data-i18n="eyebrow">Appointment Request</p>
+        <h2 data-i18n="formTitle">Request your preferred time</h2>
+        <p data-i18n="formLead">Complete the form and send it via WhatsApp. We will check availability and reply to confirm your appointment.</p>
+      </header>
+
+      <form id="bookingForm" novalidate>
+        <div class="form-section">
+          <label class="field-label" for="course"><span data-i18n="course">Course</span><span class="required" data-i18n="required">required</span></label>
+          <div class="field-control"><select id="course" name="course" required></select></div>
+        </div>
+
+        <div class="form-section date-time-grid">
+          <div>
+            <label class="field-label" for="date"><span data-i18n="preferredDate">Preferred date</span><span class="required" data-i18n="required">required</span></label>
+            <input id="date" name="date" type="date" required>
+          </div>
+          <div>
+            <label class="field-label" for="time"><span data-i18n="preferredTime">Preferred time</span><span class="required" data-i18n="required">required</span></label>
+            <div class="field-control"><select id="time" name="time" required></select></div>
+          </div>
+          <p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. <strong>Late-night fee ¥800 after 11:00 PM.</strong></p>
+        </div>
+
+        <fieldset class="form-section">
+          <legend class="section-label"><span data-i18n="guests">Number of guests</span><span class="required" data-i18n="required">required</span></legend>
+          <div class="guest-buttons" id="guestButtons" role="radiogroup" aria-label="Number of guests">
+            <button class="guest-button active" type="button" data-guests="1" role="radio" aria-checked="true">1</button>
+            <button class="guest-button" type="button" data-guests="2" role="radio" aria-checked="false">2</button>
+            <button class="guest-button" type="button" data-guests="3" role="radio" aria-checked="false">3</button>
+            <button class="guest-button" type="button" data-guests="4+" role="radio" aria-checked="false">4+</button>
+          </div>
+          <p class="hint" data-i18n="groupHint">For two or more guests, we will confirm the available staff and start times in our reply.</p>
+        </fieldset>
+
+        <details class="form-section" id="extrasSection">
+          <summary class="extras-toggle"><span data-i18n="extras">Add-ons and nomination (optional)</span></summary>
+          <div class="extras-grid" id="addonsGrid"></div>
+          <p class="nomination-title" data-i18n="nomination">Therapist nomination</p>
+          <div class="nomination-options" id="nominationOptions"></div>
+        </details>
+
+        <div class="form-section identity-grid">
+          <div class="identity-field">
+            <label class="field-label" for="name"><span data-i18n="name">Your name</span><span class="required" data-i18n="required">required</span></label>
+            <input id="name" name="name" type="text" maxlength="60" autocomplete="name" required>
+          </div>
+          <div class="identity-field">
+            <label class="field-label" for="note"><span data-i18n="note">Note</span><span class="required" data-i18n="optional">optional</span></label>
+            <textarea id="note" name="note" maxlength="300"></textarea>
+          </div>
+        </div>
+
+        <div class="form-section" style="border-bottom:0;padding-bottom:0">
+          <p class="section-label" data-i18n="preview">WhatsApp message preview</p>
+          <div class="preview" id="preview" aria-live="polite"></div>
+          <p class="estimate" id="estimate" aria-live="polite"></p>
+          <button class="submit-button" id="submitButton" type="submit" disabled data-i18n="submit">Send Booking Request via WhatsApp</button>
+          <p class="confirm-line" data-i18n="confirmLine">Your appointment is confirmed only after we reply.</p>
+          <details class="policy">
+            <summary data-i18n="policyTitle">Cancellation, late arrival and salon policy</summary>
+            <div class="policy-copy" data-i18n-html="policyCopy"></div>
+          </details>
+        </div>
+      </form>
+      <footer class="booking-footer">© 2026 Shin Yuu An · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a></footer>
+    </div>
+  </section>
+</main>
+
+<script>
+const WHATSAPP_NUMBER="817091659898";
+
+const COURSE_GROUPS=[
+  {key:"popular",items:[
+    {key:"trial60",min:60,price:4800,en:"Trial Course — Body 30 + Foot 30 (60 min)",zh:"体验套餐——整体30＋足底30（60分钟）",ja:"おためしコース——整体30＋足裏30（60分）"},
+    {key:"recovery70",min:70,price:5500,en:"Recovery Course — Body 30 + Foot 30 + Head 10 (70 min)",zh:"疲劳恢复套餐——整体30＋足底30＋头部10（70分钟）",ja:"お疲れケア——整体30＋足裏30＋ヘッド10（70分）"},
+    {key:"legs80",min:80,price:6280,en:"Swollen Legs & Stiff Shoulders — Body 40 + Foot 40 (80 min)",zh:"腿部浮肿与肩颈疲劳——整体40＋足底40（80分钟）",ja:"足むくみ・肩まわりケア——整体40＋足裏40（80分）"},
+    {key:"satisfaction90",min:90,price:6800,en:"Premium Satisfaction — Body 60 + Foot 30 (90 min)",zh:"大满足套餐——整体60＋足底30（90分钟）",ja:"大満足コース——整体60＋足裏30（90分）"},
+    {key:"aromaFoot60",min:60,price:5300,en:"Aroma Oil 30 + Foot 30 (60 min)",zh:"精油30＋足底30（60分钟）",ja:"アロマ30＋足裏30（60分）"},
+    {key:"aromaFoot90",min:90,price:7800,en:"Aroma Oil 60 + Foot 30 (90 min)",zh:"精油60＋足底30（90分钟）",ja:"アロマ60＋足裏30（90分）"},
+    {key:"aromaFoot120",min:120,price:10500,en:"Aroma Oil 90 + Foot 30 (120 min)",zh:"精油90＋足底30（120分钟）",ja:"アロマ90＋足裏30（120分）"}
+  ]},
+  {key:"body",items:[
+    {key:"body30",min:30,price:2400,en:"Pressure Point Body Massage 30 min (half body)",zh:"穴位整体按摩30分钟（半身）",ja:"整体ボディケア30分（半身）"},
+    {key:"body60",min:60,price:3980,en:"Pressure Point Body Massage 60 min",zh:"穴位整体按摩60分钟",ja:"整体ボディケア60分"},
+    {key:"body90",min:90,price:6800,en:"Pressure Point Body Massage 90 min",zh:"穴位整体按摩90分钟",ja:"整体ボディケア90分"}
+  ]},
+  {key:"foot",items:[
+    {key:"foot30",min:30,price:2800,en:"Foot Reflexology 30 min",zh:"足底反射30分钟",ja:"足つぼ30分"},
+    {key:"foot45",min:45,price:3980,en:"Foot Reflexology 45 min",zh:"足底反射45分钟",ja:"足つぼ45分"},
+    {key:"foot60",min:60,price:4980,en:"Foot Reflexology 60 min",zh:"足底反射60分钟",ja:"足つぼ60分"}
+  ]},
+  {key:"aroma",items:[
+    {key:"aroma30",min:30,price:2980,en:"Aroma Oil Treatment 30 min (half body)",zh:"香薰精油护理30分钟（半身）",ja:"アロマオイル30分（半身）"},
+    {key:"aroma60",min:60,price:4980,en:"Aroma Oil Treatment 60 min",zh:"香薰精油护理60分钟",ja:"アロマオイル60分"},
+    {key:"aroma90",min:90,price:7800,en:"Aroma Oil Treatment 90 min",zh:"香薰精油护理90分钟",ja:"アロマオイル90分"},
+    {key:"aroma120",min:120,price:9980,en:"Aroma Oil Treatment 120 min",zh:"香薰精油护理120分钟",ja:"アロマオイル120分"}
+  ]}
+];
+
+const ADDONS=[
+  {key:"calves",min:10,price:1000,en:"Aroma calves & thighs",zh:"小腿与大腿精油护理",ja:"ふくらはぎ・太ももアロマ"},
+  {key:"decollete",min:10,price:1000,en:"Neck & décolleté oil",zh:"颈部与肩颈精油护理",ja:"首・デコルテオイル"},
+  {key:"abdominal",min:10,price:1000,en:"Abdominal therapy",zh:"腹部护理",ja:"お腹まわりケア"},
+  {key:"callus",min:10,price:1000,en:"Foot callus care",zh:"足部角质护理",ja:"角質ケア"},
+  {key:"hand",min:10,price:1000,en:"Hand & arm massage",zh:"手部与手臂按摩",ja:"手・腕マッサージ"},
+  {key:"head",min:10,price:1000,en:"Eye & head massage",zh:"眼部与头部按摩",ja:"目まわり・ヘッドケア"},
+  {key:"facial",min:40,price:4000,en:"Facial treatment",zh:"面部护理",ja:"フェイシャル"},
+  {key:"extension",min:10,price:1000,en:"Extension — 10 minutes",zh:"延长10分钟",ja:"延長10分"}
+];
+
+const NOMINATIONS=[
+  {key:"none",price:0,en:"No nomination",zh:"不指定技师",ja:"指名なし"},
+  {key:"therapist",price:500,en:"Therapist nomination",zh:"指定技师",ja:"スタッフ指名"},
+  {key:"manager",price:1000,en:"Manager nomination",zh:"指定店长",ja:"店長指名"}
+];
+
+const I18N={
+  en:{
+    storyTitle:"A quiet moment<br>for your tired body.",storyLead:"Foot reflexology, body care and aroma oil treatments, one minute from JR Kamata Station.",photoAlt:"Relaxation body care treatment at Shin Yuu An",trustAccess:"1 min from JR Kamata Station",trustAccessSub:"East Exit, walk 1 minute",trustHours:"Open daily",trustHoursSub:"11:00 AM – 2:00 AM (next day)",trustSpace:"Private room space · Female friendly",trustSpaceSub:"A calm environment for relaxation",backHome:"← Back to the official website",eyebrow:"Appointment Request",formTitle:"Request your preferred time",formLead:"Complete the form and send it via WhatsApp. We will check availability and reply to confirm your appointment.",course:"Course",required:"required",preferredDate:"Preferred date",preferredTime:"Preferred time",hoursHint:"Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. Late-night fee ¥800 after 11:00 PM.",guests:"Number of guests",groupHint:"For two or more guests, we will confirm the available staff and start times in our reply.",extras:"Add-ons and nomination (optional)",nomination:"Therapist nomination",name:"Your name",note:"Note",optional:"optional",preview:"WhatsApp message preview",submit:"Send Booking Request via WhatsApp",confirmLine:"Your appointment is confirmed only after we reply.",policyTitle:"Cancellation, late arrival and salon policy",policyCopy:"<p>Please contact us as early as possible if your plans change. Same-day cancellations or no-shows may incur a fee of up to 50% of the course price.</p><p>If you are more than 10 minutes late without contacting us, your appointment may be released and the treatment time may be shortened.</p><p>We provide relaxation treatments only. No sexual services are offered; inappropriate requests will be refused.</p>",privacy:"Privacy Policy",selectCourse:"Select a course…",selectTime:"Select a preferred time…",namePh:"e.g. John Smith",notePh:"Requests, areas of concern, or questions (optional)",fillAll:"Select a course, date and time, then enter your name to preview the message.",estimateSingle:n=>`Estimated price for 1 guest: ¥${n.toLocaleString()}${isLate()?" (including the ¥800 late-night fee)":""}. Final price is confirmed by the salon.`,estimateGroup:n=>`Listed amount per guest: ¥${n.toLocaleString()}${isLate()?" + ¥800 late-night fee":""}. We will confirm the group total.`,groups:{popular:"Popular Set Courses",body:"Pressure Point Body Massage",foot:"Foot Reflexology",aroma:"Aroma Oil Treatment"},msgTitle:"Hello, I would like to request an appointment at Shin Yuu An.",msgLabels:{course:"Course",date:"Preferred date",time:"Preferred time",guests:"Guests",addons:"Add-ons",nomination:"Nomination",name:"Name",note:"Note",fee:"Late-night fee",close:"I understand that the appointment is confirmed only after your reply."}
+  },
+  zh:{
+    storyTitle:"让一天的疲惫，<br>静静地舒展开。",storyLead:"足底反射、整体按摩与香薰精油护理，距离JR蒲田站东口步行1分钟。",photoAlt:"身悠晏店内整体按摩护理场景",trustAccess:"JR蒲田站步行1分钟",trustAccessSub:"东口出站，步行约1分钟",trustHours:"每天营业",trustHoursSub:"11:00－次日凌晨2:00",trustSpace:"独立空间 · 女性也可安心到店",trustSpaceSub:"安静舒适的放松环境",backHome:"← 返回官方网站",eyebrow:"预约申请",formTitle:"选择您希望的到店时间",formLead:"填写后通过WhatsApp发送预约申请。我们确认空位后会回复，收到回复后预约才正式成立。",course:"选择套餐",required:"必填",preferredDate:"希望日期",preferredTime:"希望时间",hoursHint:"每天11:00－次日凌晨2:00营业，最晚预约申请时间为凌晨1:00。23:00以后加收深夜费¥800。",guests:"到店人数",groupHint:"两位以上客人，我们将在回复时确认可安排的员工人数和开始时间。",extras:"附加项目与指定技师（可选）",nomination:"指定技师",name:"您的姓名",note:"备注",optional:"选填",preview:"WhatsApp消息预览",submit:"通过WhatsApp发送预约申请",confirmLine:"收到本店回复后，预约才正式成立。",policyTitle:"取消、迟到及店铺服务说明",policyCopy:"<p>如果行程有变，请尽早联系我们。当日取消或无故不到店，可能收取最高为套餐价格50%的费用。</p><p>迟到超过10分钟且未联系我们，预约可能被取消，护理时间也可能相应缩短。</p><p>本店只提供正规放松护理，不提供任何色情服务；不当要求将被拒绝。</p>",privacy:"隐私政策",selectCourse:"请选择套餐…",selectTime:"请选择希望时间…",namePh:"例：王小明",notePh:"希望护理的部位、问题或其他要求（选填）",fillAll:"请选择套餐、日期和时间，并填写姓名后查看消息预览。",estimateSingle:n=>`1位客人预估价格：¥${n.toLocaleString()}${isLate()?"（已包含深夜费¥800）":""}。最终价格由店铺回复确认。`,estimateGroup:n=>`每位客人所选项目价格：¥${n.toLocaleString()}${isLate()?"，另加深夜费¥800":""}。团体总价将在回复时确认。`,groups:{popular:"人气组合套餐",body:"穴位整体按摩",foot:"足底反射",aroma:"香薰精油护理"},msgTitle:"您好，我想向身悠晏申请预约。",msgLabels:{course:"套餐",date:"希望日期",time:"希望时间",guests:"人数",addons:"附加项目",nomination:"指定技师",name:"姓名",note:"备注",fee:"深夜费",close:"我已了解：收到店铺回复后预约才正式成立。"}
+  },
+  ja:{
+    storyTitle:"一日の疲れを、<br>静かにほどく。",storyLead:"足裏・整体・アロマの本格リラクゼーション。JR蒲田駅東口から徒歩1分です。",photoAlt:"身悠晏の整体ボディケア施術風景",trustAccess:"JR蒲田駅から徒歩1分",trustAccessSub:"東口を出て徒歩約1分",trustHours:"毎日営業",trustHoursSub:"11:00〜翌2:00",trustSpace:"個室空間 · 女性も通いやすい",trustSpaceSub:"落ち着いて過ごせる空間",backHome:"← 公式サイトへ戻る",eyebrow:"Reservation Request",formTitle:"ご希望の日時をお知らせください",formLead:"フォーム入力後、WhatsAppで予約リクエストを送信します。空き状況を確認し、当店からの返信をもって予約確定となります。",course:"コース",required:"必須",preferredDate:"希望日",preferredTime:"希望時間",hoursHint:"毎日11:00〜翌2:00営業、最終予約リクエストは翌1:00です。23時以降は深夜料金800円。",guests:"人数",groupHint:"2名様以上の場合、対応スタッフ数と開始時間を返信時に確認いたします。",extras:"オプション・指名（任意）",nomination:"スタッフ指名",name:"お名前",note:"ご要望",optional:"任意",preview:"WhatsApp送信内容プレビュー",submit:"WhatsAppで予約リクエストを送信",confirmLine:"当店からの返信をもって予約確定となります。",policyTitle:"キャンセル・遅刻・当店のサービスについて",policyCopy:"<p>予定変更の際は、できるだけ早めにご連絡ください。当日キャンセルまたは無断キャンセルは、コース料金の最大50％を頂戴する場合があります。</p><p>ご連絡なく10分以上遅れた場合、予約を解除し、施術時間を短縮する場合があります。</p><p>当店は通常のリラクゼーション施術のみを提供しています。性的サービスは一切行っておらず、不適切な要求はお断りします。</p>",privacy:"プライバシーポリシー",selectCourse:"コースを選択…",selectTime:"希望時間を選択…",namePh:"例：山田太郎",notePh:"気になる部位・ご質問・ご要望（任意）",fillAll:"コース・日付・時間を選択し、お名前を入力すると送信内容が表示されます。",estimateSingle:n=>`1名様の概算料金：¥${n.toLocaleString()}${isLate()?"（深夜料金800円を含む）":""}。最終料金は当店からの返信でご確認ください。`,estimateGroup:n=>`1名様あたりの選択料金：¥${n.toLocaleString()}${isLate()?"＋深夜料金800円":""}。合計は返信時に確認いたします。`,groups:{popular:"人気セットコース",body:"整体ボディケア",foot:"足つぼ",aroma:"アロマオイル"},msgTitle:"身悠晏の予約を希望します。",msgLabels:{course:"コース",date:"希望日",time:"希望時間",guests:"人数",addons:"オプション",nomination:"指名",name:"名前",note:"要望",fee:"深夜料金",close:"当店からの返信をもって予約確定となることを確認しました。"}
+  }
+};
+
+let lang="en";
+let guests="1";
+
+const $=id=>document.getElementById(id);
+const money=n=>`¥${n.toLocaleString()}`;
+const allCourses=()=>COURSE_GROUPS.flatMap(group=>group.items);
+const selectedCourse=()=>allCourses().find(item=>item.key===$("course").value);
+const selectedAddons=()=>ADDONS.filter(item=>document.querySelector(`[data-addon="${item.key}"]`)?.checked);
+const selectedNomination=()=>NOMINATIONS.find(item=>document.querySelector('input[name="nomination"]:checked')?.value===item.key)||NOMINATIONS[0];
+const isLate=()=>{const value=$("time").value;return value?Number(value.split("|")[0])>=1380:false};
+
+function resolveLanguage(){
+  const requested=new URLSearchParams(location.search).get("lang");
+  if(["en","zh","ja"].includes(requested))return requested;
+  if(document.referrer.includes("/en/"))return "en";
+  const browser=(navigator.language||"").toLowerCase();
+  if(browser.startsWith("zh"))return "zh";
+  if(browser.startsWith("ja"))return "ja";
+  return "en";
+}
+
+function buildCourses(){
+  const current=$("course").value;
+  $("course").innerHTML=`<option value="">${I18N[lang].selectCourse}</option>`+COURSE_GROUPS.map(group=>`<optgroup label="${I18N[lang].groups[group.key]}">${group.items.map(item=>`<option value="${item.key}">${item[lang]} — ${money(item.price)}</option>`).join("")}</optgroup>`).join("");
+  $("course").value=current;
+}
+
+function buildTimes(){
+  const current=$("time").value;
+  const times=[];
+  for(let h=11;h<=23;h++)for(const m of [0,30])times.push({minutes:h*60+m,label:`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`});
+  times.push({minutes:1440,label:"00:00 (next day)"},{minutes:1470,label:"00:30 (next day)"},{minutes:1500,label:"01:00 (next day)"});
+  $("time").innerHTML=`<option value="">${I18N[lang].selectTime}</option>`+times.map(item=>`<option value="${item.minutes}|${item.label}">${item.label}</option>`).join("");
+  $("time").value=current;
+}
+
+function buildExtras(){
+  const selected=new Set(selectedAddons().map(item=>item.key));
+  $("addonsGrid").innerHTML=ADDONS.map(item=>`<label class="addon-item"><input type="checkbox" data-addon="${item.key}" ${selected.has(item.key)?"checked":""}><span class="addon-copy"><span>${item[lang]}</span><small>${item.min} min · ${money(item.price)}</small></span></label>`).join("");
+  const nomination=selectedNomination().key;
+  $("nominationOptions").innerHTML=NOMINATIONS.map(item=>`<label class="nomination-item"><input type="radio" name="nomination" value="${item.key}" ${item.key===nomination?"checked":""}><span>${item[lang]}${item.price?` · ${money(item.price)}`:""}</span></label>`).join("");
+}
+
+function applyLanguage(next){
+  lang=next;
+  document.documentElement.lang=lang==="zh"?"zh-CN":lang;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{const value=I18N[lang][el.dataset.i18n];if(typeof value==="string")el.innerHTML=value});
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>{const value=I18N[lang][el.dataset.i18nHtml];if(typeof value==="string")el.innerHTML=value});
+  document.querySelectorAll("[data-alt-key]").forEach(el=>{el.alt=I18N[lang][el.dataset.altKey]});
+  document.querySelectorAll("[data-lang]").forEach(button=>{const active=button.dataset.lang===lang;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active))});
+  $("name").placeholder=I18N[lang].namePh;
+  $("note").placeholder=I18N[lang].notePh;
+  buildCourses();buildTimes();buildExtras();updatePreview();
+  const url=new URL(location.href);url.searchParams.set("lang",lang);history.replaceState({},"",url);
+}
+
+function formatDate(value){
+  if(!value)return "";
+  const [y,m,d]=value.split("-");
+  if(lang==="en")return `${y}/${m}/${d}`;
+  if(lang==="zh")return `${y}年${Number(m)}月${Number(d)}日`;
+  return `${y}年${Number(m)}月${Number(d)}日`;
+}
+
+function timeLabel(){return $("time").value?$("time").value.split("|")[1]:""}
+
+function currentPrice(){
+  const course=selectedCourse();if(!course)return 0;
+  return course.price+selectedAddons().reduce((sum,item)=>sum+item.price,0)+selectedNomination().price+(isLate()?800:0);
+}
+
+function messageText(){
+  const course=selectedCourse();
+  const labels=I18N[lang].msgLabels;
+  const addons=selectedAddons();
+  const nomination=selectedNomination();
+  const lines=[I18N[lang].msgTitle,"",`■ ${labels.course}: ${course[lang]} (${money(course.price)})`,`■ ${labels.date}: ${formatDate($("date").value)}`,`■ ${labels.time}: ${timeLabel()}`,`■ ${labels.guests}: ${guests}`,`■ ${labels.name}: ${$("name").value.trim()}`];
+  if(addons.length)lines.push(`■ ${labels.addons}: ${addons.map(item=>`${item[lang]} (${money(item.price)})`).join(", ")}`);
+  if(nomination.key!=="none")lines.push(`■ ${labels.nomination}: ${nomination[lang]} (${money(nomination.price)})`);
+  if(isLate())lines.push(`■ ${labels.fee}: ¥800`);
+  if($("note").value.trim())lines.push(`■ ${labels.note}: ${$("note").value.trim()}`);
+  lines.push("",labels.close,"","via shinyuuan.jp/booking.html");
+  return lines.join("\n");
+}
+
+function updatePreview(){
+  const complete=Boolean(selectedCourse()&&$("date").value&&$("time").value&&$("name").value.trim());
+  $("preview").textContent=complete?messageText():I18N[lang].fillAll;
+  $("submitButton").disabled=!complete;
+  $("estimate").textContent=selectedCourse()?(guests==="1"?I18N[lang].estimateSingle(currentPrice()):I18N[lang].estimateGroup(currentPrice())):"";
+}
+
+function setTokyoDate(){
+  const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
+  const get=type=>parts.find(part=>part.type===type).value;
+  const today=`${get("year")}-${get("month")}-${get("day")}`;
+  $("date").min=today;$("date").value=today;
+}
+
+document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>applyLanguage(button.dataset.lang)));
+$("guestButtons").addEventListener("click",event=>{const button=event.target.closest("[data-guests]");if(!button)return;guests=button.dataset.guests;document.querySelectorAll("[data-guests]").forEach(item=>{const active=item===button;item.classList.toggle("active",active);item.setAttribute("aria-checked",String(active))});updatePreview()});
+$("bookingForm").addEventListener("input",updatePreview);
+$("bookingForm").addEventListener("change",updatePreview);
+$("extrasSection").addEventListener("change",updatePreview);
+$("bookingForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  updatePreview();
+  if($("submitButton").disabled)return;
+  if(typeof gtag==="function")gtag("event","booking_whatsapp_click",{language:lang,course:$("course").value,guests});
+  const url=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText())}`;
+  const opened=window.open(url,"_blank","noopener,noreferrer");
+  if(!opened)location.href=url;
+});
+
+setTokyoDate();
+buildTimes();
+buildExtras();
+applyLanguage(resolveLanguage());
+</script>
+</body>
+</html>
