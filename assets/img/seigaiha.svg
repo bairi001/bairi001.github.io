@@ -1,9 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" viewBox="0 0 120 60" fill="none">
-  <g stroke="#177e89" stroke-width="1" vector-effect="non-scaling-stroke">
-    <circle cx="0" cy="0" r="36"/><circle cx="0" cy="0" r="27"/><circle cx="0" cy="0" r="18"/><circle cx="0" cy="0" r="9"/>
-    <circle cx="120" cy="0" r="36"/><circle cx="120" cy="0" r="27"/><circle cx="120" cy="0" r="18"/><circle cx="120" cy="0" r="9"/>
-    <circle cx="60" cy="30" r="36"/><circle cx="60" cy="30" r="27"/><circle cx="60" cy="30" r="18"/><circle cx="60" cy="30" r="9"/>
-    <circle cx="0" cy="60" r="36"/><circle cx="0" cy="60" r="27"/><circle cx="0" cy="60" r="18"/><circle cx="0" cy="60" r="9"/>
-    <circle cx="120" cy="60" r="36"/><circle cx="120" cy="60" r="27"/><circle cx="120" cy="60" r="18"/><circle cx="120" cy="60" r="9"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="36" viewBox="0 0 120 36" fill="none">
+  <g stroke="#177E89" stroke-width="1" stroke-linecap="round" vector-effect="non-scaling-stroke">
+    <!-- Two half-unit-offset rows; 18px pitch on a 30px fan gives 40% vertical overlap. -->
+    <g transform="translate(0 30)">
+      <path d="M-30 0A30 30 0 0 1 30 0"/><path d="M-22 0A22 22 0 0 1 22 0"/><path d="M-14 0A14 14 0 0 1 14 0"/><path d="M-6 0A6 6 0 0 1 6 0"/>
+    </g>
+    <g transform="translate(60 30)">
+      <path d="M-30 0A30 30 0 0 1 30 0"/><path d="M-22 0A22 22 0 0 1 22 0"/><path d="M-14 0A14 14 0 0 1 14 0"/><path d="M-6 0A6 6 0 0 1 6 0"/>
+    </g>
+    <g transform="translate(120 30)">
+      <path d="M-30 0A30 30 0 0 1 30 0"/><path d="M-22 0A22 22 0 0 1 22 0"/><path d="M-14 0A14 14 0 0 1 14 0"/><path d="M-6 0A6 6 0 0 1 6 0"/>
+    </g>
+    <g transform="translate(30 12)">
+      <path d="M-30 0A30 30 0 0 1 30 0"/><path d="M-22 0A22 22 0 0 1 22 0"/><path d="M-14 0A14 14 0 0 1 14 0"/><path d="M-6 0A6 6 0 0 1 6 0"/>
+    </g>
+    <g transform="translate(90 12)">
+      <path d="M-30 0A30 30 0 0 1 30 0"/><path d="M-22 0A22 22 0 0 1 22 0"/><path d="M-14 0A14 14 0 0 1 14 0"/><path d="M-6 0A6 6 0 0 1 6 0"/>
+    </g>
+    <g transform="translate(30 48)">
+      <path d="M-30 0A30 30 0 0 1 30 0"/><path d="M-22 0A22 22 0 0 1 22 0"/><path d="M-14 0A14 14 0 0 1 14 0"/><path d="M-6 0A6 6 0 0 1 6 0"/>
+    </g>
+    <g transform="translate(90 48)">
+      <path d="M-30 0A30 30 0 0 1 30 0"/><path d="M-22 0A22 22 0 0 1 22 0"/><path d="M-14 0A14 14 0 0 1 14 0"/><path d="M-6 0A6 6 0 0 1 6 0"/>
+    </g>
   </g>
 </svg>
