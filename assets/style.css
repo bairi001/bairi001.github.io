@@ -197,9 +197,138 @@ body::before{display:none}
   .mobile-fixed-cta a:nth-child(2){background:#f2f9f8;color:#0e3a43}
   .mobile-fixed-cta a:last-child{background:rgba(43,110,163,.10);color:#0e3a43}
   .en-page .mobile-fixed-cta{grid-template-columns:minmax(0,1.55fr) minmax(92px,.75fr)}
-  .en-page .mobile-fixed-cta a:first-child{background:#25D366;color:#0e3a43}
+  .en-page .mobile-fixed-cta a:first-child{background:#0e3a43;color:#fff}
   .en-page .mobile-fixed-cta a:nth-child(2){background:#0e3a43;color:#fff}
   .site-footer::before{margin-bottom:38px}
   .footer-top{padding-inline:22px}
   .footer-bottom{padding-inline:22px}
+}
+
+/* V2.5 — quiet warm-white SPA palette and authentic seigaiha */
+:root{
+  --bg:#F6F8F4;
+  --bg-soft:#F6F8F4;
+  --surface:#F6F8F4;
+  --card:#F6F8F4;
+  --card2:#F6F8F4;
+  --text:#1A2E33;
+  --heading:#1A2E33;
+  --muted:rgba(26,46,51,.74);
+  --line:rgba(23,126,137,.20);
+  --goldline:rgba(23,126,137,.26);
+  --accent:#177E89;
+  --accent2:#0E3A43;
+  --gold:#7BA23F;
+  --footer:#0E3A43;
+  --shadow:0 16px 42px rgba(26,46,51,.055);
+}
+html,body{background:#F6F8F4;color:#1A2E33}
+body::before{content:none!important;display:none!important;background-image:none!important}
+.section,.section-soft,.section-card{background:#F6F8F4!important;background-image:none!important}
+.section-soft,.cta-banner{border-image:none;border-top:1px solid rgba(23,126,137,.20)}
+
+.site-header{background:rgba(246,248,244,.96);border-bottom-color:rgba(23,126,137,.20)}
+.site-header.scrolled{background:rgba(246,248,244,.985);box-shadow:0 8px 28px rgba(26,46,51,.065)}
+.site-logo .logo-mark,.logo-mark,.main-nav a:hover,.main-nav a.current{color:#1A2E33}
+.site-logo .logo-tagline,.main-nav a{color:rgba(26,46,51,.76)}
+.main-nav a::after{background:#177E89}
+.main-nav .nav-lang{background:#F6F8F4;color:#1A2E33;border-color:#177E89}
+.hamburger,.mobile-nav{background:#F6F8F4}
+.mobile-nav{border-bottom-color:rgba(23,126,137,.20)}
+
+.page-header{background-color:#F6F8F4;background-image:linear-gradient(rgba(246,248,244,.96),rgba(246,248,244,.96)),url("img/seigaiha.svg");background-size:auto,120px 36px;background-position:center,center top;border-bottom-color:rgba(23,126,137,.20)}
+.premium-hero{background-color:#F6F8F4;background-image:linear-gradient(rgba(246,248,244,.96),rgba(246,248,244,.96)),url("img/seigaiha.svg");background-size:auto,120px 36px}
+.premium-hero-copy{background:transparent}
+.premium-hero-visual{background:#F6F8F4}
+.premium-hero-visual::after{background:linear-gradient(90deg,rgba(246,248,244,.18),transparent 24%)}
+.premium-hero h1,.premium-hero h1 em,.premium-kicker{color:#1A2E33}
+.premium-hero-lead,.premium-facts,.premium-language,.premium-language a{color:rgba(26,46,51,.74)}
+.premium-facts li{border-color:rgba(23,126,137,.20)}
+
+.en-hero::after{background:url("img/seigaiha.svg") center/120px 36px repeat;opacity:.04}
+.en-hero .en-hero-shade{background:linear-gradient(90deg,rgba(246,248,244,.97) 0%,rgba(246,248,244,.84) 43%,rgba(246,248,244,.08) 72%)}
+.en-hero-text{color:#1A2E33}
+.en-hero-text .hc-en,.en-hero-text p{color:rgba(26,46,51,.80);text-shadow:none}
+.en-hero-text h1{color:#1A2E33;text-shadow:none}
+.en-hero-text .btn-secondary{background:#F6F8F4!important}
+.hero-info{background:#F6F8F4;border-bottom-color:rgba(23,126,137,.20)}
+
+.trust-ribbon{background:#F6F8F4;color:#1A2E33;border-top:1px solid #177E89;border-bottom:1px solid #177E89;border-image:none}
+.trust-ribbon>div{border-color:rgba(23,126,137,.20)}
+.trust-ribbon strong{color:#1A2E33}
+.trust-ribbon span{color:rgba(26,46,51,.76);opacity:1}
+.trust-badge{background:#F6F8F4!important;border-color:rgba(23,126,137,.30)!important;color:#1A2E33!important}
+.review-score .rs-stars,.review-card .rc-stars{color:#177E89}
+.review-score .rs-link{color:#1A2E33;border-color:#177E89}
+
+.section-en{color:#1A2E33}
+.section-title,.service-card h3,.card h3,.access-card h3,.info-panel h3,.menu-section h2,.recruit-entry-box h2{color:#1A2E33}
+.section-title::after{height:1px;background:#177E89}
+.section-lead,.service-card p,.card p,.access-card p,.info-panel p,.menu-section p{color:rgba(26,46,51,.74)}
+.service-card-num,.card-kicker{padding:3px 9px;border-left:2px solid #7BA23F;background:transparent;color:#1A2E33}
+.feature-tags span,.pill,.info-chip{background:#F6F8F4!important;border-color:rgba(123,162,63,.58)!important;color:#1A2E33!important}
+.service-editorial .service-card,.review-score,.review-card,.recommend-card,.step-card,.flow-step,.info-panel,.gallery-item,.shop-photo-card,.card,.menu-section,.faq-item,.access-card,.company-highlight,.recruit-entry-box,.recruit-consult-box,.recruit-income-card,.mini-card,.option-card,.workstyle-card,.recruit-welcome-item{background:#F6F8F4!important;border-color:rgba(23,126,137,.22)!important;box-shadow:none}
+.service-editorial .service-card:hover,.recommend-card:hover,.step-card:hover{border-color:#177E89!important;box-shadow:0 12px 34px rgba(26,46,51,.06)}
+.gallery-caption,.shop-photo-card p{background:#F6F8F4;color:#1A2E33}
+.menu-section:nth-child(even),.access-steps li,.price-table,.yoyaku-notice-grid .mini-note{background:#F6F8F4!important}
+.notice{background:#F6F8F4;border-left-color:#7BA23F}
+.option-card span,.workstyle-card span,.faq-q-label,.flow-num{color:#1A2E33}
+.flow-num,.faq-toggle-icon{background:transparent;border:1px solid rgba(123,162,63,.58)}
+.faq-item.open .faq-toggle-icon{background:#7BA23F;color:#1A2E33}
+.faq-q-label{padding-bottom:1px;border-bottom:2px solid #7BA23F}
+.prose a,.info-table a,.service-editorial .service-card>a,.booking-card a{color:#1A2E33;text-decoration-color:#177E89;text-underline-offset:3px}
+
+.btn-primary,.btn-accent,.main-nav .nav-cta,.mobile-lang-pill,.mobile-language-action{background:#0E3A43!important;border-color:#0E3A43!important;color:#fff!important}
+.btn-primary:hover,.btn-accent:hover,.main-nav .nav-cta:hover,.mobile-lang-pill:hover,.mobile-language-action:hover{background:#177E89!important;border-color:#177E89!important;color:#fff!important}
+.btn-secondary,.btn-outline,.btn-green-outline,.btn-text{background:#F6F8F4;border-color:#177E89;color:#1A2E33}
+.btn-secondary:hover,.btn-outline:hover,.btn-green-outline:hover,.btn-text:hover{background:rgba(23,126,137,.07);border-color:#177E89;color:#1A2E33}
+
+/* Ordinary pages keep their reservation sections light; only the Japanese home CTA stays dark. */
+.cta-banner{background:#F6F8F4!important;color:#1A2E33!important}
+.cta-banner .section-en,.cta-banner .section-title,.cta-banner .section-lead{color:#1A2E33}
+.cta-banner .section-lead{opacity:.76}
+.cta-banner .section-title::after{background:#177E89}
+.cta-card{background:#F6F8F4;color:#1A2E33;border-color:rgba(23,126,137,.26)}
+.cta-card:hover{background:rgba(23,126,137,.055)}
+.cta-card-icon{border-color:#177E89;color:#1A2E33}
+.cta-card p{color:rgba(26,46,51,.72)}
+.japanese-home .cta-banner{background:#0E3A43!important;color:#fff!important;border-top:0}
+.japanese-home .cta-banner .section-en,.japanese-home .cta-banner .section-title,.japanese-home .cta-banner .section-lead{color:#fff}
+.japanese-home .cta-banner .section-title::after{background:#177E89}
+.japanese-home .cta-card{background:rgba(246,248,244,.04);color:#fff;border-color:rgba(246,248,244,.24)}
+.japanese-home .cta-card:hover{background:rgba(246,248,244,.09)}
+.japanese-home .cta-card-icon{border-color:rgba(246,248,244,.52);color:#fff}
+.japanese-home .cta-card p{color:rgba(246,248,244,.76)}
+
+/* Recruitment and older inline page styles: remove their remaining dark/earth blocks. */
+.recruit-hero-note,.recruit-point-card,.salary-card,.income-example-card,.benefit-card,.recruit-highlight-box,.manager-msg{background:#F6F8F4!important;border-color:rgba(23,126,137,.22)!important;box-shadow:none!important}
+.recruit-point-card,.salary-card,.income-example-card,.benefit-card{border-left-color:#177E89!important}
+.recruit-point-card>span,.salary-card>span,.income-example-card>span,.benefit-card>span{color:#1A2E33!important;text-decoration:underline;text-decoration-color:#7BA23F;text-decoration-thickness:2px;text-underline-offset:4px}
+.income-example-card h3,.income-total{background:#F6F8F4!important;color:#1A2E33!important;border:1px solid rgba(23,126,137,.22)!important}
+.salary-main,.requirement-item h3,.manager-msg .manager-sign{color:#1A2E33!important}
+.manager-msg p{color:rgba(26,46,51,.74)!important}
+.requirement-item{border-left-color:#177E89!important}
+.badge-pop{background:#F6F8F4!important;color:#1A2E33!important;border:1px solid rgba(123,162,63,.58)!important}
+.coupon-note a{color:#177E89!important}
+.shop-info-table tbody,.shop-info-table tr{border-color:rgba(23,126,137,.18)!important}
+.shop-info-table th{color:#1A2E33!important}
+.shop-info-table td{color:rgba(26,46,51,.74)!important}
+.shop-convenience-grid .mini-card{background:#F6F8F4!important}
+
+/* One warm, low-saturation treatment for every photographic surface. */
+.premium-hero-visual img,.en-hero img,.hero-slider img,.service-editorial .service-card>img,.gallery-item img,.shop-photo-card img,.menu-photo img,.recruit-photo-grid img{filter:sepia(.10) saturate(.74) contrast(.96) brightness(1.02)}
+.service-editorial .service-card:hover>img{filter:sepia(.10) saturate(.78) contrast(.97) brightness(1.02)}
+
+.site-footer{background:#0E3A43;color:rgba(246,248,244,.76)}
+.site-footer::before{height:72px;background-color:#0E3A43;background-image:linear-gradient(rgba(14,58,67,.78),rgba(14,58,67,.78)),url("img/seigaiha.svg");background-size:auto,120px 36px;background-position:center,center bottom}
+.footer-brand .logo-mark,.footer-nav-col h4{color:#F6F8F4}
+.footer-brand-sub,.footer-address,.footer-nav-col a,.footer-bottom{color:rgba(246,248,244,.72)}
+
+@media(max-width:700px){
+  .en-hero .en-hero-shade{background:linear-gradient(180deg,rgba(246,248,244,.06) 0%,rgba(246,248,244,.96) 56%,#F6F8F4 100%)}
+  .trust-ribbon>div{border-color:rgba(23,126,137,.20)}
+  .mobile-fixed-cta{background:rgba(246,248,244,.98);border-color:rgba(23,126,137,.22)}
+  .mobile-fixed-cta a:first-child,.en-page .mobile-fixed-cta a:first-child{background:#0E3A43;color:#fff}
+  .mobile-fixed-cta a:nth-child(2),.mobile-fixed-cta a:last-child{background:#F6F8F4;color:#1A2E33}
+  .info-chip{max-width:100%!important;white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;line-break:auto!important}
 }
