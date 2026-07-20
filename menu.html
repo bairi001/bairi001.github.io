@@ -20,11 +20,6 @@
 .badge-pop{display:inline-block;margin-left:8px;padding:2px 10px;border-radius:999px;background:#2F4438;color:#F7F2E8;font-size:.68rem;font-weight:800;vertical-align:middle;white-space:nowrap;}
 .coupon-note{margin-top:10px;font-size:.88rem;}
 .coupon-note a{color:#2F4438;font-weight:700;text-decoration:underline;text-underline-offset:3px;}
-@media(min-width:1021px){.main-nav{gap:32px!important;}}
-.main-nav a:not(.nav-cta){font-size:16px!important;font-weight:500!important;white-space:nowrap;}
-.main-nav a.current::after{height:2px!important;}
-.mobile-nav a{font-size:17px!important;font-weight:500!important;}
-@media(max-width:1020px) and (min-width:901px){.main-nav{gap:18px!important;}}
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SWGGKR9K9W"></script>
@@ -44,12 +39,13 @@
       <a href="/">ホーム</a><a href="menu.html" class="current">メニュー</a><a href="shop.html">店舗情報</a><a href="faq.html">FAQ</a><a href="recruit.html">採用情報</a><a href="yoyaku.html" class="nav-cta">ご予約</a>
       <a href="en/" class="nav-lang">English</a>
     </nav>
+    <a href="/en/" class="mobile-lang-pill" aria-label="英語サイトへ">EN</a>
     <button class="hamburger" id="hamburger" aria-label="メニューを開く"><span></span><span></span><span></span></button>
   </div>
 </header>
 <div class="mobile-nav" id="mobileNav">
   <a href="/" onclick="closeNav()">ホーム</a><a href="menu.html" onclick="closeNav()">メニュー</a><a href="shop.html" onclick="closeNav()">店舗情報</a><a href="faq.html" onclick="closeNav()">FAQ</a><a href="recruit.html" onclick="closeNav()">採用情報</a><a href="yoyaku.html" class="mobile-cta" onclick="closeNav()">ご予約</a>
-  <a href="en/" class="nav-lang" onclick="closeNav()">ENGLISH</a>
+  <a href="en/" class="nav-lang mobile-language-action" onclick="closeNav()"><img src="assets/globe.svg" alt="" aria-hidden="true"><span>English</span></a>
 </div>
 
 <div class="page-header">
