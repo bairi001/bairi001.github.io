@@ -369,3 +369,89 @@ body::before{content:none!important;display:none!important;background-image:none
   .recruit-hero-summary{grid-template-columns:1fr;gap:8px;margin-top:18px}
   .recruit-hero-summary span{min-height:48px}
 }
+
+/* V2.7 — authentic photography and a pattern-free treatment image area */
+.premium-hero-visual img,
+.en-hero>img,
+.hero-slider img,
+.service-editorial .service-card>img,
+.gallery-item img,
+.shop-photo-card img,
+.menu-photo img,
+.recruit-photo-grid img{
+  filter:saturate(.92) contrast(1.01)!important;
+}
+.service-editorial .service-card:hover>img{
+  filter:saturate(.92) contrast(1.01)!important;
+}
+
+.en-hero{
+  display:grid;
+  grid-template-columns:minmax(430px,.78fr) minmax(0,1.22fr);
+  min-height:clamp(560px,48vw,720px);
+  margin-top:82px;
+  background:#F6F8F4;
+  overflow:hidden;
+}
+.en-hero::after{content:none!important;display:none!important}
+.en-hero .en-hero-shade{display:none!important}
+.en-hero>img{
+  grid-column:2;
+  grid-row:1;
+  width:100%;
+  height:100%;
+  min-height:clamp(560px,48vw,720px);
+  object-fit:cover;
+  object-position:52% 48%!important;
+}
+.en-hero-text{
+  grid-column:1;
+  grid-row:1;
+  position:relative;
+  inset:auto;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  width:auto;
+  margin:0;
+  padding:clamp(64px,7vw,112px) clamp(36px,5vw,78px);
+  background:#F6F8F4;
+  color:#1A2E33;
+  overflow:hidden;
+}
+.en-hero-text::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:url("img/seigaiha.svg") center/80px 40px repeat;
+  opacity:.04;
+  pointer-events:none;
+}
+.en-hero-text>*{position:relative;z-index:1}
+
+@media(max-width:900px){
+  .en-hero{grid-template-columns:minmax(350px,.9fr) minmax(0,1.1fr)}
+  .en-hero-text{padding:54px 32px}
+}
+@media(max-width:700px){
+  .en-hero{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    margin-top:68px;
+  }
+  .en-hero>img{
+    order:1;
+    min-height:0;
+    height:auto;
+    aspect-ratio:4/3;
+    object-position:50% 44%!important;
+  }
+  .en-hero-text{
+    order:2;
+    justify-content:center;
+    padding:34px 22px 40px;
+  }
+  .en-hero-text .hero-cta{margin-top:22px}
+}
