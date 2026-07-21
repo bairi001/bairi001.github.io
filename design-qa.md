@@ -1,31 +1,28 @@
-# Design QA — 身悠晏 Premium V2.2
+# Design QA — 身悠晏 V2.7 Photography Pass
 
-Reference: Urban Ryokan concept (`exec-b61bbd46-e4a6-45c1-87dc-6991f55c9530.png`)
+Reference: the supplied English hero screenshot and the three original 1254 × 1254 treatment photographs.
 
-Implementation checked at desktop viewport and inside a 390 × 844 mobile viewport.
+## Visual treatment
 
-## Reference comparison
-
-- Preserved the reference's warm ivory, ink-green and restrained-gold palette.
-- Preserved the split hero, large editorial Japanese headline, direct booking CTA and trust ribbon.
-- Replaced concept imagery with the salon's supplied treatment photography.
-- Used a text wordmark in the header instead of the supplied metallic logo to retain small-size clarity.
-- Added the V2.1 review, menu, access, reservation, English and recruitment content below the premium hero.
+- The Japanese and English home pages keep one consistent clothed-bodycare hero.
+- The English hero is split into a patterned text panel and an unpatterned image panel. Seigaiha no longer covers skin, faces, hands or clothing.
+- The booking page uses the fully covered scalp-care photograph; the Japanese service card uses neck-oil care; the menu head/facial section uses décolleté care.
+- New photographs were resized only through WebP encoding and slight saturation normalization. No generative redraw, skin smoothing or sharpening was applied.
+- The three new assets retain 1254 × 1254 pixels and average HSL saturation values between 0.449 and 0.458.
 
 ## Responsive and accessibility checks
 
-- No horizontal overflow at the desktop viewport.
-- Mobile hero stacks image first, copy second, with the booking CTA visible before the first scroll completes.
-- Mobile fixed actions retain 48 px minimum targets and safe-area padding.
-- Page has a single real H1; treatment images have descriptive alt text.
-- Mobile menu opens successfully and updates `aria-label` / `aria-expanded` state.
-- Reduced-motion users receive near-zero animation duration.
+- Desktop English hero uses a two-column layout with text and image separated.
+- At 700 px and below, the English hero stacks the clean photograph above the text panel.
+- All changed images include accurate descriptive alternative text without staff claims or image-photo labels.
+- Existing reservation buttons, language controls and sticky mobile actions are unchanged.
 
-## Resource and build checks
+## Functional checks
 
-- All three new WebP treatment images load successfully.
-- Gallery images are intentionally inherited from the existing GitHub repository and were verified present there.
-- Vite production build completed successfully.
+- All local `src` and `href` references in `index.html`, `menu.html`, `en/index.html` and `booking.html` resolve.
+- Booking inline JavaScript parses successfully.
+- WhatsApp submission remains wired to `817091659898`, which corresponds to 070-9165-9898 with Japan country code.
+- Visual source inspection completed for all three encoded WebP files. A local browser executable was not available in the container, so post-layout browser screenshots must be confirmed on the deployed GitHub Pages URL.
 
 ## Severity review
 
