@@ -13,7 +13,9 @@
 <link rel="canonical" href="https://shinyuuan.jp/">
 <link rel="alternate" hreflang="ja" href="https://shinyuuan.jp/">
 <link rel="alternate" hreflang="en" href="https://shinyuuan.jp/en/">
-<link rel="alternate" hreflang="x-default" href="https://shinyuuan.jp/">
+<link rel="alternate" hreflang="zh-Hans" href="https://shinyuuan.jp/zh/">
+<link rel="alternate" hreflang="ko" href="https://shinyuuan.jp/ko/">
+<link rel="alternate" hreflang="x-default" href="https://shinyuuan.jp/en/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600;700;800&family=Shippori+Mincho:wght@500;600;700&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
@@ -72,7 +74,7 @@
   gtag('config', 'G-SWGGKR9K9W');
 </script>
 </head>
-<body class="brand-waterwood japanese-home">
+<body class="brand-waterwood japanese-home has-language-switch">
 <header class="site-header" id="siteHeader">
   <div class="header-inner">
     <a href="/" class="site-logo" aria-label="身悠晏 ホーム">
@@ -102,6 +104,13 @@
   <a href="yoyaku.html" class="mobile-cta" onclick="closeNav()">ご予約</a>
   <a href="en/" class="nav-lang mobile-language-action" onclick="closeNav()"><img src="assets/globe.svg" alt="" aria-hidden="true"><span>English</span></a>
 </div>
+
+<nav class="language-home-switch" aria-label="言語を選択">
+  <a href="/" lang="ja" data-language-code="ja" aria-current="page">日本語</a>
+  <a href="/en/" lang="en" data-language-code="en">English</a>
+  <a href="/zh/" lang="zh-Hans" data-language-code="zh">中文</a>
+  <a href="/ko/" lang="ko" data-language-code="ko">한국어</a>
+</nav>
 
 <main>
 <section class="premium-hero" aria-labelledby="hero-title">
@@ -346,5 +355,6 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targe
 const slider=document.getElementById('heroSlider');if(slider){const slides=[...slider.querySelectorAll('.slide')],dots=[...slider.querySelectorAll('.slider-dot')];let current=0,timer;const show=i=>{current=i;slides.forEach((s,n)=>s.classList.toggle('active',n===i));dots.forEach((d,n)=>d.classList.toggle('active',n===i));};const play=()=>{timer=setInterval(()=>show((current+1)%slides.length),5000);};dots.forEach((d,i)=>d.addEventListener('click',()=>{clearInterval(timer);show(i);play();}));slider.addEventListener('mouseenter',()=>clearInterval(timer));slider.addEventListener('mouseleave',play);play();}
 document.querySelectorAll('[data-track]').forEach(el=>el.addEventListener('click',()=>{if(typeof gtag==='function')gtag('event','reservation_click',{method:el.dataset.track});}));
 </script>
+<script src="assets/language-routing.js"></script>
 </body>
 </html>
