@@ -1,0 +1,22 @@
+name: Site checks
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check static site
+        run: node scripts/check-site.mjs
+      - name: Check prices
+        run: node scripts/check-prices.mjs

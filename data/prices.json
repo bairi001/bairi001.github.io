@@ -1,0 +1,18 @@
+{
+  "currency": "JPY",
+  "taxIncluded": true,
+  "items": [
+    { "id": "body60", "duration": 60, "price": 3980 },
+    { "id": "foot45", "duration": 45, "price": 3980 },
+    { "id": "foot60", "duration": 60, "price": 4980 },
+    { "id": "aroma60", "duration": 60, "price": 4980 },
+    { "id": "aroma90", "duration": 90, "price": 7800 },
+    { "id": "aroma120", "duration": 120, "price": 9980 },
+    { "id": "aromaFoot90", "duration": 90, "price": 7800 },
+    { "id": "bodyFoot90", "duration": 90, "price": 6800 }
+  ],
+  "lateNightFee": {
+    "startsAt": "23:00",
+    "price": 800
+  }
+}
