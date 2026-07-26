@@ -8,11 +8,32 @@
 <link rel="canonical" href="https://shinyuuan.jp/booking.html">
 <link rel="alternate" hreflang="ja" href="https://shinyuuan.jp/booking.html?lang=ja">
 <link rel="alternate" hreflang="en" href="https://shinyuuan.jp/booking.html?lang=en">
-<link rel="alternate" hreflang="zh" href="https://shinyuuan.jp/booking.html?lang=zh">
+<link rel="alternate" hreflang="zh-Hans" href="https://shinyuuan.jp/booking.html?lang=zh">
+<link rel="alternate" hreflang="ko" href="https://shinyuuan.jp/booking.html?lang=ko">
 <link rel="alternate" hreflang="x-default" href="https://shinyuuan.jp/booking.html?lang=en">
+<script>
+(() => {
+  const normalize=value=>{
+    const code=String(value||"").toLowerCase();
+    if(code==="ja"||code.startsWith("ja-"))return"ja";
+    if(code==="ko"||code.startsWith("ko-"))return"ko";
+    if(code==="zh"||code.startsWith("zh-"))return"zh"; // Future zh-Hant routing can branch here.
+    if(code==="en"||code.startsWith("en-"))return"en";
+    return"";
+  };
+  const requested=normalize(new URLSearchParams(location.search).get("lang"));
+  let saved="";
+  try{saved=normalize(localStorage.getItem("sya_lang"))}catch(_){}
+  const browser=(navigator.languages||[navigator.language]).map(normalize).find(Boolean)||"";
+  const initial=requested||saved||browser||"en";
+  document.documentElement.lang=initial==="zh"?"zh-Hans":initial;
+  document.documentElement.dataset.lang=initial;
+  window.__SYA_INITIAL_LANG=initial;
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;600;700&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <style>
 :root{
@@ -70,6 +91,13 @@ a{color:inherit;text-decoration:none}
 .language-switch button{min-width:88px;min-height:46px;padding:10px 16px;border:1px solid var(--line-strong);background:#F6F8F4;font-size:.84rem;font-weight:700;letter-spacing:.03em}
 .language-switch button:hover{border-color:var(--sea);color:var(--sea-deep)}
 .language-switch button.active{background:var(--sea-deep);border-color:var(--sea-deep);color:#fff}
+.channel-panel{margin:18px 0 0;padding:16px;border:1px solid var(--line-strong);background:#fff}
+.channel-title{font-family:var(--font-heading);font-size:.9rem;font-weight:700}
+.channel-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px}
+.channel-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 15px;border:1px solid var(--line-strong);background:#fff;color:var(--sea-deep);font-size:.8rem;font-weight:700}
+.channel-button.primary{min-height:50px;padding-inline:22px;background:var(--sea-deep);border-color:var(--sea-deep);color:#fff;font-size:.88rem}
+.channel-button:hover{border-color:var(--sea);color:var(--sea)}
+.channel-button.primary:hover{background:var(--sea);color:#fff}
 .ja-hpb-banner{margin:-8px 0 22px;padding:14px 16px;border:1px solid var(--line-strong);border-left:3px solid var(--leaf);background:#F6F8F4;color:var(--ink);font-size:.82rem;line-height:1.75}
 .ja-hpb-banner a{display:inline-flex;align-items:center;min-height:38px;margin-top:9px;padding:8px 14px;border:1px solid var(--ink);background:var(--ink);color:#fff;font-weight:700}
 .ja-hpb-banner a:hover{background:var(--sea);border-color:var(--sea)}
@@ -81,7 +109,7 @@ a{color:inherit;text-decoration:none}
 .form-section{padding:22px 0;border-bottom:1px solid var(--line)}
 .field-label,.section-label{display:flex;align-items:baseline;gap:9px;margin-bottom:9px;font-family:var(--font-heading);font-size:.94rem;font-weight:700;letter-spacing:.025em}
 .required{color:var(--ink);font-family:var(--font-body);font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--leaf)}
-select,input[type="date"],input[type="text"],textarea{width:100%;min-height:52px;padding:13px 16px;border:1px solid var(--line-strong);border-radius:3px;background:#F6F8F4;font-size:16px;line-height:1.5;box-shadow:none}
+select,input[type="date"],input[type="text"],input[type="email"],input[type="tel"],textarea{width:100%;min-height:52px;padding:13px 16px;border:1px solid var(--line-strong);border-radius:3px;background:#F6F8F4;font-size:16px;line-height:1.5;box-shadow:none}
 input[type="date"]{appearance:auto;-webkit-appearance:auto}
 textarea{min-height:96px;resize:vertical;cursor:text}
 select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);border-color:var(--sea);background:#F6F8F4}
@@ -109,6 +137,23 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
 .submit-button:hover:not(:disabled){background:var(--wa-hover);transform:translateY(-1px)}
 .submit-button:disabled{background:rgba(23,126,137,.30);color:#0e3a43;box-shadow:none;cursor:not-allowed}
 .confirm-line{margin-top:12px;color:var(--ink);font-family:var(--font-heading);font-size:.82rem;font-weight:700;text-align:center}
+.reply-note{margin-top:8px;color:var(--muted);font-size:.75rem;line-height:1.7;text-align:center}
+.submit-status{margin-top:14px;padding:13px 14px;border:1px solid var(--line-strong);background:#fff;color:var(--ink);font-size:.8rem;line-height:1.75}
+.submit-status:empty{display:none}
+.submit-status a{color:var(--sea-deep);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.web-fields{margin-top:14px;padding:16px;border:1px solid var(--line);background:#fff}
+.web-fields[hidden],.web-submit[hidden]{display:none}
+.web-fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.privacy-consent{display:flex;align-items:flex-start;gap:9px;margin-top:13px;color:var(--muted);font-size:.76rem}
+.privacy-consent input{width:18px;height:18px;margin-top:2px;accent-color:var(--sea)}
+.web-submit{background:var(--sea)}
+.honeypot-field{position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.access-guide{padding:48px clamp(20px,5vw,72px);border-top:1px solid var(--line);background:#fff}
+.access-guide-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(280px,.9fr) minmax(0,1.1fr);gap:34px;align-items:center}
+.access-guide img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.access-guide h2{font-family:var(--font-heading);font-size:1.45rem;line-height:1.5}
+.access-guide p{margin-top:11px;color:var(--muted);font-size:.86rem;line-height:1.85}
+.access-guide a{display:inline-flex;align-items:center;min-height:44px;color:var(--sea-deep);font-weight:800;text-decoration:underline;text-underline-offset:4px}
 .policy{margin-top:16px;border:1px solid var(--line);background:#F6F8F4}
 .policy summary{padding:12px 14px;color:var(--sea-deep);font-size:.76rem;font-weight:700;cursor:pointer}
 .policy-copy{padding:0 14px 14px;color:var(--muted);font-size:.72rem;line-height:1.75}
@@ -129,7 +174,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
   .form-intro p{margin-top:6px;line-height:1.65}
   .form-section{padding:14px 0}
   .field-label,.section-label{margin-bottom:6px}
-  select,input[type="date"],input[type="text"],textarea{min-height:46px;padding:10px 14px}
+  select,input[type="date"],input[type="text"],input[type="email"],input[type="tel"],textarea{min-height:46px;padding:10px 14px}
   textarea{min-height:46px;max-height:70px}
   .hint{margin-top:5px;line-height:1.5}
   .guest-button{min-height:42px}
@@ -140,14 +185,16 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
   .booking-footer{margin-top:14px}
 }
 @media(max-width:980px){
-  .booking-shell{grid-template-columns:1fr}
-  .story{position:relative;min-height:0;border-right:0;border-bottom:1px solid var(--line)}
+  .booking-shell{display:flex;flex-direction:column}
+  .form-side{order:1}
+  .story{order:2;position:relative;min-height:0;border-right:0;border-bottom:1px solid var(--line)}
   .story-copy{padding:30px 26px 24px}
   .brand{margin-bottom:20px}
   .story-photo{aspect-ratio:16/9}
   .trust-list{grid-template-columns:repeat(3,1fr);padding:20px 26px}
   .story-foot{padding:0 26px 22px}
   .form-side{padding:24px 26px 46px}
+  .access-guide-inner{grid-template-columns:1fr}
 }
 @media(max-width:640px){
   .story-copy{padding:24px 20px 22px}
@@ -160,10 +207,13 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
   .trust-item{grid-template-columns:28px 1fr}
   .story-foot{padding:0 20px 20px}
   .form-side{padding:20px 18px 38px}
-  .language-switch{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:22px}
+  .language-switch{display:grid;grid-template-columns:repeat(4,1fr);margin-bottom:22px}
   .language-switch button{min-width:0;min-height:48px;padding:9px 6px}
   .date-time-grid,.extras-grid{grid-template-columns:1fr}
   .identity-grid{grid-template-columns:1fr}
+  .web-fields-grid{grid-template-columns:1fr}
+  .channel-actions{display:grid;grid-template-columns:1fr}
+  .channel-button,.channel-button.primary{width:100%}
   .form-section{padding:20px 0}
   .guest-button{flex:1;min-width:54px}
   .addon-copy{gap:8px}
@@ -216,6 +266,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
       <nav class="language-switch" aria-label="Language">
         <button type="button" data-lang="en" aria-pressed="true" class="active">English</button>
         <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+        <button type="button" data-lang="ko" aria-pressed="false">한국어</button>
         <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
       </nav>
       <aside class="ja-hpb-banner" id="jaHpbBanner" hidden>
@@ -227,6 +278,10 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
         <h1 data-i18n="formTitle">Request your preferred time</h1>
         <p data-i18n="formLead">Complete the form and send it via WhatsApp. We will check availability and reply to confirm your appointment.</p>
       </header>
+      <section class="channel-panel" aria-labelledby="channelTitle">
+        <h2 class="channel-title" id="channelTitle" data-i18n="channelTitle">Choose a booking channel</h2>
+        <div class="channel-actions" id="channelActions"></div>
+      </section>
 
       <form id="bookingForm" novalidate>
         <div class="form-section">
@@ -243,7 +298,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
             <label class="field-label" for="time"><span data-i18n="preferredTime">Preferred time</span><span class="required" data-i18n="required">required</span></label>
             <div class="field-control"><select id="time" name="time" required></select></div>
           </div>
-          <p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. <strong>Late-night fee ¥800 after 11:00 PM.</strong></p>
+          <p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. <strong>Late-night fee ¥800 after 11:00 PM. All times are JST.</strong></p>
         </div>
 
         <fieldset class="form-section">
@@ -274,13 +329,33 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
             <textarea id="note" name="note" maxlength="300"></textarea>
           </div>
         </div>
+        <div class="web-fields" id="webFields" hidden>
+          <div class="web-fields-grid">
+            <div class="identity-field">
+              <label class="field-label" for="email"><span data-i18n="email">Email</span><span class="required" data-i18n="required">required</span></label>
+              <input id="email" name="email" type="email" maxlength="160" autocomplete="email">
+            </div>
+            <div class="identity-field">
+              <label class="field-label" for="phone"><span data-i18n="phone">Phone</span><span class="required" data-i18n="optional">optional</span></label>
+              <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="tel">
+            </div>
+          </div>
+          <label class="privacy-consent"><input id="privacyConsent" type="checkbox"><span data-i18n-html="privacyConsent">I agree to the <a href="privacy.html" target="_blank">Privacy Policy</a>.</span></label>
+        </div>
+        <div class="honeypot-field" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" maxlength="120">
+        </div>
 
         <div class="form-section" style="border-bottom:0;padding-bottom:0">
           <p class="section-label" data-i18n="preview">WhatsApp message preview</p>
           <div class="preview" id="preview" aria-live="polite"></div>
           <p class="estimate" id="estimate" aria-live="polite"></p>
           <button class="submit-button" id="submitButton" type="submit" disabled data-i18n="submit">Send Booking Request via WhatsApp</button>
+          <div id="webSubmitMount"></div>
+          <div class="submit-status" id="submitStatus" aria-live="polite"></div>
           <p class="confirm-line" data-i18n="confirmLine">Your appointment is confirmed only after we reply.</p>
+          <p class="reply-note" data-i18n="replyNote">We usually reply as soon as possible during opening hours. Replies may be delayed when we are busy.</p>
           <details class="policy">
             <summary data-i18n="policyTitle">Cancellation, late arrival and salon policy</summary>
             <div class="policy-copy" data-i18n-html="policyCopy"></div>
@@ -291,56 +366,73 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
   </section>
 </main>
 
+<section class="access-guide" aria-labelledby="accessGuideTitle">
+  <div class="access-guide-inner">
+    <img src="assets/img/shop-access.jpg" alt="Kitajima Building entrance and elevator" data-alt-key="accessPhotoAlt" loading="lazy">
+    <div>
+      <h2 id="accessGuideTitle" data-i18n="accessTitle">How to find the salon</h2>
+      <p data-i18n="accessAddress">5-12-3 Kamata, Ota-ku, Tokyo 144-0052 · Kitajima Building 4F</p>
+      <p data-i18n="accessDirections">About a 1-minute walk from JR Kamata Station East Exit. Enter the building, walk to the back, and take the elevator inside the entrance to the 4th floor.</p>
+      <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Shin+Yuu+An+Kamata" target="_blank" rel="noopener" id="mapLink" data-i18n="openMap">Open in Google Maps →</a></p>
+    </div>
+  </div>
+</section>
+
 <footer class="booking-site-footer">
   <p>© 2026 Shin Yuu An · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a></p>
 </footer>
 
 <script>
 const WHATSAPP_NUMBER="817091659898";
+const FORM_BACKEND="google-apps-script";
+const FORM_ENDPOINT="";
+const FORM_PRIVACY_READY=false;
+const FORM_LIVE_TESTED=false;
+const FORM_STARTED_AT=new Date().toISOString();
 
 const COURSE_GROUPS=[
   {key:"popular",items:[
-    {key:"trial60",min:60,price:4800,en:"Trial Course — Body 30 + Foot 30 (60 min)",zh:"体验套餐——整体30＋足底30（60分钟）",ja:"おためしコース——整体30＋足裏30（60分）"},
-    {key:"recovery70",min:70,price:5500,en:"Recovery Course — Body 30 + Foot 30 + Head 10 (70 min)",zh:"疲劳恢复套餐——整体30＋足底30＋头部10（70分钟）",ja:"お疲れケア——整体30＋足裏30＋ヘッド10（70分）"},
-    {key:"legs80",min:80,price:6280,en:"Swollen Legs & Stiff Shoulders — Body 40 + Foot 40 (80 min)",zh:"腿部浮肿与肩颈疲劳——整体40＋足底40（80分钟）",ja:"足むくみ・肩まわりケア——整体40＋足裏40（80分）"},
-    {key:"satisfaction90",min:90,price:6800,en:"Premium Satisfaction — Body 60 + Foot 30 (90 min)",zh:"大满足套餐——整体60＋足底30（90分钟）",ja:"大満足コース——整体60＋足裏30（90分）"},
-    {key:"aromaFoot60",min:60,price:5300,en:"Aroma Oil 30 + Foot 30 (60 min)",zh:"精油30＋足底30（60分钟）",ja:"アロマ30＋足裏30（60分）"},
-    {key:"aromaFoot90",min:90,price:7800,en:"Aroma Oil 60 + Foot 30 (90 min)",zh:"精油60＋足底30（90分钟）",ja:"アロマ60＋足裏30（90分）"},
-    {key:"aromaFoot120",min:120,price:10500,en:"Aroma Oil 90 + Foot 30 (120 min)",zh:"精油90＋足底30（120分钟）",ja:"アロマ90＋足裏30（120分）"}
+    {key:"trial60",min:60,price:4800,en:"Trial Course — Body 30 + Foot 30 (60 min)",zh:"体验套餐——整体30＋足底30（60分钟）",ko:"체험 코스 — 바디30＋발30 (60분)",ja:"おためしコース——整体30＋足裏30（60分）"},
+    {key:"recovery70",min:70,price:5500,en:"Recovery Course — Body 30 + Foot 30 + Head 10 (70 min)",zh:"疲劳恢复套餐——整体30＋足底30＋头部10（70分钟）",ko:"피로 케어 — 바디30＋발30＋헤드10 (70분)",ja:"お疲れケア——整体30＋足裏30＋ヘッド10（70分）"},
+    {key:"legs80",min:80,price:6280,en:"Swollen Legs & Stiff Shoulders — Body 40 + Foot 40 (80 min)",zh:"腿部浮肿与肩颈疲劳——整体40＋足底40（80分钟）",ko:"다리와 어깨 케어 — 바디40＋발40 (80분)",ja:"足むくみ・肩まわりケア——整体40＋足裏40（80分）"},
+    {key:"satisfaction90",min:90,price:6800,en:"Premium Satisfaction — Body 60 + Foot 30 (90 min)",zh:"大满足套餐——整体60＋足底30（90分钟）",ko:"프리미엄 만족 코스 — 바디60＋발30 (90분)",ja:"大満足コース——整体60＋足裏30（90分）"},
+    {key:"aromaFoot60",min:60,price:5300,en:"Aroma Oil 30 + Foot 30 (60 min)",zh:"精油30＋足底30（60分钟）",ko:"아로마 오일30＋발30 (60분)",ja:"アロマ30＋足裏30（60分）"},
+    {key:"aromaFoot90",min:90,price:7800,en:"Aroma Oil 60 + Foot 30 (90 min)",zh:"精油60＋足底30（90分钟）",ko:"아로마 오일60＋발30 (90분)",ja:"アロマ60＋足裏30（90分）"},
+    {key:"aromaFoot120",min:120,price:10500,en:"Aroma Oil 90 + Foot 30 (120 min)",zh:"精油90＋足底30（120分钟）",ko:"아로마 오일90＋발30 (120분)",ja:"アロマ90＋足裏30（120分）"}
   ]},
   {key:"body",items:[
-    {key:"body30",min:30,price:2400,en:"Pressure Point Body Massage 30 min (half body)",zh:"穴位整体按摩30分钟（半身）",ja:"整体ボディケア30分（半身）"},
-    {key:"body60",min:60,price:3980,en:"Pressure Point Body Massage 60 min",zh:"穴位整体按摩60分钟",ja:"整体ボディケア60分"},
-    {key:"body90",min:90,price:6800,en:"Pressure Point Body Massage 90 min",zh:"穴位整体按摩90分钟",ja:"整体ボディケア90分"}
+    {key:"body30",min:30,price:2400,en:"Pressure Point Body Massage 30 min (half body)",zh:"穴位整体按摩30分钟（半身）",ko:"바디 릴랙세이션 30분 (반신)",ja:"整体ボディケア30分（半身）"},
+    {key:"body60",min:60,price:3980,en:"Pressure Point Body Massage 60 min",zh:"穴位整体按摩60分钟",ko:"바디 릴랙세이션 60분",ja:"整体ボディケア60分"},
+    {key:"body90",min:90,price:6800,en:"Pressure Point Body Massage 90 min",zh:"穴位整体按摩90分钟",ko:"바디 릴랙세이션 90분",ja:"整体ボディケア90分"}
   ]},
   {key:"foot",items:[
-    {key:"foot30",min:30,price:2800,en:"Foot Reflexology 30 min",zh:"足底反射30分钟",ja:"足つぼ30分"},
-    {key:"foot45",min:45,price:3980,en:"Foot Reflexology 45 min",zh:"足底反射45分钟",ja:"足つぼ45分"},
-    {key:"foot60",min:60,price:4980,en:"Foot Reflexology 60 min",zh:"足底反射60分钟",ja:"足つぼ60分"}
+    {key:"foot30",min:30,price:2800,en:"Foot Reflexology 30 min",zh:"足底反射30分钟",ko:"발 반사요법 30분",ja:"足つぼ30分"},
+    {key:"foot45",min:45,price:3980,en:"Foot Reflexology 45 min",zh:"足底反射45分钟",ko:"발 반사요법 45분",ja:"足つぼ45分"},
+    {key:"foot60",min:60,price:4980,en:"Foot Reflexology 60 min",zh:"足底反射60分钟",ko:"발 반사요법 60분",ja:"足つぼ60分"}
   ]},
   {key:"aroma",items:[
-    {key:"aroma30",min:30,price:2980,en:"Aroma Oil Treatment 30 min (half body)",zh:"香薰精油护理30分钟（半身）",ja:"アロマオイル30分（半身）"},
-    {key:"aroma60",min:60,price:4980,en:"Aroma Oil Treatment 60 min",zh:"香薰精油护理60分钟",ja:"アロマオイル60分"},
-    {key:"aroma90",min:90,price:7800,en:"Aroma Oil Treatment 90 min",zh:"香薰精油护理90分钟",ja:"アロマオイル90分"},
-    {key:"aroma120",min:120,price:9980,en:"Aroma Oil Treatment 120 min",zh:"香薰精油护理120分钟",ja:"アロマオイル120分"}
+    {key:"aroma30",min:30,price:2980,en:"Aroma Oil Treatment 30 min (half body)",zh:"香薰精油护理30分钟（半身）",ko:"아로마 오일 트리트먼트 30분 (반신)",ja:"アロマオイル30分（半身）"},
+    {key:"aroma60",min:60,price:4980,en:"Aroma Oil Treatment 60 min",zh:"香薰精油护理60分钟",ko:"아로마 오일 트리트먼트 60분",ja:"アロマオイル60分"},
+    {key:"aroma90",min:90,price:7800,en:"Aroma Oil Treatment 90 min",zh:"香薰精油护理90分钟",ko:"아로마 오일 트리트먼트 90분",ja:"アロマオイル90分"},
+    {key:"aroma120",min:120,price:9980,en:"Aroma Oil Treatment 120 min",zh:"香薰精油护理120分钟",ko:"아로마 오일 트리트먼트 120분",ja:"アロマオイル120分"}
   ]}
 ];
 
 const ADDONS=[
-  {key:"calves",min:10,price:1000,en:"Aroma calves & thighs",zh:"小腿与大腿精油护理",ja:"ふくらはぎ・太ももアロマ"},
-  {key:"decollete",min:10,price:1000,en:"Neck & décolleté oil",zh:"颈部与肩颈精油护理",ja:"首・デコルテオイル"},
-  {key:"abdominal",min:10,price:1000,en:"Abdominal therapy",zh:"腹部护理",ja:"お腹まわりケア"},
-  {key:"callus",min:10,price:1000,en:"Foot callus care",zh:"足部角质护理",ja:"角質ケア"},
-  {key:"hand",min:10,price:1000,en:"Hand & arm massage",zh:"手部与手臂按摩",ja:"手・腕マッサージ"},
-  {key:"head",min:10,price:1000,en:"Eye & head massage",zh:"眼部与头部按摩",ja:"目まわり・ヘッドケア"},
-  {key:"facial",min:40,price:4000,en:"Facial treatment",zh:"面部护理",ja:"フェイシャル"},
-  {key:"extension",min:10,price:1000,en:"Extension — 10 minutes",zh:"延长10分钟",ja:"延長10分"}
+  {key:"calves",min:10,price:1000,en:"Aroma calves & thighs",zh:"小腿与大腿精油护理",ko:"종아리·허벅지 아로마",ja:"ふくらはぎ・太ももアロマ"},
+  {key:"decollete",min:10,price:1000,en:"Neck & décolleté oil",zh:"颈部与肩颈精油护理",ko:"목·데콜테 오일",ja:"首・デコルテオイル"},
+  {key:"abdominal",min:10,price:1000,en:"Abdominal therapy",zh:"腹部护理",ko:"복부 케어",ja:"お腹まわりケア"},
+  {key:"callus",min:10,price:1000,en:"Foot callus care",zh:"足部角质护理",ko:"발 각질 케어",ja:"角質ケア"},
+  {key:"hand",min:10,price:1000,en:"Hand & arm massage",zh:"手部与手臂按摩",ko:"손·팔 릴랙세이션",ja:"手・腕マッサージ"},
+  {key:"head",min:10,price:1000,en:"Eye & head massage",zh:"眼部与头部按摩",ko:"눈가·헤드 케어",ja:"目まわり・ヘッドケア"},
+  {key:"facial",min:40,price:4000,en:"Facial treatment",zh:"面部护理",ko:"페이셜 트리트먼트",ja:"フェイシャル"},
+  {key:"extension",min:10,price:1000,en:"Extension — 10 minutes",zh:"延长10分钟",ko:"10분 연장",ja:"延長10分"}
 ];
 
 const NOMINATIONS=[
-  {key:"none",price:0,en:"No nomination",zh:"不指定技师",ja:"指名なし"},
-  {key:"therapist",price:500,en:"Therapist nomination",zh:"指定技师",ja:"スタッフ指名"},
-  {key:"manager",price:1000,en:"Manager nomination",zh:"指定店长",ja:"店長指名"}
+  {key:"none",price:0,en:"No nomination",zh:"不指定技师",ko:"지명 없음",ja:"指名なし"},
+  {key:"therapist",price:500,en:"Therapist nomination",zh:"指定技师",ko:"테라피스트 지명",ja:"スタッフ指名"},
+  {key:"manager",price:1000,en:"Manager nomination",zh:"指定店长",ko:"점장 지명",ja:"店長指名"}
 ];
 
 const I18N={
@@ -352,11 +444,87 @@ const I18N={
   },
   ja:{
     storyTitle:"一日の疲れを、<br>静かにほどく。",storyLead:"足裏・整体・アロマの本格リラクゼーション。JR蒲田駅東口から徒歩1分です。",photoAlt:"頭部をやさしくほぐすヘッドケア",trustAccess:"JR蒲田駅から徒歩1分",trustAccessSub:"東口を出て徒歩約1分",trustHours:"毎日営業",trustHoursSub:"11:00〜翌2:00",trustSpace:"個室空間 · 女性も通いやすい",trustSpaceSub:"落ち着いて過ごせる空間",backHome:"← 公式サイトへ戻る",eyebrow:"Reservation Request",formTitle:"ご希望の日時をお知らせください",formLead:"フォーム入力後、WhatsAppで予約リクエストを送信します。空き状況を確認し、当店からの返信をもって予約確定となります。",course:"コース",required:"必須",preferredDate:"希望日",preferredTime:"希望時間",hoursHint:"毎日11:00〜翌2:00営業、最終予約リクエストは翌1:00です。23時以降は深夜料金800円。",guests:"人数",groupHint:"2名様以上の場合、対応スタッフ数と開始時間を返信時に確認いたします。",extras:"オプション・指名（任意）",nomination:"スタッフ指名",name:"お名前",note:"ご要望",optional:"任意",preview:"WhatsApp送信内容プレビュー",submit:"WhatsAppで予約リクエストを送信",confirmLine:"当店からの返信をもって予約確定となります。",policyTitle:"キャンセル・遅刻・当店のサービスについて",policyCopy:"<p>予定変更の際は、できるだけ早めにご連絡ください。当日キャンセルまたは無断キャンセルは、コース料金の最大50％を頂戴する場合があります。</p><p>ご連絡なく10分以上遅れた場合、予約を解除し、施術時間を短縮する場合があります。</p><p>当店は通常のリラクゼーション施術のみを提供しています。性的サービスは一切行っておらず、不適切な要求はお断りします。</p>",privacy:"プライバシーポリシー",selectCourse:"コースを選択…",selectTime:"希望時間を選択…",namePh:"例：山田太郎",notePh:"気になる部位・ご質問・ご要望（任意）",fillAll:"コース・日付・時間を選択し、お名前を入力すると送信内容が表示されます。",estimateSingle:n=>`1名様の概算料金：¥${n.toLocaleString()}${isLate()?"（深夜料金800円を含む）":""}。最終料金は当店からの返信でご確認ください。`,estimateGroup:n=>`1名様あたりの選択料金：¥${n.toLocaleString()}${isLate()?"＋深夜料金800円":""}。合計は返信時に確認いたします。`,groups:{popular:"人気セットコース",body:"整体ボディケア",foot:"足つぼ",aroma:"アロマオイル"},msgTitle:"身悠晏の予約を希望します。",msgLabels:{course:"コース",date:"希望日",time:"希望時間",guests:"人数",addons:"オプション",nomination:"指名",name:"名前",note:"要望",fee:"深夜料金",close:"当店からの返信をもって予約確定となることを確認しました。"}
+  },
+  ko:{
+    storyTitle:"하루의 피로를,<br>차분하게 풀어보세요.",
+    storyLead:"발 반사요법, 바디 릴랙세이션, 아로마 오일 트리트먼트. JR 가마타역 동쪽 출구에서 도보 약 1분입니다.",
+    photoAlt:"편안한 헤드 케어",
+    trustAccess:"JR 가마타역 도보 1분",
+    trustAccessSub:"동쪽 출구에서 도보 약 1분",
+    trustHours:"매일 영업",
+    trustHoursSub:"11:00－다음 날 2:00",
+    trustSpace:"커튼 입구의 독립적인 공간",
+    trustSpaceSub:"차분하게 머물 수 있는 릴랙세이션 공간",
+    backHome:"← 한국어 공식 페이지로",
+    eyebrow:"예약 신청",
+    formTitle:"희망 방문 시간을 알려 주세요",
+    formLead:"양식을 작성한 뒤 WhatsApp으로 예약 신청을 보내 주세요. 매장에서 가능 여부를 확인해 답변드리며, 답변을 받은 뒤 예약이 확정됩니다.",
+    course:"코스",
+    required:"필수",
+    preferredDate:"희망 날짜",
+    preferredTime:"희망 시간",
+    hoursHint:"매일 11:00－다음 날 2:00 영업, 마지막 예약 신청은 다음 날 1:00입니다. 23:00 이후에는 심야 요금 ¥800이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다.",
+    guests:"방문 인원",
+    groupHint:"2명 이상은 가능한 직원 수와 시작 시간을 답변으로 안내드립니다.",
+    extras:"추가 옵션 및 지명 (선택)",
+    nomination:"테라피스트 지명",
+    name:"성함",
+    note:"메모",
+    optional:"선택",
+    preview:"WhatsApp 메시지 미리보기",
+    submit:"WhatsApp으로 예약 신청 보내기",
+    confirmLine:"매장의 답변을 받은 뒤 예약이 확정됩니다.",
+    policyTitle:"취소, 지각 및 매장 이용 안내",
+    policyCopy:"<p>일정이 변경되면 가능한 한 빨리 연락해 주세요. 당일 취소 또는 노쇼의 경우 코스 요금의 최대 50%가 부과될 수 있습니다.</p><p>연락 없이 10분 이상 늦으면 예약이 해제되거나 관리 시간이 단축될 수 있습니다.</p><p>본 매장은 일반 릴랙세이션 서비스만 제공합니다. 성적 서비스는 제공하지 않으며 부적절한 요청은 거절합니다.</p>",
+    privacy:"개인정보 처리방침",
+    selectCourse:"코스를 선택하세요…",
+    selectTime:"희망 시간을 선택하세요…",
+    namePh:"예: 홍길동",
+    notePh:"원하는 부위, 질문 또는 요청 사항 (선택)",
+    fillAll:"코스, 날짜, 시간을 선택하고 성함을 입력하면 메시지를 미리 볼 수 있습니다.",
+    estimateSingle:n=>`1인 예상 금액: ¥${n.toLocaleString()}${isLate()?" (심야 요금 ¥800 포함)":""}. 최종 금액은 매장의 답변으로 확인해 주세요.`,
+    estimateGroup:n=>`1인당 선택 금액: ¥${n.toLocaleString()}${isLate()?"＋심야 요금 ¥800":""}. 전체 금액은 답변 시 안내드립니다.`,
+    groups:{popular:"인기 세트 코스",body:"바디 릴랙세이션",foot:"발 반사요법",aroma:"아로마 오일 트리트먼트"},
+    msgTitle:"신유안에 예약을 신청합니다.",
+    msgLabels:{course:"코스",date:"희망 날짜",time:"희망 시간",guests:"인원",addons:"추가 옵션",nomination:"지명",name:"이름",note:"메모",fee:"심야 요금",close:"매장의 답변을 받은 뒤 예약이 확정됨을 확인했습니다."}
   }
 };
 
-let lang="en";
+Object.assign(I18N.en,{
+  channelTitle:"Choose a booking channel",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"Call 03-6874-6808",channelWeb:"Website booking",
+  email:"Email",phone:"Phone",privacyConsent:'I agree to the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.',webSubmit:"Send booking request on this website",
+  replyNote:"We usually reply as soon as possible during opening hours. Replies may be delayed when we are busy.",
+  openingWhatsapp:"Opening WhatsApp…",whatsFallback:"If WhatsApp does not open, tap this link again.",phoneFallback:"Or call 03-6874-6808.",webSubmitting:"Sending your booking request…",webSent:"Booking request sent.",webError:"The request could not be sent. Your entries have been kept.",validEmail:"Enter a valid email address.",consentRequired:"Please agree to the Privacy Policy.",
+  accessTitle:"How to find the salon",accessAddress:"5-12-3 Kamata, Ota-ku, Tokyo 144-0052 · Kitajima Building 4F",accessDirections:"About a 1-minute walk from JR Kamata Station East Exit. Enter the building, walk to the back, and take the elevator inside the entrance to the 4th floor.",openMap:"Open in Google Maps →",accessPhotoAlt:"Kitajima Building entrance and elevator",
+  hoursHint:"Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. Late-night fee ¥800 after 11:00 PM. All times are Japan Standard Time (JST)."
+});
+Object.assign(I18N.zh,{
+  channelTitle:"选择预约方式",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"电话 03-6874-6808",channelWeb:"网页预约",
+  email:"电子邮箱",phone:"电话号码",privacyConsent:'我同意<a href="privacy.html" target="_blank" rel="noopener">隐私政策</a>。',webSubmit:"通过本网页发送预约申请",
+  replyNote:"营业时间内通常会尽快回复，繁忙时可能有所延迟。",
+  openingWhatsapp:"正在打开WhatsApp……",whatsFallback:"如果WhatsApp没有打开，请再次点击此链接。",phoneFallback:"也可致电 03-6874-6808。",webSubmitting:"正在发送预约申请……",webSent:"预约申请已发送。",webError:"发送失败，已保留您填写的内容。",validEmail:"请输入有效的电子邮箱。",consentRequired:"请先同意隐私政策。",
+  accessTitle:"如何找到店铺",accessAddress:"〒144-0052 东京都大田区蒲田5-12-3 北岛大楼4楼",accessDirections:"从JR蒲田站东口步行约1分钟。进入大楼后请向里面走，乘入口内部的电梯到4楼。",openMap:"在Google Maps中查看 →",accessPhotoAlt:"北岛大楼入口与电梯指引",
+  hoursHint:"每天11:00－次日凌晨2:00营业，最晚预约申请时间为凌晨1:00。23:00以后加收深夜费¥800。所有时间均为日本标准时间（JST）。"
+});
+Object.assign(I18N.ja,{
+  channelTitle:"予約方法を選ぶ",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"電話 03-6874-6808",channelWeb:"ウェブ予約",
+  email:"メールアドレス",phone:"電話番号",privacyConsent:'<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します。',webSubmit:"このページから予約リクエストを送信",
+  replyNote:"営業時間内は通常できるだけ早く返信いたします。混雑時は返信が遅れる場合があります。",
+  openingWhatsapp:"WhatsAppを開いています…",whatsFallback:"WhatsAppが開かない場合は、こちらをもう一度押してください。",phoneFallback:"または 03-6874-6808 へお電話ください。",webSubmitting:"予約リクエストを送信しています…",webSent:"予約リクエストを送信しました。",webError:"送信できませんでした。入力内容は保持されています。",validEmail:"正しいメールアドレスを入力してください。",consentRequired:"プライバシーポリシーへの同意が必要です。",
+  accessTitle:"店舗までの行き方",accessAddress:"〒144-0052 東京都大田区蒲田5-12-3 北島ビル4F",accessDirections:"JR蒲田駅東口から徒歩約1分です。ビルに入って奥へ進み、入口内部のエレベーターで4Fまでお越しください。",openMap:"Google Mapsで開く →",accessPhotoAlt:"北島ビル入口とエレベーター案内",
+  hoursHint:"毎日11:00〜翌2:00営業、最終予約リクエストは翌1:00です。23時以降は深夜料金800円。すべて日本標準時（JST）です。"
+});
+Object.assign(I18N.ko,{
+  channelTitle:"예약 방법 선택",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"전화 03-6874-6808",channelWeb:"웹 예약",
+  email:"이메일",phone:"전화번호",privacyConsent:'<a href="privacy.html" target="_blank" rel="noopener">개인정보 처리방침</a>에 동의합니다.',webSubmit:"이 웹페이지에서 예약 신청 보내기",
+  replyNote:"영업시간에는 보통 가능한 한 빠르게 답변드립니다. 혼잡할 때는 답변이 늦어질 수 있습니다.",
+  openingWhatsapp:"WhatsApp을 여는 중입니다…",whatsFallback:"WhatsApp이 열리지 않으면 이 링크를 다시 눌러 주세요.",phoneFallback:"또는 03-6874-6808로 전화해 주세요.",webSubmitting:"예약 신청을 보내는 중입니다…",webSent:"예약 신청이 전송되었습니다.",webError:"전송하지 못했습니다. 입력 내용은 그대로 유지됩니다.",validEmail:"올바른 이메일 주소를 입력해 주세요.",consentRequired:"개인정보 처리방침에 동의해 주세요.",
+  accessTitle:"매장 찾아오는 길",accessAddress:"〒144-0052 도쿄도 오타구 가마타 5-12-3 기타지마 빌딩 4층",accessDirections:"JR 가마타역 동쪽 출구에서 도보 약 1분입니다. 빌딩에 들어간 뒤 안쪽으로 이동하여 입구 내부의 엘리베이터를 타고 4층으로 오세요.",openMap:"Google 지도에서 보기 →",accessPhotoAlt:"기타지마 빌딩 입구와 엘리베이터 안내"
+});
+
+let lang=window.__SYA_INITIAL_LANG||"en";
 let guests="1";
+const WEB_FORM_ENABLED=FORM_BACKEND==="google-apps-script"&&Boolean(FORM_ENDPOINT)&&FORM_PRIVACY_READY===true&&FORM_LIVE_TESTED===true;
 
 const $=id=>document.getElementById(id);
 const money=n=>`¥${n.toLocaleString()}`;
@@ -367,14 +535,40 @@ const selectedNomination=()=>NOMINATIONS.find(item=>document.querySelector('inpu
 const isLate=()=>{const value=$("time").value;return value?Number(value.split("|")[0])>=1380:false};
 
 function resolveLanguage(){
-  const requested=new URLSearchParams(location.search).get("lang");
-  if(["en","zh","ja"].includes(requested))return requested;
-  if(document.referrer.includes("/en/"))return "en";
-  const browser=(navigator.language||"").toLowerCase();
-  if(browser.startsWith("zh"))return "zh";
-  if(browser.startsWith("ja"))return "ja";
+  const normalize=value=>{
+    const code=String(value||"").toLowerCase();
+    if(code==="ja"||code.startsWith("ja-"))return"ja";
+    if(code==="ko"||code.startsWith("ko-"))return"ko";
+    if(code==="zh"||code.startsWith("zh-"))return"zh"; // zh-TW/HK/MO map to zh until /zh-hant/ exists.
+    if(code==="en"||code.startsWith("en-"))return"en";
+    return"";
+  };
+  const requested=normalize(new URLSearchParams(location.search).get("lang"));
+  if(requested)return requested;
+  try{
+    const saved=normalize(localStorage.getItem("sya_lang"));
+    if(saved)return saved;
+  }catch(_){}
+  const browser=(navigator.languages||[navigator.language]).map(normalize).find(Boolean);
+  if(browser)return browser;
   return "en";
 }
+
+function captureFirstUtm(){
+  try{
+    const key="sya_first_utm";
+    if(sessionStorage.getItem(key))return JSON.parse(sessionStorage.getItem(key));
+    const params=new URLSearchParams(location.search);
+    const value={};
+    ["utm_source","utm_medium","utm_campaign","utm_content"].forEach(name=>{value[name]=(params.get(name)||"").slice(0,120)});
+    if(Object.values(value).some(Boolean))sessionStorage.setItem(key,JSON.stringify(value));
+    return value;
+  }catch(_){
+    return {};
+  }
+}
+
+const FIRST_UTM=captureFirstUtm();
 
 function buildCourses(){
   const current=$("course").value;
@@ -398,9 +592,53 @@ function buildExtras(){
   $("nominationOptions").innerHTML=NOMINATIONS.map(item=>`<label class="nomination-item"><input type="radio" name="nomination" value="${item.key}" ${item.key===nomination?"checked":""}><span>${item[lang]}${item.price?` · ${money(item.price)}`:""}</span></label>`).join("");
 }
 
-function applyLanguage(next){
+function trackEvent(name,parameters={}){
+  if(typeof gtag==="function")gtag("event",name,parameters);
+}
+
+function buildChannels(){
+  const definitions={
+    whatsapp:{label:I18N[lang].channelWhatsApp,href:"#bookingForm"},
+    web:{label:I18N[lang].channelWeb,href:"#webFields"},
+    line:{label:I18N[lang].channelLine,href:"https://page.line.me/017hlpiu",external:true},
+    hpb:{label:I18N[lang].channelHpb,href:"https://beauty.hotpepper.jp/kr/slnH000397723/",external:true},
+    phone:{label:I18N[lang].channelPhone,href:"tel:0368746808"}
+  };
+  const order=lang==="ja"?["line","hpb","phone"]:(lang==="en"?["whatsapp","web","phone"]:["web","whatsapp","phone"]);
+  const available=order.filter(key=>key!=="web"||WEB_FORM_ENABLED);
+  $("channelActions").replaceChildren(...available.map((key,index)=>{
+    const item=definitions[key];
+    const link=document.createElement("a");
+    link.className=`channel-button${index===0?" primary":""}`;
+    link.href=item.href;
+    link.textContent=item.label;
+    link.dataset.channel=key;
+    if(item.external){link.target="_blank";link.rel="noopener"}
+    link.addEventListener("click",()=>trackEvent("booking_channel_click",{language:lang,channel:key}));
+    return link;
+  }));
+  $("webFields").hidden=!WEB_FORM_ENABLED;
+  $("email").required=WEB_FORM_ENABLED;
+  if(WEB_FORM_ENABLED&&!$("webSubmitButton")){
+    const button=document.createElement("button");
+    button.className="submit-button web-submit";
+    button.id="webSubmitButton";
+    button.type="button";
+    button.textContent=I18N[lang].webSubmit;
+    button.addEventListener("click",submitWebForm);
+    $("webSubmitMount").append(button);
+  }else if($("webSubmitButton")){
+    $("webSubmitButton").textContent=I18N[lang].webSubmit;
+  }
+}
+
+function applyLanguage(next,{persist=false}={}){
   lang=next;
-  document.documentElement.lang=lang==="zh"?"zh-CN":lang;
+  document.documentElement.lang=lang==="zh"?"zh-Hans":lang;
+  document.documentElement.dataset.lang=lang;
+  if(persist){
+    try{localStorage.setItem("sya_lang",lang)}catch(_){}
+  }
   document.querySelectorAll("[data-i18n]").forEach(el=>{const value=I18N[lang][el.dataset.i18n];if(typeof value==="string")el.innerHTML=value});
   document.querySelectorAll("[data-i18n-html]").forEach(el=>{const value=I18N[lang][el.dataset.i18nHtml];if(typeof value==="string")el.innerHTML=value});
   document.querySelectorAll("[data-alt-key]").forEach(el=>{el.alt=I18N[lang][el.dataset.altKey]});
@@ -408,7 +646,9 @@ function applyLanguage(next){
   $("jaHpbBanner").hidden=lang!=="ja";
   $("name").placeholder=I18N[lang].namePh;
   $("note").placeholder=I18N[lang].notePh;
-  buildCourses();buildTimes();buildExtras();updatePreview();
+  const homes={ja:"/",en:"/en/",zh:"/zh/",ko:"/ko/"};
+  document.querySelector(".story-foot a").href=homes[lang];
+  buildCourses();buildTimes();buildExtras();buildChannels();updatePreview();
   const url=new URL(location.href);url.searchParams.set("lang",lang);history.replaceState({},"",url);
 }
 
@@ -417,6 +657,7 @@ function formatDate(value){
   const [y,m,d]=value.split("-");
   if(lang==="en")return `${y}/${m}/${d}`;
   if(lang==="zh")return `${y}年${Number(m)}月${Number(d)}日`;
+  if(lang==="ko")return `${y}년 ${Number(m)}월 ${Number(d)}일`;
   return `${y}年${Number(m)}月${Number(d)}日`;
 }
 
@@ -425,6 +666,11 @@ function timeLabel(){return $("time").value?$("time").value.split("|")[1]:""}
 function currentPrice(){
   const course=selectedCourse();if(!course)return 0;
   return course.price+selectedAddons().reduce((sum,item)=>sum+item.price,0)+selectedNomination().price+(isLate()?800:0);
+}
+
+function utmReference(){
+  const values=[FIRST_UTM.utm_source,FIRST_UTM.utm_medium,FIRST_UTM.utm_campaign,FIRST_UTM.utm_content].filter(Boolean);
+  return values.length?values.join("/").slice(0,180):"";
 }
 
 function messageText(){
@@ -437,7 +683,10 @@ function messageText(){
   if(nomination.key!=="none")lines.push(`■ ${labels.nomination}: ${nomination[lang]} (${money(nomination.price)})`);
   if(isLate())lines.push(`■ ${labels.fee}: ¥800`);
   if($("note").value.trim())lines.push(`■ ${labels.note}: ${$("note").value.trim()}`);
-  lines.push("",labels.close,"","via shinyuuan.jp/booking.html");
+  lines.push("",labels.close);
+  const reference=utmReference();
+  if(reference)lines.push("",`ref: ${reference}`);
+  lines.push("","via shinyuuan.jp/booking.html");
   return lines.join("\n");
 }
 
@@ -445,6 +694,7 @@ function updatePreview(){
   const complete=Boolean(selectedCourse()&&$("date").value&&$("time").value&&$("name").value.trim());
   $("preview").textContent=complete?messageText():I18N[lang].fillAll;
   $("submitButton").disabled=!complete;
+  if($("webSubmitButton"))$("webSubmitButton").disabled=!complete;
   $("estimate").textContent=selectedCourse()?(guests==="1"?I18N[lang].estimateSingle(currentPrice()):I18N[lang].estimateGroup(currentPrice())):"";
 }
 
@@ -455,19 +705,118 @@ function setTokyoDate(){
   $("date").min=today;$("date").value=today;
 }
 
-document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>applyLanguage(button.dataset.lang)));
+function submissionId(){
+  if(globalThis.crypto?.randomUUID)return crypto.randomUUID();
+  if(globalThis.crypto?.getRandomValues){
+    const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);
+    bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;
+    return [...bytes].map((value,index)=>([4,6,8,10].includes(index)?"-":"")+value.toString(16).padStart(2,"0")).join("");
+  }
+  return "";
+}
+
+function webPayload(){
+  const course=selectedCourse();
+  return{
+    courseId:course.key,
+    courseLabel:course[lang].slice(0,160),
+    date:$("date").value,
+    time:timeLabel().slice(0,40),
+    guests:String(guests).slice(0,4),
+    name:$("name").value.trim().slice(0,60),
+    email:$("email").value.trim().slice(0,160),
+    phone:$("phone").value.trim().slice(0,40),
+    note:$("note").value.trim().slice(0,300),
+    lang,
+    utm_source:(FIRST_UTM.utm_source||"").slice(0,120),
+    utm_medium:(FIRST_UTM.utm_medium||"").slice(0,120),
+    utm_campaign:(FIRST_UTM.utm_campaign||"").slice(0,120),
+    utm_content:(FIRST_UTM.utm_content||"").slice(0,120),
+    submissionId:submissionId(),
+    startedAt:FORM_STARTED_AT,
+    website:$("website").value.slice(0,120)
+  };
+}
+
+function whatsappUrl(){
+  return`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText())}`;
+}
+
+function showWhatsAppStatus(url,opening=true){
+  const status=$("submitStatus");
+  status.replaceChildren();
+  const lead=document.createElement("strong");
+  lead.textContent=opening?I18N[lang].openingWhatsapp:I18N[lang].webError;
+  const fallback=document.createElement("a");
+  fallback.href=url;fallback.target="_blank";fallback.rel="noopener noreferrer";fallback.textContent=I18N[lang].whatsFallback;
+  const phone=document.createElement("a");
+  phone.href="tel:0368746808";phone.textContent=I18N[lang].phoneFallback;
+  status.append(lead,document.createElement("br"),fallback,document.createElement("br"),phone);
+}
+
+async function submitWebForm(){
+  if(!WEB_FORM_ENABLED)return;
+  updatePreview();
+  if($("webSubmitButton")?.disabled)return;
+  if(!$("email").validity.valid||!$("email").value.trim()){
+    $("submitStatus").textContent=I18N[lang].validEmail;$("email").focus();return;
+  }
+  if(!$("privacyConsent").checked){
+    $("submitStatus").textContent=I18N[lang].consentRequired;$("privacyConsent").focus();return;
+  }
+  const payload=webPayload();
+  if(!payload.submissionId){
+    showWhatsAppStatus(whatsappUrl(),false);return;
+  }
+  $("submitStatus").textContent=I18N[lang].webSubmitting;
+  $("webSubmitButton").disabled=true;
+  trackEvent("booking_form_start",{language:lang,channel:"web"});
+  const abortController=new AbortController();
+  const timeout=setTimeout(()=>abortController.abort(),12000);
+  try{
+    // text/plain avoids a CORS preflight. Apps Script may redirect its response.
+    // Keep FORM_LIVE_TESTED false until this is tested from the production shinyuuan.jp origin.
+    const response=await fetch(FORM_ENDPOINT,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      credentials:"omit",
+      redirect:"follow",
+      body:JSON.stringify(payload),
+      signal:abortController.signal
+    });
+    const result=await response.json();
+    if(result?.ok!==true)throw new Error("Request was not accepted");
+    $("submitStatus").textContent=`${I18N[lang].webSent} ${I18N[lang].confirmLine}`;
+    trackEvent("booking_form_submit_success",{language:lang,channel:"web"});
+  }catch(_){
+    showWhatsAppStatus(whatsappUrl(),false);
+    trackEvent("booking_form_submit_error",{language:lang,channel:"web"});
+  }finally{
+    clearTimeout(timeout);
+    updatePreview();
+  }
+}
+
+document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>{
+  const previous=lang;
+  applyLanguage(button.dataset.lang,{persist:true});
+  trackEvent("language_switch",{from_language:previous,to_language:lang,source:"booking"});
+}));
 $("guestButtons").addEventListener("click",event=>{const button=event.target.closest("[data-guests]");if(!button)return;guests=button.dataset.guests;document.querySelectorAll("[data-guests]").forEach(item=>{const active=item===button;item.classList.toggle("active",active);item.setAttribute("aria-checked",String(active))});updatePreview()});
 $("bookingForm").addEventListener("input",updatePreview);
 $("bookingForm").addEventListener("change",updatePreview);
+$("bookingForm").addEventListener("input",()=>trackEvent("booking_form_start",{language:lang,channel:"whatsapp"}),{once:true});
 $("extrasSection").addEventListener("change",updatePreview);
+$("mapLink").addEventListener("click",()=>trackEvent("access_map_click",{language:lang}));
 $("bookingForm").addEventListener("submit",event=>{
   event.preventDefault();
   updatePreview();
   if($("submitButton").disabled)return;
-  if(typeof gtag==="function")gtag("event","booking_whatsapp_click",{language:lang,course:$("course").value,guests});
-  const url=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText())}`;
-  const opened=window.open(url,"_blank","noopener,noreferrer");
-  if(!opened)location.href=url;
+  const url=whatsappUrl();
+  showWhatsAppStatus(url,true);
+  trackEvent("booking_whatsapp_open",{language:lang});
+  // Open directly inside the user gesture; do not wait for analytics or other asynchronous work.
+  window.open(url,"_blank","noopener,noreferrer");
 });
 
 setTokyoDate();
