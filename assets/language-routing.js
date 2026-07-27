@@ -4,12 +4,6 @@
   const STORAGE_KEY = "sya_lang";
   const DISMISSED_KEY = "sya_lang_dismissed";
   const ROUTES = { ja: "/", en: "/en/", zh: "/zh/", ko: "/ko/" };
-  const BOOKING_ROUTES = {
-    ja: "/booking.html?lang=ja",
-    en: "/booking.html?lang=en",
-    zh: "/booking.html?lang=zh",
-    ko: "/booking.html?lang=ko"
-  };
 
   const normalizeLanguage = value => {
     const code = String(value || "").toLowerCase();
@@ -39,26 +33,6 @@
     destination.search = location.search;
     return destination.href;
   };
-  const bookingDestination = lang => {
-    const destination = new URL(BOOKING_ROUTES[lang] || BOOKING_ROUTES.en, location.origin);
-    const current = new URLSearchParams(location.search);
-    ["utm_source", "utm_medium", "utm_campaign", "utm_content"].forEach(name => {
-      const value = current.get(name);
-      if (value) destination.searchParams.set(name, value);
-    });
-    return `${destination.pathname}${destination.search}`;
-  };
-
-  // The multilingual booking page is the single booking hub. Replace legacy
-  // yoyaku.html links before the user clicks, while explicit HPB / LINE / TEL
-  // channel links keep their existing direct destinations.
-  const pageLanguage = currentLanguage();
-  document.querySelectorAll('a[href]').forEach(link => {
-    let url;
-    try { url = new URL(link.getAttribute("href"), location.href); } catch (_) { return; }
-    if (url.origin !== location.origin || !/\/yoyaku\.html$/.test(url.pathname)) return;
-    link.setAttribute("href", bookingDestination(pageLanguage));
-  });
 
   try {
     const utmKey = "sya_first_utm";
