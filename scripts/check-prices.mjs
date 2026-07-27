@@ -66,12 +66,12 @@ expect("booking.html", "Late-night fee mismatch", new RegExp(`isLate\\(\\)\\?${p
 
 const localizedLabels = {
   "zh/index.html": {
-    body60: "身体放松 60分钟", foot45: "足底反射 45分钟", foot60: "足底反射 60分钟",
+    body60: "身体放松 60分钟", foot45: "足底护理 45分钟", foot60: "足底护理 60分钟",
     aroma60: "香薰精油护理 60分钟", aroma90: "香薰精油护理 90分钟", aroma120: "香薰精油护理 120分钟",
     aromaFoot90: "香薰精油60＋足底30（90分钟）", bodyFoot90: "身体放松60＋足底30（90分钟）"
   },
   "ko/index.html": {
-    body60: "바디 릴랙세이션 60분", foot45: "발 반사요법 45분", foot60: "발 반사요법 60분",
+    body60: "바디 릴랙세이션 60분", foot45: "발 케어 45분", foot60: "발 케어 60분",
     aroma60: "아로마 오일 트리트먼트 60분", aroma90: "아로마 오일 트리트먼트 90분", aroma120: "아로마 오일 트리트먼트 120분",
     aromaFoot90: "아로마 오일60＋발30 (90분)", bodyFoot90: "바디60＋발30 (90분)"
   }
