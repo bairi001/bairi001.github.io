@@ -6,18 +6,38 @@
 <title>プライバシーポリシー｜身悠晏 Shin Yuu An</title>
 <meta name="description" content="身悠晏のプライバシーポリシー（個人情報保護方針）について。">
 <link rel="canonical" href="https://shinyuuan.jp/privacy.html">
+<link rel="alternate" hreflang="ja" href="https://shinyuuan.jp/privacy.html?lang=ja">
+<link rel="alternate" hreflang="en" href="https://shinyuuan.jp/privacy.html?lang=en">
+<link rel="alternate" hreflang="zh-Hans" href="https://shinyuuan.jp/privacy.html?lang=zh">
+<link rel="alternate" hreflang="ko" href="https://shinyuuan.jp/privacy.html?lang=ko">
+<link rel="alternate" hreflang="x-default" href="https://shinyuuan.jp/privacy.html?lang=ja">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<style>
+.privacy-language-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:620px;margin:0 0 32px}
+.privacy-language-switch button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:48px;padding:9px 12px;border:1px solid var(--line);background:#fff;color:var(--text);font:600 .88rem/1.35 var(--font-body);cursor:pointer}
+.privacy-language-switch button:hover{border-color:var(--accent);color:var(--accent2)}
+.privacy-language-switch button[aria-pressed="true"]{border-color:var(--accent2);background:var(--accent2);color:#fff}
+.privacy-language-switch button:focus-visible{outline:3px solid rgba(23,126,137,.25);outline-offset:2px}
+.policy-language[hidden]{display:none!important}
+.policy-language h2{scroll-margin-top:92px}
+.policy-language .policy-date{margin-top:40px;color:var(--muted);font-size:.82rem}
+.policy-contact{padding:18px 20px;border-left:3px solid var(--accent);background:var(--bg-soft)}
+@media(max-width:520px){
+  .privacy-language-switch{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:26px}
+  .privacy-language-switch button{min-height:48px;padding-inline:8px}
+  .policy-contact{padding:16px}
+}
+</style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SWGGKR9K9W"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-SWGGKR9K9W');
 </script>
 </head>
@@ -58,60 +78,275 @@
 <div class="page-header">
   <div class="container">
     <span class="section-en">Privacy Policy</span>
-    <h1 class="section-title">プライバシーポリシー</h1>
-    <div class="breadcrumb"><a href="/">ホーム</a><span>›</span>プライバシーポリシー</div>
+    <h1 class="section-title" id="policyPageTitle">プライバシーポリシー</h1>
+    <div class="breadcrumb"><a href="/">ホーム</a><span>›</span><span id="policyBreadcrumb">プライバシーポリシー</span></div>
   </div>
 </div>
 
 <!-- CONTENT -->
 <section class="section">
   <div class="container">
-    <div class="prose fade-up">
+    <div class="policy-shell fade-up">
+      <nav class="privacy-language-switch" aria-label="プライバシーポリシーの言語">
+        <button type="button" data-policy-lang="ja" aria-pressed="true">日本語</button>
+        <button type="button" data-policy-lang="en" aria-pressed="false">English</button>
+        <button type="button" data-policy-lang="zh" aria-pressed="false">中文</button>
+        <button type="button" data-policy-lang="ko" aria-pressed="false">한국어</button>
+      </nav>
 
-      <p>身悠晏（以下「当店」といいます）は、お客様の個人情報の保護を重要な責務と考え、以下のプライバシーポリシーに基づき、個人情報の適切な取り扱いと保護に努めます。</p>
+      <article class="prose policy-language" data-policy-content="ja" lang="ja">
+        <p>身悠晏（以下「当店」といいます）は、お客様の個人情報を適切に取り扱うため、以下のとおりプライバシーポリシーを定めます。</p>
 
-      <h2>1. 個人情報の定義</h2>
-      <p>本ポリシーにおける「個人情報」とは、生存する個人に関する情報であって、氏名、住所、電話番号、メールアドレスその他の記述等により特定の個人を識別できる情報をいいます。</p>
+        <h2>1. 収集する情報</h2>
+        <p>当店は、ウェブ予約の利用時に次の情報を収集します。</p>
+        <ul>
+          <li>氏名</li>
+          <li>メールアドレス</li>
+          <li>電話番号（任意）</li>
+          <li>希望日および希望時間</li>
+          <li>コース</li>
+          <li>人数</li>
+          <li>備考</li>
+          <li>ページの表示言語</li>
+          <li>UTMパラメータ等の流入元情報</li>
+          <li>重複送信を防止するために必要な送信識別情報</li>
+        </ul>
 
-      <h2>2. 個人情報の収集</h2>
-      <p>当店は、以下の目的のために必要な範囲で個人情報を収集いたします。</p>
-      <ul>
-        <li>ご予約の受付・管理</li>
-        <li>施術に関するカウンセリング・アフターフォロー</li>
-        <li>お問い合わせへの対応</li>
-        <li>サービス品質の向上</li>
-      </ul>
-      <p>採用応募・店舗見学相談に関してお預かりした個人情報は、採用選考および連絡の目的にのみ使用いたします。</p>
+        <h2>2. 利用目的</h2>
+        <p>収集した情報は、次の目的で利用します。</p>
+        <ul>
+          <li>予約申請を受け付けるため</li>
+          <li>空き状況およびスタッフの手配を確認するため</li>
+          <li>お客様へ連絡するため</li>
+          <li>予約受付記録を管理するため</li>
+          <li>重複送信、迷惑送信および不正利用を防止するため</li>
+          <li>予約に関するお問い合わせへ対応するため</li>
+        </ul>
 
-      <h2>3. 個人情報の利用目的</h2>
-      <p>収集した個人情報は、上記の目的の範囲内でのみ使用し、お客様の同意なく目的外での利用はいたしません。</p>
-      <p>当サイトの多言語予約フォームに入力された情報は、予約確認のためにお客様ご自身の操作でWhatsAppへ送信されます。当サイトのサーバーには予約フォームの入力内容を保存しません。</p>
+        <h2>3. ウェブ予約で使用するサービス</h2>
+        <p>ウェブ予約では、Google Apps Script、Google SheetsおよびGmailを使用します。送信された予約内容は、当店が管理するGoogle Sheetsに保存され、予約通知はGmailを通じて送信されます。</p>
+        <p>予約情報へアクセスできるのは当店の権限を付与された担当者に限ります。当店は、予約情報を予約と無関係な広告メールの送信に使用せず、お客様の個人情報を販売しません。</p>
+        <p>ウェブからの送信は予約申請の受付であり、予約確定ではありません。当店からの返信を受け取った時点で予約が正式に成立します。</p>
 
-      <h2>4. 個人情報の第三者提供</h2>
-      <p>当店は、法令に基づく場合を除き、お客様の同意を得ることなく個人情報を第三者に提供することはありません。</p>
+        <h2>4. WhatsApp予約</h2>
+        <p>WhatsAppを選択した場合、予約内容はお客様ご自身の操作によりWhatsAppへ送信されます。WhatsApp予約とウェブ予約は、異なる送信経路です。</p>
 
-      <h2>5. 個人情報の安全管理</h2>
-      <p>当店は、個人情報の漏えい、滅失またはき損を防止するために、適切な安全管理措置を講じます。</p>
+        <h2>5. Googleサービスおよび国外での処理</h2>
+        <p>当店は、Googleが提供するサービスを利用して予約情報を処理・保存します。Googleのサービス基盤や提供条件により、情報が日本国外を含む国または地域で処理・保存される可能性があります。</p>
+        <p>当店は、すべての情報が日本国内だけに保存されるとは表示しません。また、外国にある第三者への提供に該当するかどうかは、適用法令、契約関係、処理上の役割および実際の運用により判断されるため、一律に該当する、または該当しないとは表示しません。</p>
 
-      <h2>6. 個人情報の開示・訂正・削除</h2>
-      <p>お客様ご本人から個人情報の開示、訂正、削除等のご要望があった場合は、本人確認を行った上で速やかに対応いたします。</p>
+        <h2>6. 保存および削除</h2>
+        <p>予約情報は、予約受付、連絡、紛争対応および安全管理に必要な期間保存します。利用目的を達成し、継続して保存する必要がなくなったときは、適切な方法で削除します。将来、固定の保存期間を定める場合は、本ポリシーと実際の削除手順をあわせて更新します。</p>
 
-      <h2>7. Cookie（クッキー）について</h2>
-      <p>当ウェブサイトでは、利便性の向上やアクセス解析のためにCookieを使用する場合があります。お客様はブラウザの設定によりCookieの使用を拒否することができますが、一部の機能がご利用いただけなくなる場合がございます。</p>
+        <h2>7. 開示・訂正・削除・利用停止の請求</h2>
+        <p>お客様は、当店へ連絡することにより、ご自身の情報について開示、訂正、削除または利用停止を請求できます。請求への対応にあたり、ご本人であることを確認する場合があります。</p>
 
-      <h2>8. ポリシーの変更</h2>
-      <p>当店は、法令の変更やサービスの見直しに伴い、本ポリシーを変更する場合がございます。変更後のポリシーは本ページにて公表します。</p>
+        <h2>8. Cookieおよびアクセス解析</h2>
+        <p>当サイトでは、利便性の向上やアクセス状況の把握のため、CookieおよびGoogle Analyticsを使用する場合があります。氏名、メールアドレス、電話番号、備考または予約内容をGoogle Analyticsへ送信しません。</p>
 
-      <h2>9. お問い合わせ</h2>
-      <p>個人情報の取り扱いに関するお問い合わせは、下記までご連絡ください。</p>
-      <p>
-        身悠晏<br>
-        電話：<a href="tel:0368746808">03-6874-6808</a><br>
-        メール：<a href="mailto:ashisou3f@gmail.com">ashisou3f@gmail.com</a>
-      </p>
+        <h2>9. 本ポリシーの変更</h2>
+        <p>法令、使用サービスまたは運用方法の変更に応じて、本ポリシーを改定する場合があります。改定後の内容は本ページで公表します。</p>
 
-      <p style="margin-top:40px; color:var(--text-muted); font-size:0.82rem;">制定日：2026年3月</p>
+        <h2>10. お問い合わせ窓口</h2>
+        <p class="policy-contact">
+          凱鴻商事株式会社<br>
+          店舗名：身悠晏<br>
+          電話：<a href="tel:0368746808">03-6874-6808</a><br>
+          メール：<a href="mailto:shinyuuan@gmail.com">shinyuuan@gmail.com</a>
+        </p>
+        <p class="policy-date">改定日：2026年7月27日</p>
+      </article>
 
+      <article class="prose policy-language" data-policy-content="en" lang="en" hidden>
+        <p>Shin Yuu An (the “Salon”) establishes this Privacy Policy to explain how it handles customers’ personal information.</p>
+
+        <h2>1. Information we collect</h2>
+        <p>When you use website booking, we collect:</p>
+        <ul>
+          <li>Name</li>
+          <li>Email address</li>
+          <li>Telephone number (optional)</li>
+          <li>Preferred date and time</li>
+          <li>Course</li>
+          <li>Number of guests</li>
+          <li>Notes</li>
+          <li>Page language</li>
+          <li>Traffic-source information such as UTM parameters</li>
+          <li>A submission identifier needed to prevent duplicate submissions</li>
+        </ul>
+
+        <h2>2. Purposes of use</h2>
+        <p>We use the collected information to:</p>
+        <ul>
+          <li>Receive appointment requests</li>
+          <li>Check availability and staff arrangements</li>
+          <li>Contact customers</li>
+          <li>Manage appointment-request records</li>
+          <li>Prevent duplicate submissions, spam, and misuse</li>
+          <li>Handle inquiries relating to appointments</li>
+        </ul>
+
+        <h2>3. Services used for website booking</h2>
+        <p>Website booking uses Google Apps Script, Google Sheets, and Gmail. Submitted appointment details are stored in a Google Sheet managed by the Salon, and appointment notifications are sent through Gmail.</p>
+        <p>Access to appointment information is limited to personnel authorized by the Salon. We do not use appointment information for unrelated advertising emails, and we do not sell customers’ personal information.</p>
+        <p>A website submission is an appointment request, not a confirmed appointment. The appointment is formally confirmed only after you receive a reply from the Salon.</p>
+
+        <h2>4. WhatsApp booking</h2>
+        <p>If you choose WhatsApp, you send the appointment details to WhatsApp through your own action. WhatsApp booking and website booking are separate submission channels.</p>
+
+        <h2>5. Google services and processing outside Japan</h2>
+        <p>We use services provided by Google to process and store appointment information. Depending on Google’s service infrastructure and terms, information may be processed or stored in countries or regions outside Japan.</p>
+        <p>We do not state that all information is stored only in Japan. Whether a particular handling constitutes provision to a third party located outside Japan depends on applicable law, contractual relationships, processing roles, and actual operations; this policy therefore does not categorically state that it always does or does not.</p>
+
+        <h2>6. Retention and deletion</h2>
+        <p>We retain appointment information for the period needed to receive and manage appointments, communicate with customers, handle disputes, and maintain security. When the purpose of use has been achieved and continued retention is no longer necessary, we delete the information by an appropriate method. If we establish a fixed retention period in the future, we will update both this policy and the actual deletion process.</p>
+
+        <h2>7. Requests for access, correction, deletion, or restriction of use</h2>
+        <p>You may contact the Salon to request access to, correction or deletion of, or restriction of use of your information. We may need to verify your identity before responding.</p>
+
+        <h2>8. Cookies and analytics</h2>
+        <p>This website may use cookies and Google Analytics to improve convenience and understand website usage. We do not send names, email addresses, telephone numbers, notes, or appointment details to Google Analytics.</p>
+
+        <h2>9. Changes to this policy</h2>
+        <p>We may revise this policy in response to changes in laws, services used, or our operations. The revised policy will be published on this page.</p>
+
+        <h2>10. Contact</h2>
+        <p class="policy-contact">
+          Kaihong Shoji Co., Ltd. (凱鴻商事株式会社)<br>
+          Salon: Shin Yuu An (身悠晏)<br>
+          Telephone: <a href="tel:0368746808">03-6874-6808</a><br>
+          Email: <a href="mailto:shinyuuan@gmail.com">shinyuuan@gmail.com</a>
+        </p>
+        <p class="policy-date">Revised: July 27, 2026</p>
+      </article>
+
+      <!-- TODO: 上线前需母语者最终校对 -->
+      <article class="prose policy-language" data-policy-content="zh" lang="zh-Hans" hidden>
+        <p>身悠晏（以下简称“本店”）制定本隐私政策，以说明本店如何处理客人的个人信息。</p>
+
+        <h2>1. 收集的信息</h2>
+        <p>客人使用网页预约时，本店会收集：</p>
+        <ul>
+          <li>姓名</li>
+          <li>邮箱地址</li>
+          <li>电话号码（选填）</li>
+          <li>希望日期和希望时间</li>
+          <li>套餐</li>
+          <li>人数</li>
+          <li>备注</li>
+          <li>页面语言</li>
+          <li>UTM参数等来源信息</li>
+          <li>防止重复提交所需的提交识别信息</li>
+        </ul>
+
+        <h2>2. 利用目的</h2>
+        <p>本店将收集的信息用于：</p>
+        <ul>
+          <li>接收预约申请</li>
+          <li>确认空位和工作人员安排</li>
+          <li>联系客人</li>
+          <li>管理预约受理记录</li>
+          <li>防止重复提交、垃圾提交和不正当使用</li>
+          <li>处理与预约有关的咨询</li>
+        </ul>
+
+        <h2>3. 网页预约使用的服务</h2>
+        <p>网页预约使用Google Apps Script、Google Sheets和Gmail。提交的预约内容会保存到由本店管理的Google Sheets中，预约通知通过Gmail发送。</p>
+        <p>仅限本店授权人员访问预约信息。本店不会将预约信息用于发送与预约无关的广告邮件，也不会出售客人的个人信息。</p>
+        <p>通过网页提交的是预约申请，并不代表预约成功。收到本店回复后，预约才正式成立。</p>
+
+        <h2>4. WhatsApp预约</h2>
+        <p>客人选择WhatsApp时，预约内容由客人本人操作发送至WhatsApp。WhatsApp预约和网页预约是不同的发送通道。</p>
+
+        <h2>5. Google服务和境外处理</h2>
+        <p>本店使用Google提供的服务处理和保存预约信息。根据Google的服务基础设施和服务条件，信息可能在日本境外的国家或地区进行处理或保存。</p>
+        <p>本店不声称所有信息仅保存在日本。某项处理是否构成向境外第三方提供信息，需要依据适用法律、合同关系、处理角色和实际运营情况判断，因此本政策不笼统断言其一定属于或一定不属于该情形。</p>
+
+        <h2>6. 保存和删除</h2>
+        <p>预约信息将在预约受理、联络、纠纷处理及安全管理所需期间内保存。达成利用目的且无需继续保存时，本店将以适当方式删除。如将来确定固定保存期限，本店将同时更新本隐私政策和实际清理流程。</p>
+
+        <h2>7. 查询、订正、删除或停止使用请求</h2>
+        <p>客人可联系本店，申请查询、订正、删除或停止使用本人的信息。处理申请时，本店可能需要进行本人确认。</p>
+
+        <h2>8. Cookie和访问分析</h2>
+        <p>本网站可能使用Cookie和Google Analytics，以提高便利性并了解网站使用情况。本店不会向Google Analytics传输姓名、邮箱地址、电话号码、备注或预约内容。</p>
+
+        <h2>9. 本政策的变更</h2>
+        <p>本店可能根据法律法规、所使用服务或运营方式的变化修订本政策。修订后的内容将在本页面公布。</p>
+
+        <h2>10. 联系窗口</h2>
+        <p class="policy-contact">
+          凱鴻商事株式会社<br>
+          店铺名：身悠晏<br>
+          电话：<a href="tel:0368746808">03-6874-6808</a><br>
+          邮箱：<a href="mailto:shinyuuan@gmail.com">shinyuuan@gmail.com</a>
+        </p>
+        <p class="policy-date">改定日：2026年7月27日</p>
+      </article>
+
+      <!-- TODO: 上线前需母语者最终校对 -->
+      <article class="prose policy-language" data-policy-content="ko" lang="ko" hidden>
+        <p>신유안(이하 “매장”)은 고객의 개인정보 처리 방법을 안내하기 위해 다음과 같이 개인정보 처리방침을 정합니다.</p>
+
+        <h2>1. 수집하는 정보</h2>
+        <p>웹 예약 이용 시 다음 정보를 수집합니다.</p>
+        <ul>
+          <li>성명</li>
+          <li>이메일 주소</li>
+          <li>전화번호(선택)</li>
+          <li>희망 날짜와 희망 시간</li>
+          <li>코스</li>
+          <li>인원수</li>
+          <li>메모</li>
+          <li>페이지 언어</li>
+          <li>UTM 매개변수 등 유입 경로 정보</li>
+          <li>중복 제출 방지에 필요한 제출 식별 정보</li>
+        </ul>
+
+        <h2>2. 이용 목적</h2>
+        <p>수집한 정보는 다음 목적으로 이용합니다.</p>
+        <ul>
+          <li>예약 신청 접수</li>
+          <li>예약 가능 여부와 직원 배치 확인</li>
+          <li>고객 연락</li>
+          <li>예약 접수 기록 관리</li>
+          <li>중복 제출, 스팸 제출 및 부정 이용 방지</li>
+          <li>예약 관련 문의 처리</li>
+        </ul>
+
+        <h2>3. 웹 예약에 사용하는 서비스</h2>
+        <p>웹 예약에는 Google Apps Script, Google Sheets 및 Gmail을 사용합니다. 제출된 예약 내용은 매장이 관리하는 Google Sheets에 저장되며, 예약 알림은 Gmail을 통해 전송됩니다.</p>
+        <p>예약 정보는 매장에서 권한을 부여받은 담당자만 접근할 수 있습니다. 매장은 예약 정보를 예약과 무관한 광고 메일 발송에 사용하지 않으며, 고객의 개인정보를 판매하지 않습니다.</p>
+        <p>웹 제출은 예약 신청이며 예약 확정이 아닙니다. 매장의 답변을 받은 뒤 예약이 정식으로 확정됩니다.</p>
+
+        <h2>4. WhatsApp 예약</h2>
+        <p>고객이 WhatsApp을 선택하면 고객 본인의 조작으로 예약 내용이 WhatsApp에 전송됩니다. WhatsApp 예약과 웹 예약은 서로 다른 전송 경로입니다.</p>
+
+        <h2>5. Google 서비스 및 국외 처리</h2>
+        <p>매장은 Google이 제공하는 서비스를 사용하여 예약 정보를 처리하고 저장합니다. Google의 서비스 인프라와 제공 조건에 따라 정보가 일본 국외의 국가 또는 지역에서 처리되거나 저장될 수 있습니다.</p>
+        <p>매장은 모든 정보가 일본에만 저장된다고 표시하지 않습니다. 특정 처리가 국외 제3자 제공에 해당하는지는 적용 법령, 계약 관계, 처리 역할 및 실제 운영에 따라 판단되므로, 본 방침은 일률적으로 해당하거나 해당하지 않는다고 단정하지 않습니다.</p>
+
+        <h2>6. 보관 및 삭제</h2>
+        <p>예약 정보는 예약 접수, 연락, 분쟁 처리 및 안전 관리에 필요한 기간 동안 보관합니다. 이용 목적을 달성하고 계속 보관할 필요가 없어진 경우 적절한 방법으로 삭제합니다. 향후 고정 보관 기간을 정하는 경우 본 방침과 실제 삭제 절차를 함께 업데이트합니다.</p>
+
+        <h2>7. 열람, 정정, 삭제 또는 이용 중지 요청</h2>
+        <p>고객은 매장에 연락하여 본인 정보의 열람, 정정, 삭제 또는 이용 중지를 요청할 수 있습니다. 요청 처리 시 본인 확인이 필요할 수 있습니다.</p>
+
+        <h2>8. 쿠키 및 접속 분석</h2>
+        <p>본 웹사이트는 편의성 향상과 이용 현황 파악을 위해 쿠키와 Google Analytics를 사용할 수 있습니다. 성명, 이메일 주소, 전화번호, 메모 또는 예약 내용을 Google Analytics로 전송하지 않습니다.</p>
+
+        <h2>9. 본 방침의 변경</h2>
+        <p>법령, 이용 서비스 또는 운영 방법의 변경에 따라 본 방침을 개정할 수 있습니다. 개정된 내용은 본 페이지에 공개합니다.</p>
+
+        <h2>10. 문의처</h2>
+        <p class="policy-contact">
+          凱鴻商事株式会社<br>
+          매장명: 신유안(身悠晏)<br>
+          전화: <a href="tel:0368746808">03-6874-6808</a><br>
+          이메일: <a href="mailto:shinyuuan@gmail.com">shinyuuan@gmail.com</a>
+        </p>
+        <p class="policy-date">개정일: 2026년 7월 27일</p>
+      </article>
     </div>
   </div>
 </section>
@@ -126,12 +361,12 @@
       </div>
       <div class="footer-nav">
         <div class="footer-nav-col"><h4>Menu</h4><a href="/">ホーム</a><a href="menu.html">メニュー</a><a href="shop.html">店舗情報</a></div>
-        <div class="footer-nav-col"><h4>Info</h4><a href="faq.html">FAQ</a><a href="privacy.html">プライバシーポリシー</a><a href="recruit.html">採用情報</a><a href="en/">English</a></div>
+        <div class="footer-nav-col"><h4>Info</h4><a href="faq.html">FAQ</a><a href="privacy.html?lang=ja">プライバシーポリシー</a><a href="recruit.html">採用情報</a><a href="en/">English</a></div>
       </div>
     </div>
     <div class="footer-bottom">
       <span>© 2026 身悠晏 All Rights Reserved.</span>
-      <div class="footer-legal"><a href="privacy.html">プライバシーポリシー</a><a href="recruit.html">採用情報</a></div>
+      <div class="footer-legal"><a href="privacy.html?lang=ja">プライバシーポリシー</a><a href="recruit.html">採用情報</a></div>
     </div>
   </div>
 </footer>
@@ -140,6 +375,37 @@
 const h=document.getElementById('siteHeader');window.addEventListener('scroll',()=>h.classList.toggle('scrolled',scrollY>10));
 const btn=document.getElementById('hamburger'),nav=document.getElementById('mobileNav');btn.addEventListener('click',()=>{btn.classList.toggle('active');nav.classList.toggle('open');const isOpen=nav.classList.contains('open');btn.setAttribute('aria-label',isOpen?'メニューを閉じる':'メニューを開く');btn.setAttribute('aria-expanded',String(isOpen));document.body.style.overflow=isOpen?'hidden':'';});function closeNav(){btn.classList.remove('active');nav.classList.remove('open');btn.setAttribute('aria-label','メニューを開く');btn.setAttribute('aria-expanded','false');document.body.style.overflow='';}
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('is-visible')}),{threshold:0.08,rootMargin:'0px 0px -30px 0px'});document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+const POLICY_META={
+  ja:{htmlLang:"ja",title:"プライバシーポリシー｜身悠晏 Shin Yuu An",description:"身悠晏のプライバシーポリシー（個人情報保護方針）について。",heading:"プライバシーポリシー"},
+  en:{htmlLang:"en",title:"Privacy Policy | Shin Yuu An",description:"Privacy Policy for Shin Yuu An website booking and customer information.",heading:"Privacy Policy"},
+  zh:{htmlLang:"zh-Hans",title:"隐私政策｜身悠晏 Shin Yuu An",description:"身悠晏网页预约及客人个人信息的隐私政策。",heading:"隐私政策"},
+  ko:{htmlLang:"ko",title:"개인정보 처리방침 | 신유안 Shin Yuu An",description:"신유안 웹 예약 및 고객 개인정보 처리방침입니다.",heading:"개인정보 처리방침"}
+};
+
+function policyLanguageFromQuery(){
+  const requested=new URLSearchParams(location.search).get("lang");
+  return Object.hasOwn(POLICY_META,requested)?requested:"ja";
+}
+
+function showPolicyLanguage(language,{updateUrl=false}={}){
+  const meta=POLICY_META[language]||POLICY_META.ja;
+  document.documentElement.lang=meta.htmlLang;
+  document.title=meta.title;
+  document.querySelector('meta[name="description"]').content=meta.description;
+  document.getElementById("policyPageTitle").textContent=meta.heading;
+  document.getElementById("policyBreadcrumb").textContent=meta.heading;
+  document.querySelectorAll("[data-policy-content]").forEach(article=>{article.hidden=article.dataset.policyContent!==language});
+  document.querySelectorAll("[data-policy-lang]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.policyLang===language)));
+  if(updateUrl){
+    const url=new URL(location.href);
+    url.searchParams.set("lang",language);
+    history.replaceState({},"",url);
+  }
+}
+
+document.querySelectorAll("[data-policy-lang]").forEach(button=>button.addEventListener("click",()=>showPolicyLanguage(button.dataset.policyLang,{updateUrl:true})));
+showPolicyLanguage(policyLanguageFromQuery());
 </script>
 <div class="mobile-fixed-cta" aria-label="固定予約ボタン">
   <a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener">HPB予約</a>
