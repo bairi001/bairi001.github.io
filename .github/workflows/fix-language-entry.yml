@@ -1,0 +1,129 @@
+name: Apply language entry cleanup
+
+on:
+  push:
+    branches:
+      - agent/language-entry-cleanup
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/language-entry-cleanup
+          fetch-depth: 0
+
+      - name: Apply scoped UI changes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          def read(path):
+              return Path(path).read_text(encoding='utf-8')
+
+          def write(path, text):
+              Path(path).write_text(text, encoding='utf-8')
+
+          def replace_once(path, old, new, label):
+              text = read(path)
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected exactly one {label}, found {count}')
+              write(path, text.replace(old, new, 1))
+
+          # 1) Keep HotPepper as the real-time availability CTA, but make the unified
+          # booking hub clearly visible as a secondary action.
+          index_path = 'index.html'
+          index = read(index_path)
+          old_hero = '<p class="premium-language"><a href="en/">English</a><span aria-hidden="true">/</span><a href="/booking.html?lang=ja">予約方法</a></p>'
+          new_hero = '<div class="premium-alt-booking"><a href="/booking.html?lang=ja" class="btn-secondary">その他の予約方法</a><span>ウェブ・WhatsApp・LINE・電話</span></div>'
+          if index.count(old_hero) != 1:
+              raise SystemExit(f'index.html: hero secondary booking link count={index.count(old_hero)}')
+          index = index.replace(old_hero, new_hero, 1)
+          hero_css = '''
+          .premium-alt-booking{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+          .premium-alt-booking .btn-secondary{min-height:44px;padding:10px 18px;background:rgba(253,255,254,.88);font-size:.84rem}
+          .premium-alt-booking span{color:var(--muted);font-size:.76rem;font-weight:700;line-height:1.5}
+          @media(max-width:600px){.premium-alt-booking{align-items:stretch;gap:8px}.premium-alt-booking .btn-secondary{width:100%}.premium-alt-booking span{width:100%;text-align:center}}
+          '''
+          if '.premium-alt-booking{' in index:
+              raise SystemExit('index.html: premium-alt-booking CSS already exists')
+          if '</style>' not in index:
+              raise SystemExit('index.html: first style block not found')
+          index = index.replace('</style>', hero_css + '</style>', 1)
+          write(index_path, index)
+
+          # 2) Add a visible four-language selector to Japanese inner pages.
+          language_nav = '''<nav class="inner-language-switch" id="language-options" aria-label="言語を選択"><a href="/" lang="ja" data-language-code="ja" aria-current="page">日本語</a><a href="/en/" lang="en" data-language-code="en">English</a><a href="/zh/" lang="zh-Hans" data-language-code="zh">中文</a><a href="/ko/" lang="ko" data-language-code="ko">한국어</a></nav>'''
+
+          page_markers = {
+              'menu.html': '<span class="section-en">Menu & Price</span>',
+              'shop.html': '<span class="section-en">Shop Information</span>',
+              'faq.html': '<span class="section-en">Frequently Asked Questions</span>',
+          }
+
+          for path, marker in page_markers.items():
+              text = read(path)
+              if 'class="inner-language-switch"' in text:
+                  raise SystemExit(f'{path}: language switch already exists')
+              if text.count(marker) != 1:
+                  raise SystemExit(f'{path}: page header marker count={text.count(marker)}')
+              text = text.replace(marker, language_nav + marker, 1)
+              if 'assets/language-routing.js' in text:
+                  raise SystemExit(f'{path}: language-routing.js unexpectedly already present')
+              if text.count('</body>') != 1:
+                  raise SystemExit(f'{path}: closing body count={text.count("</body>")}')
+              text = text.replace('</body>', '<script src="assets/language-routing.js"></script>\n</body>', 1)
+              write(path, text)
+
+          # 3) Replace the outdated LINE-only English note on the menu page.
+          replace_once(
+              'menu.html',
+              '<p class="section-lead">蒲田駅東口徒歩1分。足裏・整体・アロマリンパを中心に、お疲れに合わせて選べるメニューをご用意しています。<br>English-friendly. Please feel free to contact us on LINE.</p>',
+              '<p class="section-lead">蒲田駅東口徒歩1分。足裏・整体・アロマリンパを中心に、お疲れに合わせて選べるメニューをご用意しています。<br>主要メニュー・料金・予約方法は、English・中文・한국어の各言語ページでもご確認いただけます。</p>',
+              'outdated menu language note'
+          )
+
+          # 4) Shared visual treatment for the inner-page selector.
+          css_path = 'assets/style.css'
+          css = read(css_path)
+          marker = '/* inner language switch */'
+          if marker in css:
+              raise SystemExit('assets/style.css: inner language switch CSS already exists')
+          css += '''\n/* inner language switch */\n.inner-language-switch{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 28px}.inner-language-switch a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 13px;border:1px solid var(--goldline);border-radius:999px;background:rgba(253,255,254,.88);color:var(--muted);font-size:.78rem;font-weight:800;line-height:1.2}.inner-language-switch a:hover{border-color:var(--accent);color:var(--accent2)}.inner-language-switch a[aria-current="page"]{background:var(--accent2);border-color:var(--accent2);color:#fff}@media(max-width:600px){.inner-language-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:24px}.inner-language-switch a{min-width:0;min-height:42px;padding:7px 5px;font-size:.72rem;white-space:nowrap}}\n'''
+          write(css_path, css)
+
+          # 5) Scope and integrity assertions.
+          for path in ['index.html', 'menu.html', 'shop.html', 'faq.html']:
+              text = read(path)
+              if path != 'index.html' and text.count('class="inner-language-switch"') != 1:
+                  raise SystemExit(f'{path}: final language switch assertion failed')
+          if '空き状況を見て予約</a>' not in read('index.html'):
+              raise SystemExit('index.html: HotPepper real-time CTA was changed unexpectedly')
+          if read('index.html').count('/booking.html?lang=ja') < 1:
+              raise SystemExit('index.html: unified booking link missing')
+          PY
+
+      - name: Run repository checks
+        shell: bash
+        run: |
+          node scripts/check-site.mjs
+          node scripts/check-prices.mjs
+          git diff --check
+
+      - name: Commit scoped changes
+        shell: bash
+        run: |
+          rm .github/workflows/fix-language-entry.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "完善预约入口与内页多语言导航"
+          git push origin HEAD:agent/language-entry-cleanup
