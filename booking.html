@@ -341,7 +341,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
               <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="tel">
             </div>
           </div>
-          <label class="privacy-consent"><input id="privacyConsent" type="checkbox"><span data-i18n-html="privacyConsent">I agree to the <a href="privacy.html" target="_blank">Privacy Policy</a>.</span></label>
+          <label class="privacy-consent"><input id="privacyConsent" type="checkbox"><span data-i18n-html="privacyConsent">This is an appointment request, not a confirmed appointment. The appointment is confirmed only after the salon replies. By submitting on this website, I agree to the <a href="privacy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
         </div>
         <div class="honeypot-field" aria-hidden="true">
           <label for="website">Website</label>
@@ -380,15 +380,16 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
 </section>
 
 <footer class="booking-site-footer">
-  <p>© 2026 Shin Yuu An · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a></p>
+  <p>© 2026 Shin Yuu An · <a href="privacy.html?lang=en" id="footerPrivacyLink" data-i18n="privacy">Privacy Policy</a></p>
 </footer>
 
 <script>
 const WHATSAPP_NUMBER="817091659898";
-const FORM_BACKEND="google-apps-script";
-const FORM_ENDPOINT="";
-const FORM_PRIVACY_READY=false;
-const FORM_LIVE_TESTED=false;
+const FORM_BACKEND = 'google-apps-script';
+const FORM_ENDPOINT =
+  'https://script.google.com/macros/s/AKfycbyBjLo7VvZKz_8WzYMVDVk_1ESs3jFk-LFLTo2fzVaHvTvfkumq7cX1KgNWnHTHTyjb/exec';
+const FORM_PRIVACY_READY = true;
+const FORM_LIVE_TESTED = false;
 const FORM_STARTED_AT=new Date().toISOString();
 
 const COURSE_GROUPS=[
@@ -493,7 +494,7 @@ const I18N={
 
 Object.assign(I18N.en,{
   channelTitle:"Choose a booking channel",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"Call 03-6874-6808",channelWeb:"Website booking",
-  email:"Email",phone:"Phone",privacyConsent:'I agree to the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.',webSubmit:"Send booking request on this website",
+  email:"Email",phone:"Phone",privacyConsent:'This is an appointment request, not a confirmed appointment. The appointment is confirmed only after the salon replies. By submitting on this website, I agree to the <a href="privacy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>.',webSubmit:"Send booking request on this website",
   replyNote:"We usually reply as soon as possible during opening hours. Replies may be delayed when we are busy.",
   openingWhatsapp:"Opening WhatsApp…",whatsFallback:"If WhatsApp does not open, tap this link again.",phoneFallback:"Or call 03-6874-6808.",webSubmitting:"Sending your booking request…",webSent:"Booking request sent.",webError:"The request could not be sent. Your entries have been kept.",validEmail:"Enter a valid email address.",consentRequired:"Please agree to the Privacy Policy.",
   accessTitle:"How to find the salon",accessAddress:"5-12-3 Kamata, Ota-ku, Tokyo 144-0052 · Kitajima Building 4F",accessDirections:"About a 1-minute walk from JR Kamata Station East Exit. Enter the building, walk to the back, and take the elevator inside the entrance to the 4th floor.",openMap:"Open in Google Maps →",accessPhotoAlt:"Kitajima Building entrance and elevator",
@@ -501,7 +502,7 @@ Object.assign(I18N.en,{
 });
 Object.assign(I18N.zh,{
   channelTitle:"选择预约方式",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"电话 03-6874-6808",channelWeb:"网页预约",
-  email:"电子邮箱",phone:"电话号码",privacyConsent:'我同意<a href="privacy.html" target="_blank" rel="noopener">隐私政策</a>。',webSubmit:"通过本网页发送预约申请",
+  email:"电子邮箱",phone:"电话号码",privacyConsent:'提交的是预约申请，并不代表预约成功；收到店铺回复后，预约才正式成立。使用网页提交即表示同意<a href="privacy.html?lang=zh" target="_blank" rel="noopener">隐私政策</a>。',webSubmit:"通过本网页发送预约申请",
   replyNote:"营业时间内通常会尽快回复，繁忙时可能有所延迟。",
   openingWhatsapp:"正在打开WhatsApp……",whatsFallback:"如果WhatsApp没有打开，请再次点击此链接。",phoneFallback:"也可致电 03-6874-6808。",webSubmitting:"正在发送预约申请……",webSent:"预约申请已发送。",webError:"发送失败，已保留您填写的内容。",validEmail:"请输入有效的电子邮箱。",consentRequired:"请先同意隐私政策。",
   accessTitle:"如何找到店铺",accessAddress:"〒144-0052 东京都大田区蒲田5-12-3 北岛大楼4楼",accessDirections:"从JR蒲田站东口步行约1分钟。进入大楼后请向里面走，乘入口内部的电梯到4楼。",openMap:"在Google Maps中查看 →",accessPhotoAlt:"北岛大楼入口与电梯指引",
@@ -509,7 +510,7 @@ Object.assign(I18N.zh,{
 });
 Object.assign(I18N.ja,{
   channelTitle:"予約方法を選ぶ",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"電話 03-6874-6808",channelWeb:"ウェブ予約",
-  email:"メールアドレス",phone:"電話番号",privacyConsent:'<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します。',webSubmit:"このページから予約リクエストを送信",
+  email:"メールアドレス",phone:"電話番号",privacyConsent:'送信する内容は予約申請であり、予約確定ではありません。当店からの返信をもって予約が正式に成立します。ウェブから送信することにより、<a href="privacy.html?lang=ja" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します。',webSubmit:"このページから予約リクエストを送信",
   replyNote:"営業時間内は通常できるだけ早く返信いたします。混雑時は返信が遅れる場合があります。",
   openingWhatsapp:"WhatsAppを開いています…",whatsFallback:"WhatsAppが開かない場合は、こちらをもう一度押してください。",phoneFallback:"または 03-6874-6808 へお電話ください。",webSubmitting:"予約リクエストを送信しています…",webSent:"予約リクエストを送信しました。",webError:"送信できませんでした。入力内容は保持されています。",validEmail:"正しいメールアドレスを入力してください。",consentRequired:"プライバシーポリシーへの同意が必要です。",
   accessTitle:"店舗までの行き方",accessAddress:"〒144-0052 東京都大田区蒲田5-12-3 北島ビル4F",accessDirections:"JR蒲田駅東口から徒歩約1分です。ビルに入って奥へ進み、入口内部のエレベーターで4Fまでお越しください。",openMap:"Google Mapsで開く →",accessPhotoAlt:"北島ビル入口とエレベーター案内",
@@ -517,7 +518,7 @@ Object.assign(I18N.ja,{
 });
 Object.assign(I18N.ko,{
   channelTitle:"예약 방법 선택",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"전화 03-6874-6808",channelWeb:"웹 예약",
-  email:"이메일",phone:"전화번호",privacyConsent:'<a href="privacy.html" target="_blank" rel="noopener">개인정보 처리방침</a>에 동의합니다.',webSubmit:"이 웹페이지에서 예약 신청 보내기",
+  email:"이메일",phone:"전화번호",privacyConsent:'제출하는 내용은 예약 신청이며 예약 확정이 아닙니다. 매장의 답변을 받은 뒤 예약이 정식으로 확정됩니다. 웹페이지에서 제출하면 <a href="privacy.html?lang=ko" target="_blank" rel="noopener">개인정보 처리방침</a>에 동의하는 것으로 봅니다.',webSubmit:"이 웹페이지에서 예약 신청 보내기",
   replyNote:"영업시간에는 보통 가능한 한 빠르게 답변드립니다. 혼잡할 때는 답변이 늦어질 수 있습니다.",
   openingWhatsapp:"WhatsApp을 여는 중입니다…",whatsFallback:"WhatsApp이 열리지 않으면 이 링크를 다시 눌러 주세요.",phoneFallback:"또는 03-6874-6808로 전화해 주세요.",webSubmitting:"예약 신청을 보내는 중입니다…",webSent:"예약 신청이 전송되었습니다.",webError:"전송하지 못했습니다. 입력 내용은 그대로 유지됩니다.",validEmail:"올바른 이메일 주소를 입력해 주세요.",consentRequired:"개인정보 처리방침에 동의해 주세요.",
   accessTitle:"매장 찾아오는 길",accessAddress:"〒144-0052 도쿄도 오타구 가마타 5-12-3 기타지마 빌딩 4층",accessDirections:"JR 가마타역 동쪽 출구에서 도보 약 1분입니다. 빌딩에 들어간 뒤 안쪽으로 이동하여 입구 내부의 엘리베이터를 타고 4층으로 오세요.",openMap:"Google 지도에서 보기 →",accessPhotoAlt:"기타지마 빌딩 입구와 엘리베이터 안내"
@@ -649,6 +650,7 @@ function applyLanguage(next,{persist=false}={}){
   $("note").placeholder=I18N[lang].notePh;
   const homes={ja:"/",en:"/en/",zh:"/zh/",ko:"/ko/"};
   document.querySelector(".story-foot a").href=homes[lang];
+  $("footerPrivacyLink").href=`privacy.html?lang=${lang}`;
   buildCourses();buildTimes();buildExtras();buildChannels();updatePreview();
   const url=new URL(location.href);url.searchParams.set("lang",lang);history.replaceState({},"",url);
 }
