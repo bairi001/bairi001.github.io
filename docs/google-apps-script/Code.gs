@@ -83,18 +83,19 @@ function doPost(e) {
       }
 
       var booking = appendBookingRow_(payload, config);
-      CacheService.getScriptCache().put(
-        "submission:" + payload.submissionId,
-        "1",
-        SUBMISSION_CACHE_SECONDS
-      );
-      rememberBooking_(payload);
-
       var mailStatus = sendBookingMail_(payload, config);
       booking.sheet.getRange(booking.row, 17, 1, 2).setValues([[
         mailStatus,
         mailStatus === "sent" ? "recorded_mail_sent" : "recorded_mail_failed"
       ]]);
+      if (mailStatus === "sent") {
+        CacheService.getScriptCache().put(
+          "submission:" + payload.submissionId,
+          "1",
+          SUBMISSION_CACHE_SECONDS
+        );
+        rememberBooking_(payload);
+      }
 
       return jsonResponse_({ ok: true });
     } finally {
@@ -216,17 +217,24 @@ function isDuplicateSubmission_(submissionId, sheetId) {
   if (CacheService.getScriptCache().get("submission:" + submissionId) === "1") return true;
   var sheet = SpreadsheetApp.openById(sheetId).getSheets()[0];
   if (sheet.getLastRow() < 2) return false;
-  return Boolean(
-    sheet
-      .getRange(2, 1, sheet.getLastRow() - 1, 1)
-      .createTextFinder(submissionId)
-      .matchEntireCell(true)
-      .findNext()
-  );
+  var matches = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1, 1)
+    .createTextFinder(submissionId)
+    .matchEntireCell(true)
+    .findAll();
+  for (var index = 0; index < matches.length; index++) {
+    if (isHandledMailStatus_(sheet.getRange(matches[index].getRow(), 17).getValue())) return true;
+  }
+  return false;
 }
 
 function normalizeBookingKey_(value) {
   return String(value == null ? "" : value).trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function isHandledMailStatus_(value) {
+  var status = normalizeBookingKey_(value);
+  return status === "sent" || status === "pending";
 }
 
 function bookingFingerprint_(payload) {
@@ -260,13 +268,13 @@ function isDuplicateBooking_(payload, config) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
   var startRow = Math.max(2, lastRow - 99);
-  var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, 10).getValues();
+  var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, 18).getValues();
   var cutoff = Date.now() - DUPLICATE_WINDOW_SECONDS * 1000;
   for (var index = rows.length - 1; index >= 0; index--) {
     var receivedText = String(rows[index][1] || "").trim();
     var receivedAt = Date.parse(receivedText.replace(" ", "T") + "+09:00");
     if (!Number.isFinite(receivedAt) || receivedAt < cutoff) continue;
-    if (bookingRowMatches_(rows[index], payload)) return true;
+    if (bookingRowMatches_(rows[index], payload) && isHandledMailStatus_(rows[index][16])) return true;
   }
   return false;
 }
