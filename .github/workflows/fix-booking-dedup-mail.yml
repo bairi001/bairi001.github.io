@@ -1,0 +1,412 @@
+name: Apply booking deduplication and localized mail
+
+on:
+  push:
+    branches:
+      - agent/booking-dedup-mail-i18n
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/booking-dedup-mail-i18n
+          fetch-depth: 0
+
+      - name: Apply scoped changes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          def read(path):
+              return Path(path).read_text(encoding="utf-8")
+
+          def write(path, text):
+              Path(path).write_text(text, encoding="utf-8")
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected exactly one match, found {count}")
+              return text.replace(old, new, 1)
+
+          # ---------------- booking.html ----------------
+          path = "booking.html"
+          booking = read(path)
+
+          # Add explicit success text in every supported language.
+          replacements = {
+              'webSent:"Booking request sent.",': 'webSent:"Booking request sent.",webSentLocked:"Booking request sent. Please do not submit the same request again. Your appointment is confirmed only after we reply.",',
+              'webSent:"预约申请已发送。",': 'webSent:"预约申请已发送。",webSentLocked:"预约申请已发送，请勿重复提交。收到店铺回复后，预约才正式成立。",',
+              'webSent:"予約リクエストを送信しました。",': 'webSent:"予約リクエストを送信しました。",webSentLocked:"予約リクエストを送信しました。同じ内容を再送信しないでください。当店からの返信をもって予約確定となります。",',
+              'webSent:"예약 신청이 전송되었습니다.",': 'webSent:"예약 신청이 전송되었습니다.",webSentLocked:"예약 신청이 전송되었습니다. 같은 내용을 다시 제출하지 마세요. 매장의 답변을 받은 뒤 예약이 확정됩니다.",'
+          }
+          for old, new in replacements.items():
+              booking = replace_once(booking, old, new, f"booking i18n {old[:20]}")
+
+          state_old = 'const WEB_FORM_ENABLED=FORM_BACKEND==="google-apps-script"&&Boolean(FORM_ENDPOINT)&&FORM_PRIVACY_READY===true&&FORM_LIVE_TESTED===true;'
+          state_new = '''const WEB_FORM_ENABLED=FORM_BACKEND==="google-apps-script"&&Boolean(FORM_ENDPOINT)&&FORM_PRIVACY_READY===true&&FORM_LIVE_TESTED===true;
+          let webSubmissionId="";
+          let webSubmissionSignature="";
+          let webSubmissionInFlight=false;
+          let webSubmissionSucceeded=false;'''
+          booking = replace_once(booking, state_old, state_new, "booking submission state")
+
+          preview_old = '''function updatePreview(){
+            const complete=Boolean(selectedCourse()&&$("date").value&&$("time").value&&$("name").value.trim());
+            $("preview").textContent=complete?messageText():I18N[lang].fillAll;
+            $("submitButton").disabled=!complete;
+            if($("webSubmitButton"))$("webSubmitButton").disabled=!complete;
+            $("estimate").textContent=selectedCourse()?(guests==="1"?I18N[lang].estimateSingle(currentPrice()):I18N[lang].estimateGroup(currentPrice())):"";
+          }'''
+          preview_new = '''function updatePreview(){
+            const complete=Boolean(selectedCourse()&&$("date").value&&$("time").value&&$("name").value.trim());
+            $("preview").textContent=complete?messageText():I18N[lang].fillAll;
+            $("submitButton").disabled=!complete;
+            if($("webSubmitButton"))$("webSubmitButton").disabled=!complete||webSubmissionInFlight||webSubmissionSucceeded;
+            $("estimate").textContent=selectedCourse()?(guests==="1"?I18N[lang].estimateSingle(currentPrice()):I18N[lang].estimateGroup(currentPrice())):"";
+          }'''
+          booking = replace_once(booking, preview_old, preview_new, "booking updatePreview")
+
+          id_old = '''function submissionId(){
+            if(globalThis.crypto?.randomUUID)return crypto.randomUUID();
+            if(globalThis.crypto?.getRandomValues){
+              const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);
+              bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;
+              return [...bytes].map((value,index)=>([4,6,8,10].includes(index)?"-":"")+value.toString(16).padStart(2,"0")).join("");
+            }
+            return "";
+          }
+
+          function webPayload(){'''
+          id_new = '''function submissionId(){
+            if(globalThis.crypto?.randomUUID)return crypto.randomUUID();
+            if(globalThis.crypto?.getRandomValues){
+              const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);
+              bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;
+              return [...bytes].map((value,index)=>([4,6,8,10].includes(index)?"-":"")+value.toString(16).padStart(2,"0")).join("");
+            }
+            return "";
+          }
+
+          function webSubmissionSignatureValue(){
+            const course=selectedCourse();
+            return JSON.stringify({
+              courseId:course?.key||"",
+              date:$("date").value,
+              time:timeLabel(),
+              guests:String(guests),
+              name:$("name").value.trim(),
+              email:$("email").value.trim().toLowerCase(),
+              phone:$("phone").value.trim(),
+              note:$("note").value.trim(),
+              lang
+            });
+          }
+
+          function stableWebSubmissionId(){
+            const signature=webSubmissionSignatureValue();
+            if(!webSubmissionId||signature!==webSubmissionSignature){
+              webSubmissionId=submissionId();
+              webSubmissionSignature=signature;
+            }
+            return webSubmissionId;
+          }
+
+          function webPayload(){'''
+          booking = replace_once(booking, id_old, id_new, "booking stable submission ID helpers")
+          booking = replace_once(booking, 'submissionId:submissionId(),', 'submissionId:stableWebSubmissionId(),', "booking payload submission ID")
+
+          submit_pattern = re.compile(r'''async function submitWebForm\(\)\{.*?\n\}\n\ndocument\.querySelectorAll\("\[data-lang\]"\)''', re.S)
+          match = submit_pattern.search(booking)
+          if not match:
+              raise SystemExit("booking submitWebForm block not found")
+          submit_new = '''async function submitWebForm(){
+            if(!WEB_FORM_ENABLED)return;
+            if(webSubmissionSucceeded){
+              $("submitStatus").textContent=I18N[lang].webSentLocked;
+              updatePreview();
+              return;
+            }
+            if(webSubmissionInFlight)return;
+            updatePreview();
+            if($("webSubmitButton")?.disabled)return;
+            if(!$("email").validity.valid||!$("email").value.trim()){
+              $("submitStatus").textContent=I18N[lang].validEmail;$("email").focus();return;
+            }
+            if(!$("privacyConsent").checked){
+              $("submitStatus").textContent=I18N[lang].consentRequired;$("privacyConsent").focus();return;
+            }
+            const payload=webPayload();
+            if(!payload.submissionId){
+              showWhatsAppStatus(whatsappUrl(),false);return;
+            }
+            webSubmissionInFlight=true;
+            $("submitStatus").textContent=I18N[lang].webSubmitting;
+            updatePreview();
+            trackEvent("booking_form_start",{language:lang,channel:"web"});
+            const abortController=new AbortController();
+            const timeout=setTimeout(()=>abortController.abort(),12000);
+            try{
+              // text/plain avoids a CORS preflight. Apps Script may redirect its response.
+              const response=await fetch(FORM_ENDPOINT,{
+                method:"POST",
+                headers:{"Content-Type":"text/plain;charset=utf-8"},
+                credentials:"omit",
+                redirect:"follow",
+                body:JSON.stringify(payload),
+                signal:abortController.signal
+              });
+              const result=await response.json();
+              if(result?.ok!==true)throw new Error("Request was not accepted");
+              webSubmissionSucceeded=true;
+              $("submitStatus").textContent=I18N[lang].webSentLocked;
+              trackEvent("booking_form_submit_success",{language:lang,channel:"web",duplicate:Boolean(result?.duplicate)});
+            }catch(_){
+              showWhatsAppStatus(whatsappUrl(),false);
+              trackEvent("booking_form_submit_error",{language:lang,channel:"web"});
+            }finally{
+              clearTimeout(timeout);
+              webSubmissionInFlight=false;
+              updatePreview();
+            }
+          }
+
+          document.querySelectorAll("[data-lang]")'''
+          booking = booking[:match.start()] + submit_new + booking[match.end():]
+
+          endpoint = 'https://script.google.com/macros/s/AKfycbyBjLo7VvZKz_8WzYMVDVk_1ESs3jFk-LFLTo2fzVaHvTvfkumq7cX1KgNWnHTHTyjb/exec'
+          if booking.count(endpoint) != 1:
+              raise SystemExit("booking endpoint changed unexpectedly")
+          write(path, booking)
+
+          # ---------------- Code.gs ----------------
+          path = "docs/google-apps-script/Code.gs"
+          code = read(path)
+          code = replace_once(code, 'var SERVICE_VERSION = "1";', 'var SERVICE_VERSION = "2";', "Apps Script service version")
+          code = replace_once(code, 'var SUBMISSION_CACHE_SECONDS = 21600;', 'var SUBMISSION_CACHE_SECONDS = 21600;\nvar DUPLICATE_WINDOW_SECONDS = 300;', "Apps Script duplicate window")
+
+          duplicate_check_old = '''      if (isDuplicateSubmission_(payload.submissionId, config.sheetId)) {
+                return jsonResponse_({ ok: true, duplicate: true });
+              }
+              if (!checkRateLimit_(config.maxPerHour)) {'''
+          duplicate_check_new = '''      if (isDuplicateSubmission_(payload.submissionId, config.sheetId)) {
+                return jsonResponse_({ ok: true, duplicate: true });
+              }
+              if (isDuplicateBooking_(payload, config)) {
+                return jsonResponse_({ ok: true, duplicate: true });
+              }
+              if (!checkRateLimit_(config.maxPerHour)) {'''
+          code = replace_once(code, duplicate_check_old, duplicate_check_new, "Apps Script duplicate content check")
+
+          remember_old = '''      CacheService.getScriptCache().put(
+                "submission:" + payload.submissionId,
+                "1",
+                SUBMISSION_CACHE_SECONDS
+              );
+
+              var mailStatus = sendBookingMail_(payload, config);'''
+          remember_new = '''      CacheService.getScriptCache().put(
+                "submission:" + payload.submissionId,
+                "1",
+                SUBMISSION_CACHE_SECONDS
+              );
+              rememberBooking_(payload);
+
+              var mailStatus = sendBookingMail_(payload, config);'''
+          code = replace_once(code, remember_old, remember_new, "Apps Script remember booking")
+
+          duplicate_helpers_marker = '''function checkRateLimit_(maxPerHour) {'''
+          duplicate_helpers = '''function normalizeBookingKey_(value) {
+            return String(value == null ? "" : value).trim().toLowerCase().replace(/\\s+/g, " ");
+          }
+
+          function bookingFingerprint_(payload) {
+            var source = [
+              normalizeBookingKey_(payload.email),
+              normalizeBookingKey_(payload.date),
+              normalizeBookingKey_(payload.time),
+              normalizeBookingKey_(payload.courseId),
+              normalizeBookingKey_(payload.guests),
+              normalizeBookingKey_(payload.name)
+            ].join("|");
+            return Utilities.computeDigest(
+              Utilities.DigestAlgorithm.SHA_256,
+              source,
+              Utilities.Charset.UTF_8
+            ).map(function(byte) {
+              var value = (byte + 256) % 256;
+              return ("0" + value.toString(16)).slice(-2);
+            }).join("");
+          }
+
+          function bookingRowMatches_(row, payload) {
+            return normalizeBookingKey_(row[3]) === normalizeBookingKey_(payload.courseId) &&
+              normalizeBookingKey_(row[5]) === normalizeBookingKey_(payload.date) &&
+              normalizeBookingKey_(row[6]) === normalizeBookingKey_(payload.time) &&
+              normalizeBookingKey_(row[7]) === normalizeBookingKey_(payload.guests) &&
+              normalizeBookingKey_(row[8]) === normalizeBookingKey_(payload.name) &&
+              normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email);
+          }
+
+          function isDuplicateBooking_(payload, config) {
+            var cacheKey = "booking:" + bookingFingerprint_(payload);
+            if (CacheService.getScriptCache().get(cacheKey) === "1") return true;
+
+            var sheet = SpreadsheetApp.openById(config.sheetId).getSheets()[0];
+            var lastRow = sheet.getLastRow();
+            if (lastRow < 2) return false;
+
+            var startRow = Math.max(2, lastRow - 99);
+            var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, 10).getValues();
+            var cutoff = Date.now() - DUPLICATE_WINDOW_SECONDS * 1000;
+            for (var index = rows.length - 1; index >= 0; index--) {
+              var receivedText = String(rows[index][1] || "").trim();
+              var receivedAt = Date.parse(receivedText.replace(" ", "T") + "+09:00");
+              if (!Number.isFinite(receivedAt) || receivedAt < cutoff) continue;
+              if (bookingRowMatches_(rows[index], payload)) return true;
+            }
+            return false;
+          }
+
+          function rememberBooking_(payload) {
+            CacheService.getScriptCache().put(
+              "booking:" + bookingFingerprint_(payload),
+              "1",
+              DUPLICATE_WINDOW_SECONDS
+            );
+          }
+
+          function checkRateLimit_(maxPerHour) {'''
+          code = replace_once(code, duplicate_helpers_marker, duplicate_helpers, "Apps Script duplicate helper insertion")
+
+          mail_pattern = re.compile(r'''function sendBookingMail_\(payload, config\) \{.*?\n\}\n\nfunction jsonResponse_''', re.S)
+          mail_match = mail_pattern.search(code)
+          if not mail_match:
+              raise SystemExit("Apps Script sendBookingMail_ block not found")
+          mail_new = '''function buildBookingMail_(payload) {
+            var templates = {
+              ja: {
+                subject: "【身悠晏】ご予約リクエスト ",
+                title: "身悠晏 ご予約リクエスト",
+                language: "言語", course: "コース", date: "日付", time: "時間", guests: "人数",
+                name: "お名前", email: "メール", phone: "電話", note: "備考",
+                noPhone: "未入力", noNote: "なし",
+                closing: "最終料金は店舗からの返信にてご確認ください。"
+              },
+              en: {
+                subject: "[Shin Yuu An] Booking Request ",
+                title: "Shin Yuu An Booking Request",
+                language: "Language", course: "Course", date: "Date", time: "Time", guests: "Guests",
+                name: "Name", email: "Email", phone: "Phone", note: "Note",
+                noPhone: "Not provided", noNote: "None",
+                closing: "The final price will be confirmed in the salon's reply."
+              },
+              zh: {
+                subject: "【身悠晏】预约申请 ",
+                title: "身悠晏 网页预约申请",
+                language: "语言", course: "套餐", date: "日期", time: "时间", guests: "人数",
+                name: "姓名", email: "邮箱", phone: "电话", note: "备注",
+                noPhone: "未填写", noNote: "无",
+                closing: "最终价格请由店铺回复确认。"
+              },
+              ko: {
+                subject: "[신유안] 예약 요청 ",
+                title: "신유안 예약 요청",
+                language: "언어", course: "코스", date: "날짜", time: "시간", guests: "인원",
+                name: "이름", email: "이메일", phone: "전화번호", note: "메모",
+                noPhone: "미입력", noNote: "없음",
+                closing: "최종 요금은 매장의 답변에서 확인해 주세요."
+              }
+            };
+            var text = templates[payload.lang] || templates.en;
+            var subject = (text.subject + payload.date).replace(/[\\r\\n]+/g, " ").slice(0, 160);
+            var body = [
+              text.title,
+              "",
+              text.language + ": " + payload.lang,
+              text.course + ": " + payload.courseLabel + " (" + payload.courseId + ")",
+              text.date + ": " + payload.date,
+              text.time + ": " + payload.time,
+              text.guests + ": " + payload.guests,
+              text.name + ": " + payload.name,
+              text.email + ": " + payload.email,
+              text.phone + ": " + (payload.phone || text.noPhone),
+              text.note + ": " + (payload.note || text.noNote),
+              "",
+              text.closing
+            ].join("\\n");
+            return { subject: subject, body: body };
+          }
+
+          function sendBookingMail_(payload, config) {
+            try {
+              if (MailApp.getRemainingDailyQuota() < 1) return "quota_unavailable";
+              var mail = buildBookingMail_(payload);
+              MailApp.sendEmail({
+                to: config.toMail,
+                replyTo: payload.email,
+                name: "身悠晏 Shin Yuu An",
+                subject: mail.subject,
+                body: mail.body
+              });
+              return "sent";
+            } catch (error) {
+              console.error("Booking notification mail failed");
+              return "failed";
+            }
+          }
+
+          function jsonResponse_'''
+          code = code[:mail_match.start()] + mail_new + code[mail_match.end():]
+
+          required = [
+              'var SERVICE_VERSION = "2";',
+              'var DUPLICATE_WINDOW_SECONDS = 300;',
+              'function isDuplicateBooking_(payload, config)',
+              'name: "身悠晏 Shin Yuu An"',
+              'subject: "【身悠晏】ご予約リクエスト "',
+              'subject: "[Shin Yuu An] Booking Request "',
+              'subject: "【身悠晏】预约申请 "',
+              'subject: "[신유안] 예약 요청 "'
+          ]
+          for item in required:
+              if item not in code:
+                  raise SystemExit(f"Apps Script assertion missing: {item}")
+          if 'name: "身悠晏予約受付"' in code or '网页预约申请 " + payload.date' in code:
+              raise SystemExit("Apps Script old fixed-language mail code remains")
+          write(path, code)
+          PY
+
+      - name: Validate changes
+        shell: bash
+        run: |
+          node scripts/check-site.mjs
+          node scripts/check-prices.mjs
+          cp docs/google-apps-script/Code.gs /tmp/Code.js
+          node --check /tmp/Code.js
+          git diff --check
+          git diff --name-only | sort > /tmp/changed.txt
+          printf '%s\n' booking.html docs/google-apps-script/Code.gs | sort > /tmp/expected.txt
+          diff -u /tmp/expected.txt /tmp/changed.txt
+          grep -F 'submissionId:stableWebSubmissionId()' booking.html
+          grep -F 'webSubmissionSucceeded=true' booking.html
+          grep -F 'var DUPLICATE_WINDOW_SECONDS = 300;' docs/google-apps-script/Code.gs
+          grep -F 'name: "身悠晏 Shin Yuu An"' docs/google-apps-script/Code.gs
+
+      - name: Commit scoped changes
+        shell: bash
+        run: |
+          rm .github/workflows/fix-booking-dedup-mail.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add booking.html docs/google-apps-script/Code.gs .github/workflows/fix-booking-dedup-mail.yml
+          git commit -m "防止网页预约重复提交并优化通知邮件"
+          git push origin HEAD:agent/booking-dedup-mail-i18n
