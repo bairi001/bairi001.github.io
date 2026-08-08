@@ -1,0 +1,30 @@
+name: One-time SEO polish
+
+on:
+  push:
+    branches:
+      - feature/recruit-conversion-v2
+    paths:
+      - '.github/workflows/seo-polish.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/recruit-conversion-v2
+          fetch-depth: 0
+      - name: Apply final polish
+        run: python .github/seo_polish.py
+      - name: Commit final polish
+        run: |
+          rm -f .github/seo_polish.py .github/workflows/seo-polish.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Polish local SEO accuracy and visitor UX"
+          git push origin HEAD:feature/recruit-conversion-v2
