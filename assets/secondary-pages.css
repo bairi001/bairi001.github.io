@@ -1,0 +1,37 @@
+/* Shared shell fixes for local SEO and recruitment detail pages. */
+.secondary-page{padding-top:var(--header-h)}
+.secondary-page .site-header{top:0}
+.secondary-page .intent-wrap,.secondary-page .jd{padding-top:34px}
+.secondary-page .breadcrumb{margin-top:0}
+.secondary-page .mobile-nav{display:none}
+.secondary-page .mobile-nav.open{display:grid}
+.secondary-page .secondary-main-nav{display:flex;align-items:center;gap:20px}
+.secondary-page .secondary-main-nav a{position:relative;color:var(--muted);font-size:.82rem;font-weight:700;padding:7px 0}
+.secondary-page .secondary-main-nav .nav-cta{padding:8px 16px;border-radius:999px;background:var(--accent);color:#fff}
+.secondary-page .secondary-main-nav .nav-cta:hover{background:var(--accent2);color:#fff}
+.secondary-page .secondary-mobile-nav a{min-height:46px;display:flex;align-items:center;padding:10px 14px;border-radius:var(--radius-md);color:var(--heading);font-weight:700}
+.secondary-page .secondary-mobile-nav .mobile-cta{background:var(--accent);color:#fff}
+.secondary-page .intent-hero h1,.secondary-page .jd h1{overflow-wrap:anywhere}
+.secondary-page .intent-hero img{box-shadow:var(--shadow)}
+.secondary-page .site-footer{margin-top:0}
+.secondary-page .footer-bottom{gap:16px;flex-wrap:wrap}
+.secondary-page .secondary-language-pill{display:none}
+@media(max-width:900px){
+  .secondary-page .secondary-main-nav{display:none}
+  .secondary-page .hamburger{display:block}
+  .secondary-page .secondary-language-pill{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px 11px;margin-left:auto;border:1px solid var(--goldline);border-radius:999px;background:var(--card);color:var(--heading);font-size:.76rem;font-weight:800}
+  .secondary-page .intent-wrap,.secondary-page .jd{padding-top:24px}
+}
+@media(max-width:760px){
+  .secondary-page .intent-hero{grid-template-columns:1fr!important;padding:26px 0 30px!important;gap:22px!important}
+  .secondary-page .intent-hero h1,.secondary-page .jd h1{font-size:clamp(1.65rem,8vw,2.25rem)!important}
+  .secondary-page .intent-actions,.secondary-page .jd-actions{align-items:stretch}
+  .secondary-page .intent-actions a,.secondary-page .jd-actions a{width:100%}
+}
+@media(max-width:520px){
+  .secondary-page .container{width:min(100% - 32px,var(--max-w))}
+  .secondary-page .logo-tagline{display:none}
+  .secondary-page .logo-divider{display:none}
+  .secondary-page .intent-facts{gap:6px}
+  .secondary-page .intent-facts span{font-size:.74rem}
+}
