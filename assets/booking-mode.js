@@ -22,6 +22,10 @@
 
   let bookingMode = WEB_FORM_ENABLED ? "web" : "whatsapp";
   const previewLabel = document.querySelector('[data-i18n="preview"]');
+  const hideRedundantHpbBanner = () => {
+    const banner = $("jaHpbBanner");
+    if (banner) banner.hidden = true;
+  };
 
   const setBookingMode = (mode, { focus = false } = {}) => {
     bookingMode = mode === "web" && WEB_FORM_ENABLED ? "web" : "whatsapp";
@@ -93,6 +97,7 @@
     }
 
     setBookingMode(bookingMode);
+    hideRedundantHpbBanner();
   };
 
   buildChannels = renderChannels;
@@ -101,12 +106,14 @@
   applyLanguage = function(next, options = {}) {
     originalApplyLanguage(next, options);
     renderChannels();
+    hideRedundantHpbBanner();
   };
 
   const style = document.createElement("style");
   style.textContent = `
     .channel-button.active{background:var(--sea-deep);border-color:var(--sea-deep);color:#fff}
     .channel-button.active:hover{background:var(--sea);border-color:var(--sea);color:#fff}
+    .ja-hpb-banner{display:none!important}
     [hidden]{display:none!important}
   `;
   document.head.append(style);
