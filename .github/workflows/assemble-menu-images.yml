@@ -1,0 +1,45 @@
+name: Assemble menu image assets
+
+on:
+  push:
+    branches:
+      - fix/menu-image-semantic-quality-20260810
+    paths:
+      - '.image-parts/READY'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Assemble WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/img
+          cat .image-parts/body/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-bodycare-dry-hq.webp
+          cat .image-parts/aroma/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-aroma-back-hq.webp
+          cat .image-parts/head/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-head-care-hq.webp
+          test -s assets/img/menu-bodycare-dry-hq.webp
+          test -s assets/img/menu-aroma-back-hq.webp
+          test -s assets/img/menu-head-care-hq.webp
+          file assets/img/menu-bodycare-dry-hq.webp | grep -qi webp
+          file assets/img/menu-aroma-back-hq.webp | grep -qi webp
+          file assets/img/menu-head-care-hq.webp | grep -qi webp
+          rm -rf .image-parts
+          rm -f .github/workflows/assemble-menu-images.yml
+      - name: Commit assembled images
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m '接入菜单高清语义匹配图片'
+          git push
