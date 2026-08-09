@@ -34,6 +34,60 @@
     return destination.href;
   };
 
+  const configureHomeMobileCta = () => {
+    const pathname = location.pathname.replace(/\/index\.html$/, "/");
+    const homeLang = Object.entries(ROUTES).find(([, route]) => route === pathname)?.[0];
+    const bar = document.querySelector(".mobile-fixed-cta");
+    if (!homeLang || !bar) return;
+
+    const bookingHref = lang => `/booking.html?lang=${lang}`;
+    const whatsappHref = lang => `/booking.html?lang=${lang}&mode=whatsapp`;
+    const configs = {
+      ja: [
+        { label: "HotPepper予約", href: "https://beauty.hotpepper.jp/kr/slnH000397723/", external: true, channel: "hpb" },
+        { label: "ウェブ予約", href: bookingHref("ja"), channel: "web" },
+        { label: "LINE相談", href: "https://page.line.me/017hlpiu", external: true, channel: "line" }
+      ],
+      en: [
+        { label: "Book Online", href: bookingHref("en"), channel: "web" },
+        { label: "WhatsApp", href: whatsappHref("en"), channel: "whatsapp" },
+        { label: "Call", href: "tel:0368746808", channel: "phone" }
+      ],
+      zh: [
+        { label: "网页预约", href: bookingHref("zh"), channel: "web" },
+        { label: "WhatsApp", href: whatsappHref("zh"), channel: "whatsapp" },
+        { label: "LINE", href: "https://page.line.me/017hlpiu", external: true, channel: "line" }
+      ],
+      ko: [
+        { label: "온라인 예약", href: bookingHref("ko"), channel: "web" },
+        { label: "WhatsApp", href: whatsappHref("ko"), channel: "whatsapp" },
+        { label: "LINE", href: "https://page.line.me/017hlpiu", external: true, channel: "line" }
+      ]
+    };
+
+    const links = configs[homeLang].map(item => {
+      const link = document.createElement("a");
+      link.href = item.href;
+      link.textContent = item.label;
+      link.dataset.track = `mobile_${item.channel}`;
+      if (item.external) {
+        link.target = "_blank";
+        link.rel = "noopener";
+      }
+      link.addEventListener("click", () => {
+        track("mobile_conversion_click", { language: homeLang, channel: item.channel });
+      });
+      return link;
+    });
+
+    bar.replaceChildren(...links);
+    if (homeLang !== "ja") {
+      bar.style.gridTemplateColumns = "minmax(0,1fr) minmax(0,1fr) minmax(56px,.72fr)";
+    }
+  };
+
+  configureHomeMobileCta();
+
   try {
     const utmKey = "sya_first_utm";
     if (!sessionStorage.getItem(utmKey)) {
