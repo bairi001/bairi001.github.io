@@ -35,7 +35,7 @@ for (const [file, url] of indexableFiles) {
   if (!canonical) fail(file, "missing canonical");
   else if (canonical !== url) fail(file, `canonical mismatch: expected ${url}, found ${canonical}`);
 
-  if (/WhatsApp/i.test(html)) fail(file, "disabled WhatsApp booking copy remains in raw indexable HTML");
+  if (/https?:\/\/wa\.me\//i.test(html)) fail(file, "indexable page must not bypass the structured booking form with a direct wa.me link");
   if (/(完全個室|個室サロン|全室個室)/.test(html)) fail(file, "forbidden private-room wording remains in raw HTML");
 
   for (const [index, match] of [...html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)].entries()) {
@@ -102,6 +102,34 @@ for (const file of ["index.html", "menu.html", "shop.html", "faq.html", "en/inde
   if (source.includes("site-closeout.js")) fail(file, "runtime SEO closeout script must not be referenced");
 }
 
+const bookingMode = await read("assets/booking-mode.js");
+if (!/const\s+WHATSAPP_CHANNEL_ENABLED\s*=\s*true\s*;/.test(bookingMode)) {
+  fail("assets/booking-mode.js", "WhatsApp channel should be enabled after account restoration");
+}
+if (!bookingMode.includes('get("mode")') || !bookingMode.includes('requestedMode === "whatsapp"')) {
+  fail("assets/booking-mode.js", "booking page must support a mode=whatsapp deep link without bypassing the form");
+}
+
+const booking = await read("booking.html");
+if (!booking.includes("https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText())}")) {
+  fail("booking.html", "WhatsApp handoff must use the generated structured message");
+}
+for (const required of ["labels.course", "labels.date", "labels.time", "labels.guests", "labels.name", "via shinyuuan.jp/booking.html"]) {
+  if (!booking.includes(required)) fail("booking.html", `structured WhatsApp message field missing: ${required}`);
+}
+
+const routing = await read("assets/language-routing.js");
+if (/https?:\/\/wa\.me\//i.test(routing)) {
+  fail("assets/language-routing.js", "homepage WhatsApp CTA must route through booking.html, not directly to wa.me");
+}
+for (const required of [
+  'label: "HotPepper予約"', 'label: "ウェブ予約"', 'label: "LINE相談"',
+  'label: "Book Online"', 'label: "WhatsApp"', 'label: "Call"',
+  'label: "网页预约"', 'label: "온라인 예약"', 'mode=whatsapp'
+]) {
+  if (!routing.includes(required)) fail("assets/language-routing.js", `mobile CTA configuration missing: ${required}`);
+}
+
 for (const localized of ["https://shinyuuan.jp/zh/", "https://shinyuuan.jp/ko/"]) {
   const block = sitemap.match(new RegExp(`<url><loc>${localized.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</loc><lastmod>([^<]+)</lastmod>`))?.[1];
   if (block !== "2026-08-09") fail("sitemap.xml", `${localized} lastmod should reflect the current significant SEO update`);
@@ -111,4 +139,4 @@ if (errors.length) {
   console.error(`SEO consistency check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages, structured data, noindex rules, internal links, channel state, local-business facts and static content guards.`);
+console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages, structured data, noindex rules, internal links, restored WhatsApp channel, structured booking handoff, mobile conversion CTAs, local-business facts and static content guards.`);
