@@ -55,12 +55,12 @@
     const style = document.createElement("style");
     style.id = "siteCloseoutStyle";
     style.textContent = `
-      .menu-global-actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 2px}
+      .menu-global-actions{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 34px}
       .menu-global-actions .btn-primary,.menu-global-actions .btn-secondary{min-height:44px}
       .menu-option-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 22px}
-      .menu-option-photo-grid figure{overflow:hidden;border:1px solid var(--goldline);border-radius:14px;background:var(--card)}
+      .menu-option-photo-grid figure{overflow:hidden;border:1px solid rgba(74,55,40,.12);border-radius:14px;background:#fff}
       .menu-option-photo-grid img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
-      .menu-option-photo-grid figcaption{padding:10px 12px;color:var(--heading);font-size:.78rem;font-weight:700}
+      .menu-option-photo-grid figcaption{padding:10px 12px;color:#3F332B;font-size:.78rem;font-weight:700}
       .menu-web-cta{text-align:center;margin-top:22px}
       @media(max-width:600px){.menu-global-actions{display:grid}.menu-global-actions a{width:100%}.menu-option-photo-grid{grid-template-columns:1fr}}
     `;
@@ -90,15 +90,17 @@
     injectStyle();
     $$(".menu-section .menu-actions").forEach(el => el.remove());
 
-    const jump = $(".menu-jump");
-    if (jump && !$(".menu-global-actions")) {
+    if (!$(".menu-global-actions")) {
       const actions = document.createElement("div");
       actions.className = "menu-global-actions";
       actions.innerHTML = `
         <a class="btn-primary" href="/booking.html?lang=ja">ウェブで予約リクエスト</a>
         <a class="btn-secondary" href="${HPB_COUPON}" target="_blank" rel="noopener">HotPepperで空席・クーポンを見る</a>
         <a class="btn-secondary" href="${LINE}" target="_blank" rel="noopener">LINEで相談する</a>`;
-      jump.insertAdjacentElement("afterend", actions);
+      const firstSection = $(".menu-section");
+      const jump = $(".menu-jump");
+      if (firstSection) firstSection.insertAdjacentElement("beforebegin", actions);
+      else if (jump) jump.insertAdjacentElement("afterend", actions);
     }
 
     const bodyImg = $("#bodycare .menu-photo img");
@@ -177,12 +179,15 @@
       ["Use the short English form and choose website booking or WhatsApp. LINE and phone are also available.", "Use the short English form to send a booking request. LINE and phone are also available."],
       ["Submit directly on the website or send the prepared request through WhatsApp.", "Submit directly on the website. We will reply after checking availability."],
       ["English menu, WhatsApp booking and directions for visitors to Tokyo.", "English menu, online booking and directions for visitors to Tokyo."],
+      ["Basic English is OK in person. For booking, use the English booking page and choose website booking or WhatsApp. LINE is also available.", "Basic English is OK in person. For booking, use the English booking page. LINE is also available."],
+      ["Website booking or WhatsApp", "Website booking request"],
       ["Private treatment room", "Private treatment space · curtain entrance"]
     ]);
   };
 
   const patchZh = () => {
     setMeta('meta[name="description"]', "东京蒲田站东口步行约1分钟。身悠晏提供足底护理、身体放松与香薰精油护理，营业时间11:00至次日凌晨2点，可用中文通过网页发送预约申请。");
+    setMeta('meta[property="og:description"]', "蒲田站东口步行约1分钟，提供足底护理、身体放松与香薰精油护理。营业时间11:00至次日凌晨2点，1月1日休息。");
     replaceTextNodes(document.body, [
       ["每天开始营业", "开始营业"],
       ["填写中文预约表单后，可直接通过网页提交，也可通过WhatsApp发送。", "填写中文预约表单后，可直接通过网页提交。"],
@@ -194,6 +199,7 @@
 
   const patchKo = () => {
     setMeta('meta[name="description"]', "도쿄 가마타역 동쪽 출구에서 도보 약 1분. 신유안은 발 케어, 바디 릴랙세이션, 아로마 오일 트리트먼트를 제공하며 영업시간은 11:00부터 다음 날 새벽 2시까지입니다. 한국어 웹 예약 신청이 가능합니다.");
+    setMeta('meta[property="og:description"]', "가마타역 동쪽 출구 도보 약 1분. 발 케어, 바디 릴랙세이션, 아로마 오일 트리트먼트. 영업시간 11:00~다음 날 2:00, 1월 1일 휴무.");
     replaceTextNodes(document.body, [
       ["매일 영업 시작", "영업 시작"],
       ["한국어 예약 양식을 작성한 뒤 웹페이지에서 바로 제출하거나 WhatsApp으로 보낼 수 있습니다.", "한국어 예약 양식을 작성한 뒤 웹페이지에서 바로 제출할 수 있습니다."],
