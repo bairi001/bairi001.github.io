@@ -1,25 +1,6 @@
 (() => {
   "use strict";
 
-  const ensureAuditStyles = () => {
-    if (document.querySelector('link[data-sya-audit-fixes]')) return;
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "/assets/site-audit-fixes.css";
-    link.dataset.syaAuditFixes = "1";
-    document.head.appendChild(link);
-  };
-  const applyAuditCopyFixes = () => {
-    document.querySelectorAll(".coupon-note").forEach(el => el.remove());
-    document.querySelectorAll(".premium-facts li").forEach(el => {
-      if (el.textContent.trim() === "落ち着ける個室空間") el.textContent = "落ち着ける施術スペース";
-    });
-    document.querySelectorAll(".trust-badge").forEach(el => {
-      if (el.textContent.trim() === "Private rooms (curtain entrance)") el.textContent = "Private treatment spaces · curtain entrance";
-    });
-  };
-  ensureAuditStyles();
-  applyAuditCopyFixes();
 
   const STORAGE_KEY = "sya_lang";
   const DISMISSED_KEY = "sya_lang_dismissed";

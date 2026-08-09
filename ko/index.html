@@ -42,8 +42,15 @@
       <a href="https://shinyuuan.jp/booking.html?lang=ko" class="nav-cta">예약</a>
     </nav>
     <a class="mobile-lang-pill" href="https://shinyuuan.jp/booking.html?lang=ko">예약</a>
+    <button class="hamburger" id="hamburger" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>
   </div>
 </header>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#services" onclick="closeNav()">서비스</a>
+  <a href="#menu" onclick="closeNav()">코스와 요금</a>
+  <a href="#access" onclick="closeNav()">오시는 길</a>
+  <a href="https://shinyuuan.jp/booking.html?lang=ko" class="mobile-cta" onclick="closeNav()">예약</a>
+</div>
 
 <nav class="language-home-switch" aria-label="언어 선택">
   <a href="/" lang="ja" data-language-code="ja">日本語</a>
@@ -90,7 +97,7 @@
 
 <section class="section section-soft" id="menu">
   <div class="container">
-    <div class="section-header center"><span class="section-en">Menu &amp; Prices</span><h2 class="section-title">주요 코스와 요금</h2><p class="section-lead">아래 금액은 세금 포함입니다. 23:00 이후에는 1인당 심야 요금 ¥800이 추가됩니다.</p></div>
+    <div class="section-header center"><span class="section-en">Menu &amp; Prices</span><h2 class="section-title">주요 코스와 요금</h2><p class="section-lead">아래 금액은 세금 포함입니다. 23:00 이후에 도착하시는 경우 1인당 심야 요금 ¥800이 추가됩니다.</p></div>
     <div class="recommend-grid">
       <article class="recommend-card"><h3>바디 릴랙세이션 60분</h3><span class="price">¥3,980</span></article>
       <article class="recommend-card"><h3>발 케어 45분</h3><span class="price">¥3,980</span></article>
@@ -141,6 +148,13 @@
 <script>
 const header=document.getElementById("siteHeader");addEventListener("scroll",()=>header.classList.toggle("scrolled",scrollY>10));
 document.querySelectorAll("[data-map-link]").forEach(link=>link.addEventListener("click",()=>{if(typeof gtag==="function")gtag("event","access_map_click",{language:"ko"})}));
+</script>
+
+<script>
+const localeHamburger=document.getElementById("hamburger");
+const localeMobileNav=document.getElementById("mobileNav");
+function closeNav(){if(!localeHamburger||!localeMobileNav)return;localeHamburger.classList.remove("active");localeMobileNav.classList.remove("open");localeHamburger.setAttribute("aria-expanded","false");}
+if(localeHamburger&&localeMobileNav){localeHamburger.addEventListener("click",()=>{const open=!localeMobileNav.classList.contains("open");localeHamburger.classList.toggle("active",open);localeMobileNav.classList.toggle("open",open);localeHamburger.setAttribute("aria-expanded",open?"true":"false");});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeNav();});}
 </script>
 <script src="../assets/language-routing.js"></script>
 </body>

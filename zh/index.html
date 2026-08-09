@@ -41,8 +41,15 @@
       <a href="https://shinyuuan.jp/booking.html?lang=zh" class="nav-cta">预约</a>
     </nav>
     <a class="mobile-lang-pill" href="https://shinyuuan.jp/booking.html?lang=zh">预约</a>
+    <button class="hamburger" id="hamburger" aria-label="打开菜单" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>
   </div>
 </header>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#services" onclick="closeNav()">主要服务</a>
+  <a href="#menu" onclick="closeNav()">套餐与价格</a>
+  <a href="#access" onclick="closeNav()">到店路线</a>
+  <a href="https://shinyuuan.jp/booking.html?lang=zh" class="mobile-cta" onclick="closeNav()">预约</a>
+</div>
 
 <nav class="language-home-switch" aria-label="选择语言">
   <a href="/" lang="ja" data-language-code="ja">日本語</a>
@@ -89,7 +96,7 @@
 
 <section class="section section-soft" id="menu">
   <div class="container">
-    <div class="section-header center"><span class="section-en">Menu &amp; Prices</span><h2 class="section-title">主要套餐与价格</h2><p class="section-lead">以下均为含税价格。23:00以后，每位客人另收深夜费¥800。</p></div>
+    <div class="section-header center"><span class="section-en">Menu &amp; Prices</span><h2 class="section-title">主要套餐与价格</h2><p class="section-lead">以下均为含税价格。若到店时间为23:00或之后，每位客人另收深夜费¥800。</p></div>
     <div class="recommend-grid">
       <article class="recommend-card"><h3>身体放松 60分钟</h3><span class="price">¥3,980</span></article>
       <article class="recommend-card"><h3>足底护理 45分钟</h3><span class="price">¥3,980</span></article>
@@ -140,6 +147,13 @@
 <script>
 const header=document.getElementById("siteHeader");addEventListener("scroll",()=>header.classList.toggle("scrolled",scrollY>10));
 document.querySelectorAll("[data-map-link]").forEach(link=>link.addEventListener("click",()=>{if(typeof gtag==="function")gtag("event","access_map_click",{language:"zh"})}));
+</script>
+
+<script>
+const localeHamburger=document.getElementById("hamburger");
+const localeMobileNav=document.getElementById("mobileNav");
+function closeNav(){if(!localeHamburger||!localeMobileNav)return;localeHamburger.classList.remove("active");localeMobileNav.classList.remove("open");localeHamburger.setAttribute("aria-expanded","false");}
+if(localeHamburger&&localeMobileNav){localeHamburger.addEventListener("click",()=>{const open=!localeMobileNav.classList.contains("open");localeHamburger.classList.toggle("active",open);localeMobileNav.classList.toggle("open",open);localeHamburger.setAttribute("aria-expanded",open?"true":"false");});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeNav();});}
 </script>
 <script src="../assets/language-routing.js"></script>
 </body>
