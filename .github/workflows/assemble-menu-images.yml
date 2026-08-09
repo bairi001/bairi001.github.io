@@ -1,0 +1,68 @@
+name: Assemble approved menu images
+
+on:
+  push:
+    branches:
+      - fix/menu-image-semantic-quality-20260810
+    paths:
+      - '.image-parts/READY'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Assemble approved WebP files
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .image-parts/body/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-bodycare-pink-hq.webp
+          cat .image-parts/aroma/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-aroma-back-upload-hq.webp
+          cat .image-parts/head/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-head-male-hq.webp
+          file assets/img/menu-bodycare-pink-hq.webp | grep -qi webp
+          file assets/img/menu-aroma-back-upload-hq.webp | grep -qi webp
+          file assets/img/menu-head-male-hq.webp | grep -qi webp
+          python - <<'PY'
+          from pathlib import Path
+          def dims(path):
+              b=Path(path).read_bytes()
+              if b[:4] != b'RIFF' or b[8:12] != b'WEBP': raise SystemExit(f'bad WebP header: {path}')
+              pos=12
+              while pos+8 <= len(b):
+                  typ=b[pos:pos+4]; n=int.from_bytes(b[pos+4:pos+8],'little'); data=pos+8
+                  if typ == b'VP8X': return (1+int.from_bytes(b[data+4:data+7],'little'),1+int.from_bytes(b[data+7:data+10],'little'))
+                  if typ == b'VP8 ':
+                      s=b.find(b'\x9d\x01\x2a',data,min(data+n,data+64))
+                      if s>=0: return (int.from_bytes(b[s+3:s+5],'little')&0x3fff,int.from_bytes(b[s+5:s+7],'little')&0x3fff)
+                  if typ == b'VP8L' and b[data] == 0x2f:
+                      bits=int.from_bytes(b[data+1:data+5],'little'); return ((bits&0x3fff)+1,((bits>>14)&0x3fff)+1)
+                  pos=data+n+(n&1)
+              raise SystemExit(f'cannot read dimensions: {path}')
+          expected={
+            'assets/img/menu-bodycare-pink-hq.webp':(1800,1200),
+            'assets/img/menu-aroma-back-upload-hq.webp':(1254,1254),
+            'assets/img/menu-head-male-hq.webp':(1254,1254),
+          }
+          for p,e in expected.items():
+              actual=dims(p)
+              if actual != e: raise SystemExit(f'{p}: expected {e}, got {actual}')
+              if Path(p).stat().st_size < 120000: raise SystemExit(f'{p}: unexpectedly small')
+              print(p, actual, Path(p).stat().st_size)
+          PY
+          rm -rf .image-parts
+          rm -f .github/workflows/assemble-menu-images.yml
+      - name: Commit assembled files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m '重建用户指定高清菜单主图'
+          git push
