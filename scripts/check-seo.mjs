@@ -21,6 +21,12 @@ function firstMatch(source, pattern) {
   return source.match(pattern)?.[1]?.trim() || "";
 }
 
+function requireFragments(file, source, fragments, label) {
+  for (const fragment of fragments) {
+    if (!source.includes(fragment)) fail(file, `${label} missing: ${fragment}`);
+  }
+}
+
 const indexableFiles = new Map();
 for (const url of sitemapUrls) indexableFiles.set(urlToFile(url), url);
 
@@ -44,13 +50,16 @@ for (const [file, url] of indexableFiles) {
   }
 }
 
-const noindexFiles = ["booking.html", "404.html", "company.html", "yoyaku.html"];
+const noindexFiles = ["booking.html", "privacy.html", "404.html", "company.html", "yoyaku.html"];
 for (const file of noindexFiles) {
   const html = await read(file);
-  if (!/<meta\s+name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html)) {
-    fail(file, "expected noindex directive");
-  }
+  if (!/<meta\s+name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html)) fail(file, "expected noindex directive");
 }
+const privacy = await read("privacy.html");
+if (/<link\s+rel=["']alternate["'][^>]*hreflang=/i.test(privacy)) {
+  fail("privacy.html", "noindex privacy page should not publish parameter-based hreflang alternates");
+}
+if (sitemap.includes("https://shinyuuan.jp/privacy.html")) fail("sitemap.xml", "privacy page must stay out of sitemap");
 
 const importantPaths = [
   "/ashitsubo-fukurahagi.html",
@@ -67,14 +76,20 @@ const indexableHtml = Object.fromEntries(await Promise.all([...indexableFiles.ke
 for (const target of importantPaths) {
   const targetFile = urlToFile(`https://shinyuuan.jp${target}`);
   const linkedFrom = Object.entries(indexableHtml).some(([file, html]) => file !== targetFile && new RegExp(`href=["'](?:https:\\/\\/shinyuuan\\.jp)?${target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:[?#][^"']*)?["']`, "i").test(html));
-  if (!linkedFrom) fail(targetFile, `important page has no crawlable internal link from another indexable page`);
+  if (!linkedFrom) fail(targetFile, "important page has no crawlable internal link from another indexable page");
 }
 
+const logoPath = "https://shinyuuan.jp/assets/logo-square.svg";
+const logoSvg = await read("assets/logo-square.svg");
+if (!/viewBox=["']0 0 512 512["']/.test(logoSvg) || !logoSvg.includes("身悠晏")) {
+  fail("assets/logo-square.svg", "brand logo must remain a square 512-viewBox asset with the brand name");
+}
 for (const file of ["index.html", "shop.html", "en/index.html"]) {
   const html = indexableHtml[file];
   if (!html.includes('"validFrom":"2027-01-01"') || !html.includes('"validThrough":"2027-01-01"')) {
     fail(file, "LocalBusiness structured data is missing January 1 closure override");
   }
+  if (!html.includes(`"logo":"${logoPath}"`)) fail(file, "LocalBusiness structured data is missing the official square logo");
 }
 
 const lateNightChecks = {
@@ -90,9 +105,7 @@ for (const [file, phrase] of Object.entries(lateNightChecks)) {
 }
 
 const menu = indexableHtml["menu.html"];
-if ((menu.match(/HotPepperでこのメニューを見る/g) || []).length !== 0) {
-  fail("menu.html", "repeated per-menu HotPepper CTA has returned");
-}
+if ((menu.match(/HotPepperでこのメニューを見る/g) || []).length !== 0) fail("menu.html", "repeated per-menu HotPepper CTA has returned");
 for (const image of ["body-shoulder-care-new.webp", "aroma-leg-care-new.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
   if (!menu.includes(image)) fail("menu.html", `new treatment image is not statically referenced: ${image}`);
 }
@@ -103,40 +116,57 @@ for (const file of ["index.html", "menu.html", "shop.html", "faq.html", "en/inde
 }
 
 const bookingMode = await read("assets/booking-mode.js");
-if (!/const\s+WHATSAPP_CHANNEL_ENABLED\s*=\s*true\s*;/.test(bookingMode)) {
-  fail("assets/booking-mode.js", "WhatsApp channel should be enabled after account restoration");
-}
-if (!bookingMode.includes('get("mode")') || !bookingMode.includes('requestedMode === "whatsapp"')) {
-  fail("assets/booking-mode.js", "booking page must support a mode=whatsapp deep link without bypassing the form");
-}
+if (!/const\s+WHATSAPP_CHANNEL_ENABLED\s*=\s*true\s*;/.test(bookingMode)) fail("assets/booking-mode.js", "WhatsApp channel should remain enabled");
+if (!bookingMode.includes('get("mode")') || !bookingMode.includes('requestedMode === "whatsapp"')) fail("assets/booking-mode.js", "booking page must support mode=whatsapp without bypassing the form");
 
 const booking = await read("booking.html");
-if (!booking.includes("https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText())}")) {
-  fail("booking.html", "WhatsApp handoff must use the generated structured message");
-}
+if (!booking.includes("https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText())}")) fail("booking.html", "WhatsApp handoff must use the generated structured message");
 for (const required of ["labels.course", "labels.date", "labels.time", "labels.guests", "labels.name", "via shinyuuan.jp/booking.html"]) {
   if (!booking.includes(required)) fail("booking.html", `structured WhatsApp message field missing: ${required}`);
 }
 
 const routing = await read("assets/language-routing.js");
-if (/https?:\/\/wa\.me\//i.test(routing)) {
-  fail("assets/language-routing.js", "homepage WhatsApp CTA must route through booking.html, not directly to wa.me");
-}
-for (const required of [
-  'label: "HotPepper予約"', 'label: "ウェブ予約"', 'label: "LINE相談"',
-  'label: "Book Online"', 'label: "WhatsApp"', 'label: "Call"',
-  'label: "网页预约"', 'label: "온라인 예약"', 'mode=whatsapp'
-]) {
-  if (!routing.includes(required)) fail("assets/language-routing.js", `mobile CTA configuration missing: ${required}`);
+if (/https?:\/\/wa\.me\//i.test(routing)) fail("assets/language-routing.js", "homepage WhatsApp CTA must route through booking.html, not directly to wa.me");
+if (/configureHomeMobileCta|replaceChildren\s*\(/.test(routing)) fail("assets/language-routing.js", "mobile conversion CTA must be static HTML, not rebuilt at runtime");
+if (!routing.includes('mobile_conversion_click') || !routing.includes('dataset.channel')) fail("assets/language-routing.js", "static mobile CTA conversion tracking is missing");
+
+const staticCtas = {
+  "index.html": ['data-channel="hpb">HotPepper予約', 'data-channel="web">ウェブ予約', 'data-channel="line">LINE相談'],
+  "en/index.html": ['data-channel="web">Book Online', 'data-channel="whatsapp">WhatsApp', 'data-channel="phone">Call'],
+  "zh/index.html": ['data-channel="web">网页预约', 'data-channel="whatsapp">WhatsApp', 'data-channel="line">LINE'],
+  "ko/index.html": ['data-channel="web">온라인 예약', 'data-channel="whatsapp">WhatsApp', 'data-channel="line">LINE']
+};
+for (const [file, fragments] of Object.entries(staticCtas)) requireFragments(file, indexableHtml[file], fragments, "static mobile CTA");
+for (const file of ["en/index.html", "zh/index.html", "ko/index.html"]) {
+  if (!indexableHtml[file].includes("mode=whatsapp")) fail(file, "WhatsApp CTA must deep-link to booking mode=whatsapp");
 }
 
-for (const localized of ["https://shinyuuan.jp/zh/", "https://shinyuuan.jp/ko/"]) {
-  const block = sitemap.match(new RegExp(`<url><loc>${localized.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</loc><lastmod>([^<]+)</lastmod>`))?.[1];
-  if (block !== "2026-08-09") fail("sitemap.xml", `${localized} lastmod should reflect the current significant SEO update`);
+requireFragments("zh/index.html", indexableHtml["zh/index.html"], ["东京蒲田站东口步行约1分钟", "足底・身体・香薰放松护理"], "search-intent H1");
+requireFragments("ko/index.html", indexableHtml["ko/index.html"], ["도쿄 가마타역 동쪽 출구 도보 약 1분", "발・바디・아로마 릴랙세이션"], "search-intent H1");
+
+for (const file of ["shop.html", "faq.html"]) {
+  const html = indexableHtml[file];
+  if (!html.includes("mode=whatsapp") || !html.includes("WhatsApp")) fail(file, "restored WhatsApp option must be visible and routed through booking.html");
+  if (/https?:\/\/wa\.me\//i.test(html)) fail(file, "WhatsApp option must never bypass structured booking form");
+}
+if (indexableHtml["shop.html"].includes("完整な")) fail("shop.html", "mixed-language WhatsApp helper copy remains");
+
+const currentLastmod = [
+  "https://shinyuuan.jp/",
+  "https://shinyuuan.jp/shop.html",
+  "https://shinyuuan.jp/faq.html",
+  "https://shinyuuan.jp/en/",
+  "https://shinyuuan.jp/zh/",
+  "https://shinyuuan.jp/ko/"
+];
+for (const url of currentLastmod) {
+  const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const value = sitemap.match(new RegExp(`<url><loc>${escaped}</loc><lastmod>([^<]+)</lastmod>`))?.[1];
+  if (value !== "2026-08-10") fail("sitemap.xml", `${url} lastmod should reflect the 2026-08-10 SEO closeout`);
 }
 
 if (errors.length) {
   console.error(`SEO consistency check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages, structured data, noindex rules, internal links, restored WhatsApp channel, structured booking handoff, mobile conversion CTAs, local-business facts and static content guards.`);
+console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages: canonical/index rules, structured data, internal links, January closure, official logo, static multilingual mobile CTAs, restored WhatsApp handoff, search-intent H1s, local-business facts and regression guards.`);
