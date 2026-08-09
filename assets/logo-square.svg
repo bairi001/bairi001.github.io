@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">身悠晏 Shin Yuu An</title>
+  <desc id="desc">身悠晏的方形品牌标识</desc>
+  <rect width="512" height="512" rx="72" fill="#173E46"/>
+  <rect x="26" y="26" width="460" height="460" rx="54" fill="none" stroke="#F3E8D2" stroke-width="4"/>
+  <text x="256" y="224" text-anchor="middle" fill="#F7F2E8" font-family="serif" font-size="112" font-weight="600" letter-spacing="10">身悠晏</text>
+  <line x1="146" y1="270" x2="366" y2="270" stroke="#B98F4E" stroke-width="4"/>
+  <text x="256" y="332" text-anchor="middle" fill="#F7F2E8" font-family="Georgia, serif" font-size="34" letter-spacing="8">SHIN YUU AN</text>
+  <text x="256" y="382" text-anchor="middle" fill="#D8E6E2" font-family="Arial, sans-serif" font-size="20" letter-spacing="5">KAMATA · TOKYO</text>
+</svg>

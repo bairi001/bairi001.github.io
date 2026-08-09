@@ -62,12 +62,13 @@
 <section class="premium-hero localized-hero">
   <div class="premium-hero-copy">
     <p class="premium-kicker">KAMATA · TOKYO</p>
-    <h1><span>旅途中也能</span><em>安静放松片刻。</em></h1>
+    <h1><span>东京蒲田站东口步行约1分钟</span><em>足底・身体・香薰放松护理</em></h1>
+    <p class="localized-note">旅途中也能，安静放松片刻。</p>
     <p class="premium-hero-lead">身悠晏 Shin Yuu An 距离JR蒲田站东口步行约1分钟，提供足底护理、身体放松与香薰精油护理。</p>
     <ul class="premium-facts"><li>1月1日休息</li><li>11:00－次日2:00</li><li>可当天咨询</li></ul>
     <div class="premium-hero-actions">
       <a href="https://shinyuuan.jp/booking.html?lang=zh" class="btn-primary">用中文申请预约</a>
-      <a href="tel:0368746808" class="btn-text">电话 03-6874-6808</a>
+      <a href="https://shinyuuan.jp/booking.html?lang=zh&amp;mode=whatsapp" class="btn-text">WhatsApp</a>
     </div>
     <p class="localized-note">收到店铺回复后，预约才正式成立。</p>
   </div>
@@ -136,15 +137,19 @@
 
 <section class="cta-banner">
   <div class="container">
-    <div class="section-header center"><span class="section-en">Reservation</span><h2 class="section-title">预约申请</h2><p class="section-lead">填写中文预约表单后，可直接通过网页提交。营业时间内通常会尽快回复，繁忙时可能有所延迟。</p></div>
-    <p><a href="https://shinyuuan.jp/booking.html?lang=zh" class="btn-primary">填写中文预约申请</a></p>
-    <p class="localized-note">也可致电 <a href="tel:0368746808">03-6874-6808</a>。收到店铺回复后，预约才正式成立。</p>
+    <div class="section-header center"><span class="section-en">Reservation</span><h2 class="section-title">预约申请</h2><p class="section-lead">填写中文预约表单后，可直接通过网页提交，也可在完成表单后通过WhatsApp发送完整预约内容。营业时间内通常会尽快回复，繁忙时可能有所延迟。</p></div>
+    <p><a href="https://shinyuuan.jp/booking.html?lang=zh" class="btn-primary">填写中文预约申请</a> <a href="https://shinyuuan.jp/booking.html?lang=zh&amp;mode=whatsapp" class="btn-secondary">WhatsApp</a></p>
+    <p class="localized-note">收到店铺回复后，预约才正式成立。</p>
   </div>
 </section>
 </main>
 
-<footer class="site-footer"><div class="container"><div class="footer-top"><div class="footer-brand"><div class="logo-mark">身悠晏</div><div class="footer-brand-sub">Shin Yuu An Relaxation Salon</div><div class="footer-address">东京都大田区蒲田5-12-3 北岛大楼4楼<br><a href="tel:0368746808">03-6874-6808</a></div></div><div class="footer-nav"><div class="footer-nav-col"><h4>Language</h4><a href="/">日本語</a><a href="/en/">English</a><a href="/ko/">한국어</a></div><div class="footer-nav-col"><h4>Reserve</h4><a href="https://shinyuuan.jp/booking.html?lang=zh">中文预约</a><a href="../privacy.html?lang=zh">隐私政策</a></div></div></div><div class="footer-bottom"><span>© 2026 身悠晏 All Rights Reserved.</span></div></div></footer>
-<div class="mobile-fixed-cta"><a href="https://shinyuuan.jp/booking.html?lang=zh">预约</a><a href="tel:0368746808">电话</a></div>
+<footer class="site-footer"><div class="container"><div class="footer-top"><div class="footer-brand"><div class="logo-mark">身悠晏</div><div class="footer-brand-sub">Shin Yuu An Relaxation Salon</div><div class="footer-address">东京都大田区蒲田5-12-3 北岛大楼4楼<br><a href="tel:0368746808">03-6874-6808</a></div></div><div class="footer-nav"><div class="footer-nav-col"><h4>Language</h4><a href="/">日本語</a><a href="/en/">English</a><a href="/ko/">한국어</a></div><div class="footer-nav-col"><h4>Reserve</h4><a href="https://shinyuuan.jp/booking.html?lang=zh">中文预约</a><a href="https://shinyuuan.jp/booking.html?lang=zh&amp;mode=whatsapp">WhatsApp</a><a href="../privacy.html?lang=zh">隐私政策</a></div></div></div><div class="footer-bottom"><span>© 2026 身悠晏 All Rights Reserved.</span></div></div></footer>
+<div class="mobile-fixed-cta" aria-label="固定预约按钮">
+  <a href="https://shinyuuan.jp/booking.html?lang=zh" data-channel="web">网页预约</a>
+  <a href="https://shinyuuan.jp/booking.html?lang=zh&amp;mode=whatsapp" data-channel="whatsapp">WhatsApp</a>
+  <a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" data-channel="line">LINE</a>
+</div>
 <script>
 const header=document.getElementById("siteHeader");addEventListener("scroll",()=>header.classList.toggle("scrolled",scrollY>10));
 document.querySelectorAll("[data-map-link]").forEach(link=>link.addEventListener("click",()=>{if(typeof gtag==="function")gtag("event","access_map_click",{language:"zh"})}));
