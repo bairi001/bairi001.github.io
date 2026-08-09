@@ -1,4 +1,4 @@
-name: Assemble menu image assets
+name: Fix menu image semantics
 
 on:
   push:
@@ -11,35 +11,76 @@ permissions:
   contents: write
 
 jobs:
-  assemble:
+  fix:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Assemble WebP assets
+      - name: Apply targeted menu image fix
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p assets/img
-          cat .image-parts/body/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-bodycare-dry-hq.webp
-          cat .image-parts/aroma/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-aroma-back-hq.webp
-          cat .image-parts/head/*.b64 | tr -d '\r\n' | base64 -d > assets/img/menu-head-care-hq.webp
-          test -s assets/img/menu-bodycare-dry-hq.webp
-          test -s assets/img/menu-aroma-back-hq.webp
-          test -s assets/img/menu-head-care-hq.webp
-          file assets/img/menu-bodycare-dry-hq.webp | grep -qi webp
-          file assets/img/menu-aroma-back-hq.webp | grep -qi webp
-          file assets/img/menu-head-care-hq.webp | grep -qi webp
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          menu_path = Path('menu.html')
+          menu = menu_path.read_text(encoding='utf-8')
+          replacements = {
+            '<div class="menu-photo"><img src="assets/img/body-shoulder-care-new.webp" alt="肩・背中を丁寧にもみほぐす整体ボディケア" loading="lazy" width="600" height="571"></div>':
+            '<div class="menu-photo"><img src="assets/img/premium-seitai.webp" alt="施術着を着たまま肩・背中を丁寧にもみほぐす整体ボディケア" loading="lazy" width="1254" height="1050"></div>',
+            '<div class="menu-photo"><img class="photo-natural" src="assets/img/aroma-leg-care-new.webp" alt="脚を丁寧に流すアロマオイルトリートメント" loading="lazy" width="600" height="450"></div>':
+            '<div class="menu-photo"><img class="photo-natural" src="assets/img/menu-aroma-back.webp" alt="背中をオイルでゆっくり流すアロマリンパ・オイルトリートメント" loading="lazy" width="1800" height="1005"></div>',
+            '<div class="menu-photo"><img src="assets/img/decollete-care.webp" alt="首からデコルテをオイルで丁寧に流すフェイシャルケア" loading="lazy" width="1254" height="1254"></div>':
+            '<div class="menu-photo"><img src="assets/img/head-scalp-care.webp" alt="頭まわりを両手で丁寧にほぐすドライヘッドケア" loading="lazy" width="1254" height="1254"></div>',
+          }
+          for old, new in replacements.items():
+              if old not in menu:
+                  raise SystemExit(f'menu replacement anchor missing: {old[:80]}')
+              menu = menu.replace(old, new, 1)
+          menu_path.write_text(menu, encoding='utf-8')
+
+          check_path = Path('scripts/check-seo.mjs')
+          check = check_path.read_text(encoding='utf-8')
+          old = '''for (const image of ["body-shoulder-care-new.webp", "aroma-leg-care-new.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
+  if (!menu.includes(image)) fail("menu.html", `new treatment image is not statically referenced: ${image}`);
+}'''
+          new = '''for (const image of ["premium-seitai.webp", "menu-aroma-back.webp", "head-scalp-care.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
+  if (!menu.includes(image)) fail("menu.html", `approved treatment image is not statically referenced: ${image}`);
+}
+const menuImageLocks = {
+  bodycare: { image: "premium-seitai.webp", width: 'width="1254"', height: 'height="1050"', forbidden: ["body-shoulder-care-new.webp"] },
+  aroma: { image: "menu-aroma-back.webp", width: 'width="1800"', height: 'height="1005"', forbidden: ["aroma-leg-care-new.webp"] },
+  head: { image: "head-scalp-care.webp", width: 'width="1254"', height: 'height="1254"', forbidden: ["decollete-care.webp"] }
+};
+for (const [id, rule] of Object.entries(menuImageLocks)) {
+  const section = menu.match(new RegExp(`<section[^>]+id=["']${id}["'][\\s\\S]*?<\\/section>`, "i"))?.[0] || "";
+  if (!section.includes(rule.image)) fail("menu.html", `${id} must use ${rule.image}`);
+  if (!section.includes(rule.width) || !section.includes(rule.height)) fail("menu.html", `${id} must keep approved high-resolution intrinsic dimensions`);
+  for (const wrong of rule.forbidden) if (section.includes(wrong)) fail("menu.html", `${id} contains semantically incorrect image ${wrong}`);
+}'''
+          if old not in check:
+              raise SystemExit('SEO image guard anchor missing')
+          check = check.replace(old, new, 1)
+          check_path.write_text(check, encoding='utf-8')
+
+          sitemap_path = Path('sitemap.xml')
+          sitemap = sitemap_path.read_text(encoding='utf-8')
+          sitemap = re.sub(r'(<url><loc>https://shinyuuan\.jp/menu\.html</loc><lastmod>)[^<]+(</lastmod>)', r'\g<1>2026-08-10\2', sitemap, count=1)
+          sitemap_path.write_text(sitemap, encoding='utf-8')
+          PY
+
           rm -rf .image-parts
           rm -f .github/workflows/assemble-menu-images.yml
-      - name: Commit assembled images
+
+      - name: Commit targeted fix
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m '接入菜单高清语义匹配图片'
+          git commit -m '修正菜单图片语义与高清引用'
           git push
