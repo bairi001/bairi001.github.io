@@ -129,6 +129,7 @@ const routing = await read("assets/language-routing.js");
 if (/https?:\/\/wa\.me\//i.test(routing)) fail("assets/language-routing.js", "homepage WhatsApp CTA must route through booking.html, not directly to wa.me");
 if (/configureHomeMobileCta|replaceChildren\s*\(/.test(routing)) fail("assets/language-routing.js", "mobile conversion CTA must be static HTML, not rebuilt at runtime");
 if (!routing.includes('mobile_conversion_click') || !routing.includes('dataset.channel')) fail("assets/language-routing.js", "static mobile CTA conversion tracking is missing");
+if (!routing.includes('gridTemplateColumns = "minmax(0,1fr) minmax(0,1fr) minmax(56px,.72fr)"')) fail("assets/language-routing.js", "three-button EN/ZH/KO mobile CTA layout guard is missing");
 
 const staticCtas = {
   "index.html": ['data-channel="hpb">HotPepper予約', 'data-channel="web">ウェブ予約', 'data-channel="line">LINE相談'],
