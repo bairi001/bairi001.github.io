@@ -31,6 +31,12 @@
     return destination.href;
   };
 
+  document.querySelectorAll(".en-page .mobile-fixed-cta, .localized-home .mobile-fixed-cta").forEach(bar => {
+    if (bar.children.length === 3) {
+      bar.style.gridTemplateColumns = "minmax(0,1fr) minmax(0,1fr) minmax(56px,.72fr)";
+    }
+  });
+
   document.querySelectorAll(".mobile-fixed-cta [data-channel]").forEach(link => {
     link.addEventListener("click", () => {
       track("mobile_conversion_click", {
