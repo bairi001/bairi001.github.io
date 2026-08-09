@@ -49,13 +49,16 @@
       "@id":"https://shinyuuan.jp/#business",
       "name":"身悠晏 Shin Yuu An",
       "alternateName":"Shin Yuu An Relaxation Salon",
-      "description":"蒲田駅東口徒歩1分。足裏リフレクソロジー、整体ボディケア、アロマトリートメント、ドライヘッドケアを提供するリラクゼーションサロン。11:00から翌2:00まで営業。",
+      "description":"蒲田駅東口徒歩1分。足裏リフレクソロジー、整体ボディケア、アロマトリートメント、ドライヘッドケアを提供するリラクゼーションサロン。11:00から翌2:00まで営業。1月1日休業。",
       "url":"https://shinyuuan.jp/",
       "image":"https://shinyuuan.jp/assets/img/shop-front.jpg",
       "telephone":"+81-3-6874-6808",
       "address":{"@type":"PostalAddress","streetAddress":"蒲田5-12-3 北島ビル4F","addressLocality":"大田区","addressRegion":"東京都","postalCode":"144-0052","addressCountry":"JP"},
       "geo":{"@type":"GeoCoordinates","latitude":35.5634739,"longitude":139.7170054},
-      "openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"11:00","closes":"02:00"},
+      "openingHoursSpecification":[
+        {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"11:00","closes":"02:00"},
+        {"@type":"OpeningHoursSpecification","opens":"00:00","closes":"00:00","validFrom":"2027-01-01","validThrough":"2027-01-01"}
+      ],
       "priceRange":"¥2,400-¥10,500",
       "currenciesAccepted":"JPY",
       "paymentAccepted":"Cash, Credit Card, PayPay",
@@ -71,7 +74,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-SWGGKR9K9W');
 </script>
 </head>
@@ -122,7 +124,7 @@
       <em class="hero-service-line"><span>リラクゼーション</span><span>サロン</span></em>
     </h1>
     <p class="premium-brand-calligraphy">一日の疲れを、静かにほどく。</p>
-    <p class="premium-hero-lead">足裏・整体ボディケア・アロマ・ヘッドケア、11:00〜翌2:00。</p>
+    <p class="premium-hero-lead">足裏・整体ボディケア・アロマ・ヘッドケア、<span class="hero-hours">11:00〜翌2:00</span>。</p>
     <ul class="premium-facts" aria-label="店舗の特徴">
       <li>当日予約OK</li><li>落ち着ける施術スペース</li><li>女性も通いやすい</li>
     </ul>
@@ -152,7 +154,7 @@
       <article class="recommend-card"><h3>足裏・ふくらはぎ</h3><p>立ち仕事、歩き疲れ、足まわりをゆっくり休めたい方へ。</p><div class="cta-row"><a href="ashitsubo-fukurahagi.html" class="btn-secondary">詳しく見る</a></div></article>
       <article class="recommend-card"><h3>夜遅く・今から</h3><p>仕事帰りや遅い時間に。11:00〜翌2:00、当日予約可。</p><div class="cta-row"><a href="kamata-late-night.html" class="btn-secondary">深夜利用を見る</a></div></article>
       <article class="recommend-card"><h3>ヘッドケア</h3><p>ヘッドスパを探している方へ。当店は髪を濡らさない10分のドライヘッドケアをご用意しています。</p><div class="cta-row"><a href="headspa-kamata.html" class="btn-secondary">ヘッドケアを見る</a></div></article>
-      <article class="recommend-card"><h3>English / Travelers</h3><p>English menu, WhatsApp booking and directions for visitors to Tokyo.</p><div class="cta-row"><a href="/en/" class="btn-secondary">English site</a></div></article>
+      <article class="recommend-card"><h3>English / Travelers</h3><p>English menu, online booking and directions for visitors to Tokyo.</p><div class="cta-row"><a href="/en/" class="btn-secondary">English site</a></div></article>
     </div>
   </div>
 </section>
@@ -188,9 +190,9 @@
       <article class="service-card">
         <img src="assets/img/neck-oil-care.webp" alt="首からデコルテをオイルでゆっくり流すケア" loading="lazy" width="1254" height="1254">
         <div class="service-card-num">Service 03</div>
-        <h3>アロマ・ヘッドケア</h3>
-        <p>香りと落ち着いた手技で、ゆっくりリラックスしたい日にも選びやすいコースをご用意しています。</p>
-        <a href="menu.html#aroma">メニューを見る <span aria-hidden="true">→</span></a>
+        <h3>アロマ・デコルテケア</h3>
+        <p>香りに包まれてゆっくり過ごしたい日や、首・デコルテまわりをオイルでケアしたい日に。</p>
+        <a href="menu.html#aroma">アロマメニューを見る <span aria-hidden="true">→</span></a>
       </article>
     </div>
   </div>
@@ -301,8 +303,9 @@
       <h2 class="section-title">店舗の様子</h2>
       <p class="section-lead">駅近の便利さと、落ち着いて過ごせるサロン空間を大切にしています。</p>
     </div>
-    <div class="gallery-grid fade-up">      <figure class="gallery-item"><img src="assets/img/shop-front.jpg" alt="受付・フロント" loading="lazy"><figcaption class="gallery-caption">受付・フロント</figcaption></figure>
-      <figure class="gallery-item"><img src="assets/img/shop-room.jpg" alt="施術ルーム" loading="lazy"><figcaption class="gallery-caption">施術ルーム</figcaption></figure>
+    <div class="gallery-grid fade-up">
+      <figure class="gallery-item"><img src="assets/img/shop-front.jpg" alt="受付・フロント" loading="lazy"><figcaption class="gallery-caption">受付・フロント</figcaption></figure>
+      <figure class="gallery-item"><img src="assets/img/shop-room.jpg" alt="施術スペース" loading="lazy"><figcaption class="gallery-caption">施術スペース</figcaption></figure>
       <figure class="gallery-item"><img src="assets/img/shop-access.jpg" alt="北島ビル入口・エレベーター案内" loading="lazy"><figcaption class="gallery-caption">北島ビル入口・エレベーター案内</figcaption></figure>
     </div>
   </div>
@@ -314,7 +317,7 @@
       <div class="info-panel">
         <span class="section-en">Access</span>
         <h2 class="section-title">アクセス簡易案内</h2>
-        <p>JR蒲田駅東口から徒歩1分。北島ビル4F、エレベーターでお越しいただけます。</p>
+        <p>JR蒲田駅東口から徒歩1分。北島ビル4F、エレベーターでお越しいただけます。営業時間は11:00〜翌2:00、1月1日は休業です。</p>
       </div>
       <div class="info-panel">
         <h3>店舗情報を確認</h3>
