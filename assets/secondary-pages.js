@@ -1,12 +1,5 @@
 (() => {
   "use strict";
-  if (!document.querySelector('script[data-site-closeout]')) {
-    const siteCloseout = document.createElement("script");
-    siteCloseout.src = "/assets/site-closeout.js";
-    siteCloseout.async = false;
-    siteCloseout.dataset.siteCloseout = "1";
-    document.head.append(siteCloseout);
-  }
   const header=document.getElementById("siteHeader");
   const button=document.getElementById("hamburger");
   const nav=document.getElementById("mobileNav");

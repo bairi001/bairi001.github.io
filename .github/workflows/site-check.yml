@@ -20,3 +20,5 @@ jobs:
         run: node scripts/check-site.mjs
       - name: Check prices
         run: node scripts/check-prices.mjs
+      - name: Check SEO consistency
+        run: node scripts/check-seo.mjs
