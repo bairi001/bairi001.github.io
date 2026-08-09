@@ -45,7 +45,7 @@ expect("menu.html", "香薰90分价格不一致", /アロマリンパ・オイ�
 expect("menu.html", "香薰120分价格不一致", /アロマリンパ・オイル[\s\S]{0,1200}?120分<\/th><td>9980円/i);
 expect("menu.html", "香薰＋足裏90分价格不一致", /アロマオイル60分 \+ 足裏30分[\s\S]{0,100}?90分 7800円/i);
 expect("menu.html", "整体＋足裏90分价格不一致", /整体60分 \+ 足裏30分[\s\S]{0,100}?90分 6800円/i);
-expect("menu.html", "深夜费不一致", new RegExp(`深夜料金 23:00以降[\\s\\S]{0,80}?${prices.lateNightFee.price}円`));
+expect("menu.html", "深夜费不一致", new RegExp(`深夜料金（23:00以降にご来店の場合）[\\s\\S]{0,80}?${prices.lateNightFee.price}円`));
 
 // English page intentionally does not list every course.
 expect("en/index.html", "Foot reflexology 45 min price mismatch", htmlPattern("Foot reflexology — 45 min", "foot45"));
