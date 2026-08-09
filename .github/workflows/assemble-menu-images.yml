@@ -45,15 +45,16 @@ jobs:
                   pos=data+n+(n&1)
               raise SystemExit(f'cannot read dimensions: {path}')
           expected={
-            'assets/img/menu-bodycare-pink-hq.webp':(1800,1200),
-            'assets/img/menu-aroma-back-upload-hq.webp':(1254,1254),
-            'assets/img/menu-head-male-hq.webp':(1254,1254),
+            'assets/img/menu-bodycare-pink-hq.webp':((1600,1067),70000),
+            'assets/img/menu-aroma-back-upload-hq.webp':((1254,1254),80000),
+            'assets/img/menu-head-male-hq.webp':((1254,1254),100000),
           }
-          for p,e in expected.items():
+          for p,(e,min_size) in expected.items():
               actual=dims(p)
               if actual != e: raise SystemExit(f'{p}: expected {e}, got {actual}')
-              if Path(p).stat().st_size < 120000: raise SystemExit(f'{p}: unexpectedly small')
-              print(p, actual, Path(p).stat().st_size)
+              size=Path(p).stat().st_size
+              if size < min_size: raise SystemExit(f'{p}: unexpectedly small: {size}')
+              print(p, actual, size)
           PY
           rm -rf .image-parts
           rm -f .github/workflows/assemble-menu-images.yml
