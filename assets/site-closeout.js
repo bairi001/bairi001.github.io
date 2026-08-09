@@ -184,33 +184,23 @@
   const patchZh = () => {
     setMeta('meta[name="description"]', "东京蒲田站东口步行约1分钟。身悠晏提供足底护理、身体放松与香薰精油护理，营业时间11:00至次日凌晨2点，可用中文通过网页发送预约申请。");
     replaceTextNodes(document.body, [
-      ["每天营业", "营业时间"],
+      ["每天开始营业", "开始营业"],
       ["填写中文预约表单后，可直接通过网页提交，也可通过WhatsApp发送。", "填写中文预约表单后，可直接通过网页提交。"],
       ["网页或WhatsApp", "网页"]
     ]);
-    const ribbon = $$(".trust-ribbon > div");
-    if (ribbon[0] && ribbon.length >= 4) {
-      const last = ribbon[ribbon.length - 1];
-      const strong = $("strong", last), span = $("span", last);
-      if (strong) strong.textContent = "1/1";
-      if (span) span.textContent = "1月1日休息";
-    }
+    const firstFact = $(".premium-facts li:first-child");
+    if (firstFact && firstFact.textContent.includes("每天营业")) firstFact.textContent = "1月1日休息";
   };
 
   const patchKo = () => {
     setMeta('meta[name="description"]', "도쿄 가마타역 동쪽 출구에서 도보 약 1분. 신유안은 발 케어, 바디 릴랙세이션, 아로마 오일 트리트먼트를 제공하며 영업시간은 11:00부터 다음 날 새벽 2시까지입니다. 한국어 웹 예약 신청이 가능합니다.");
     replaceTextNodes(document.body, [
-      ["매일 영업", "영업시간"],
+      ["매일 영업 시작", "영업 시작"],
       ["한국어 예약 양식을 작성한 뒤 웹페이지에서 바로 제출하거나 WhatsApp으로 보낼 수 있습니다.", "한국어 예약 양식을 작성한 뒤 웹페이지에서 바로 제출할 수 있습니다."],
       ["웹페이지 또는 WhatsApp", "웹페이지"]
     ]);
-    const ribbon = $$(".trust-ribbon > div");
-    if (ribbon[0] && ribbon.length >= 4) {
-      const last = ribbon[ribbon.length - 1];
-      const strong = $("strong", last), span = $("span", last);
-      if (strong) strong.textContent = "1/1";
-      if (span) span.textContent = "1월 1일 휴무";
-    }
+    const firstFact = $(".premium-facts li:first-child");
+    if (firstFact && firstFact.textContent.includes("매일 영업")) firstFact.textContent = "1월 1일 휴무";
   };
 
   const patchEnglishSeo = () => {
