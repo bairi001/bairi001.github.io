@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
@@ -106,19 +106,28 @@ for (const [file, phrase] of Object.entries(lateNightChecks)) {
 
 const menu = indexableHtml["menu.html"];
 if ((menu.match(/HotPepperでこのメニューを見る/g) || []).length !== 0) fail("menu.html", "repeated per-menu HotPepper CTA has returned");
-for (const image of ["premium-seitai.webp", "menu-aroma-back.webp", "head-scalp-care.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
+for (const image of ["menu-bodycare-pink-hq.webp", "menu-aroma-back-upload-hq.webp", "menu-head-male-hq.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
   if (!menu.includes(image)) fail("menu.html", `approved treatment image is not statically referenced: ${image}`);
 }
 const menuImageLocks = {
-  bodycare: { image: "premium-seitai.webp", width: 'width="1254"', height: 'height="1050"', forbidden: ["body-shoulder-care-new.webp"] },
-  aroma: { image: "menu-aroma-back.webp", width: 'width="1800"', height: 'height="1005"', forbidden: ["aroma-leg-care-new.webp"] },
-  head: { image: "head-scalp-care.webp", width: 'width="1254"', height: 'height="1254"', forbidden: ["decollete-care.webp"] }
+  bodycare: { image: "menu-bodycare-pink-hq.webp", width: 'width="2048"', height: 'height="1365"', forbidden: ["body-shoulder-care-new.webp", "premium-seitai.webp"] },
+  aroma: { image: "menu-aroma-back-upload-hq.webp", width: 'width="1254"', height: 'height="1254"', forbidden: ["aroma-leg-care-new.webp", "menu-aroma-back.webp"] },
+  head: { image: "menu-head-male-hq.webp", width: 'width="1254"', height: 'height="1254"', forbidden: ["decollete-care.webp", "head-scalp-care.webp"] }
 };
 for (const [id, rule] of Object.entries(menuImageLocks)) {
   const section = menu.match(new RegExp(`<section[^>]+id=["']${id}["'][\\s\\S]*?<\\/section>`, "i"))?.[0] || "";
   if (!section.includes(rule.image)) fail("menu.html", `${id} must use ${rule.image}`);
   if (!section.includes(rule.width) || !section.includes(rule.height)) fail("menu.html", `${id} must keep approved high-resolution intrinsic dimensions`);
-  for (const wrong of rule.forbidden) if (section.includes(wrong)) fail("menu.html", `${id} contains semantically incorrect image ${wrong}`);
+  for (const wrong of rule.forbidden) if (section.includes(wrong)) fail("menu.html", `${id} contains semantically incorrect or obsolete image ${wrong}`);
+}
+const highQualityMenuAssets = [
+  ["assets/img/menu-bodycare-pink-hq.webp", 120000],
+  ["assets/img/menu-aroma-back-upload-hq.webp", 120000],
+  ["assets/img/menu-head-male-hq.webp", 120000]
+];
+for (const [file, minBytes] of highQualityMenuAssets) {
+  const info = await stat(path.join(root, file));
+  if (info.size < minBytes) fail(file, `high-resolution menu image unexpectedly compressed below ${minBytes} bytes`);
 }
 
 for (const file of ["index.html", "menu.html", "shop.html", "faq.html", "en/index.html", "zh/index.html", "ko/index.html", "assets/language-routing.js", "assets/secondary-pages.js"]) {
@@ -181,4 +190,4 @@ if (errors.length) {
   console.error(`SEO consistency check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages: canonical/index rules, structured data, internal links, January closure, official logo, static multilingual mobile CTAs, restored WhatsApp handoff, search-intent H1s, local-business facts and regression guards.`);
+console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages: canonical/index rules, structured data, internal links, January closure, official logo, static multilingual mobile CTAs, restored WhatsApp handoff, search-intent H1s, local-business facts, approved high-resolution menu photography and regression guards.`);
