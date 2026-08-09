@@ -34,6 +34,7 @@ body.japanese-home .premium-brand-calligraphy{
   letter-spacing:.08em;
 }
 body.japanese-home .premium-hero-lead{margin-top:8px;}
+body.japanese-home .premium-hero-lead .hero-hours{white-space:nowrap;word-break:keep-all;}
 
 @media (min-width:701px){
   body.japanese-home .premium-hero-copy{min-width:0;}
