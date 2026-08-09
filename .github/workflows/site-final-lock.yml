@@ -1,0 +1,229 @@
+name: Final site lock refactor
+
+on:
+  push:
+    branches:
+      - fix/site-final-lock-20260809
+
+permissions:
+  contents: write
+
+jobs:
+  refactor:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/site-final-lock-20260809
+          fetch-depth: 0
+
+      - name: Apply final production-safe corrections
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          root = Path('.')
+          changed = []
+
+          def write(path, text):
+              p = root / path
+              old = p.read_text(encoding='utf-8')
+              if text != old:
+                  p.write_text(text, encoding='utf-8')
+                  changed.append(path)
+
+          def replace(path, old, new, *, required=True, count=None):
+              p = root / path
+              text = p.read_text(encoding='utf-8')
+              hits = text.count(old)
+              if required and hits == 0:
+                  raise RuntimeError(f'{path}: expected text not found: {old[:120]!r}')
+              if count is not None and hits != count:
+                  raise RuntimeError(f'{path}: expected {count} occurrence(s), found {hits}: {old[:120]!r}')
+              text = text.replace(old, new)
+              write(path, text)
+
+          def regex(path, pattern, repl, *, required=True, flags=0, count=0):
+              p = root / path
+              text = p.read_text(encoding='utf-8')
+              new, n = re.subn(pattern, repl, text, count=count, flags=flags)
+              if required and n == 0:
+                  raise RuntimeError(f'{path}: regex did not match: {pattern}')
+              write(path, new)
+              return n
+
+          # 1) Make the former audit CSS corrections permanent in the main stylesheet.
+          css_path = root / 'assets/style.css'
+          css = css_path.read_text(encoding='utf-8')
+          # Remove stale position-dependent pseudo-label copy. Keep the generic badge styling
+          # because zh/ko explicitly supply their own localized "tax included" badge text.
+          for i in range(1, 5):
+              css = re.sub(rf'\.recommend-card:nth-child\({i}\)::before\{{content:"[^"]*"\}}', '', css)
+          marker = '/* ===== Final production lock: 2026-08-09 ===== */'
+          if marker in css:
+              css = css.split(marker)[0].rstrip()
+          css += '''\n\n/* ===== Final production lock: 2026-08-09 ===== */\n/* Desktop-only H1 containment. Mobile hero layout and image geometry are intentionally untouched. */\n@media (min-width:701px){\n  body.japanese-home .premium-hero-copy{min-width:0;}\n  body.japanese-home .premium-hero h1{font-size:clamp(2.55rem,3.15vw,3.5rem)!important;line-height:1.34;}\n  body.japanese-home .premium-hero h1 span,\n  body.japanese-home .premium-hero h1 em{white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;max-width:100%;}\n  body.japanese-home .premium-hero h1 em{font-size:.94em;}\n}\n'''
+          write('assets/style.css', css)
+
+          # 2) Remove runtime audit styling/copy mutation from the language router.
+          js_path = root / 'assets/language-routing.js'
+          js = js_path.read_text(encoding='utf-8')
+          js2, n = re.subn(
+              r'\n  const ensureAuditStyles = \(\) => \{.*?\n  applyAuditCopyFixes\(\);\n',
+              '\n', js, count=1, flags=re.S
+          )
+          if n != 1:
+              raise RuntimeError('assets/language-routing.js: audit runtime block not found exactly once')
+          write('assets/language-routing.js', js2)
+
+          # 3) Direct source copy corrections on the Japanese home page.
+          replace('index.html', '落ち着ける個室空間', '落ち着ける施術スペース', count=1)
+          replace('index.html', 'アロマ・ヘッドスパ', 'アロマ・ヘッドケア', required=False)
+
+          # 4) Menu: delete the HPB "most economical" source copy, normalize real service naming,
+          #    and make the late-night trigger explicitly arrival-based.
+          menu = (root / 'menu.html').read_text(encoding='utf-8')
+          menu, n_coupon = re.subn(r'\s*<p class="coupon-note"><a .*?</a></p>\s*', '\n', menu, count=1, flags=re.S)
+          if n_coupon != 1:
+              raise RuntimeError('menu.html: coupon-note source paragraph not found exactly once')
+          menu = re.sub(r'\n\.coupon-note\{[^\n]*\}\n\.coupon-note a\{[^\n]*\}', '', menu)
+          menu = menu.replace('ドライヘッドスパ', 'ドライヘッドケア')
+          menu = menu.replace('アロマ・ヘッドスパ', 'アロマ・ヘッドケア')
+          menu = menu.replace('ヘッドスパ｜メニュー・料金', 'ヘッドケア｜メニュー・料金')
+          menu = menu.replace('深夜料金 23:00以降</th><td>800円', '深夜料金（23:00以降にご来店の場合）</th><td>800円')
+          write('menu.html', menu)
+
+          # 5) English home: remove the obsolete white inline color, make the treatment-space
+          #    wording truthful in source, prevent Japanese pseudo-label leakage, and normalize
+          #    late-night/head-care wording.
+          en = (root / 'en/index.html').read_text(encoding='utf-8')
+          en = en.replace('href="#menu" style="color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:3px;"',
+                          'href="#menu" style="font-weight:700;text-decoration:underline;text-underline-offset:3px;"')
+          en = en.replace('Private rooms (curtain entrance)', 'Private treatment spaces · curtain entrance')
+          en = en.replace('A late-night fee of ¥800 applies after 11:00 PM.',
+                          'A late-night fee of ¥800 applies when you arrive at or after 11:00 PM.')
+          en = en.replace('dry head spa', 'dry head care').replace('Dry head spa', 'Dry head care')
+          write('en/index.html', en)
+
+          # 6) Add real mobile navigation to Simplified Chinese and Korean pages.
+          zh = (root / 'zh/index.html').read_text(encoding='utf-8')
+          if 'id="hamburger"' not in zh:
+              zh = zh.replace(
+                  '    <a class="mobile-lang-pill" href="https://shinyuuan.jp/booking.html?lang=zh">预约</a>\n  </div>\n</header>',
+                  '    <a class="mobile-lang-pill" href="https://shinyuuan.jp/booking.html?lang=zh">预约</a>\n'
+                  '    <button class="hamburger" id="hamburger" aria-label="打开菜单" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>\n'
+                  '  </div>\n</header>\n'
+                  '<div class="mobile-nav" id="mobileNav">\n'
+                  '  <a href="#services" onclick="closeNav()">主要服务</a>\n'
+                  '  <a href="#menu" onclick="closeNav()">套餐与价格</a>\n'
+                  '  <a href="#access" onclick="closeNav()">到店路线</a>\n'
+                  '  <a href="https://shinyuuan.jp/booking.html?lang=zh" class="mobile-cta" onclick="closeNav()">预约</a>\n'
+                  '</div>'
+              )
+              nav_js = '''\n<script>\nconst localeHamburger=document.getElementById("hamburger");\nconst localeMobileNav=document.getElementById("mobileNav");\nfunction closeNav(){if(!localeHamburger||!localeMobileNav)return;localeHamburger.classList.remove("active");localeMobileNav.classList.remove("open");localeHamburger.setAttribute("aria-expanded","false");}\nif(localeHamburger&&localeMobileNav){localeHamburger.addEventListener("click",()=>{const open=!localeMobileNav.classList.contains("open");localeHamburger.classList.toggle("active",open);localeMobileNav.classList.toggle("open",open);localeHamburger.setAttribute("aria-expanded",open?"true":"false");});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeNav();});}\n</script>\n'''
+              zh = zh.replace('<script src="../assets/language-routing.js"></script>', nav_js + '<script src="../assets/language-routing.js"></script>')
+          zh = zh.replace('以下均为含税价格。23:00以后，每位客人另收深夜费¥800。',
+                          '以下均为含税价格。若到店时间为23:00或之后，每位客人另收深夜费¥800。')
+          write('zh/index.html', zh)
+
+          ko = (root / 'ko/index.html').read_text(encoding='utf-8')
+          if 'id="hamburger"' not in ko:
+              ko = ko.replace(
+                  '    <a class="mobile-lang-pill" href="https://shinyuuan.jp/booking.html?lang=ko">예약</a>\n  </div>\n</header>',
+                  '    <a class="mobile-lang-pill" href="https://shinyuuan.jp/booking.html?lang=ko">예약</a>\n'
+                  '    <button class="hamburger" id="hamburger" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>\n'
+                  '  </div>\n</header>\n'
+                  '<div class="mobile-nav" id="mobileNav">\n'
+                  '  <a href="#services" onclick="closeNav()">서비스</a>\n'
+                  '  <a href="#menu" onclick="closeNav()">코스와 요금</a>\n'
+                  '  <a href="#access" onclick="closeNav()">오시는 길</a>\n'
+                  '  <a href="https://shinyuuan.jp/booking.html?lang=ko" class="mobile-cta" onclick="closeNav()">예약</a>\n'
+                  '</div>'
+              )
+              nav_js = '''\n<script>\nconst localeHamburger=document.getElementById("hamburger");\nconst localeMobileNav=document.getElementById("mobileNav");\nfunction closeNav(){if(!localeHamburger||!localeMobileNav)return;localeHamburger.classList.remove("active");localeMobileNav.classList.remove("open");localeHamburger.setAttribute("aria-expanded","false");}\nif(localeHamburger&&localeMobileNav){localeHamburger.addEventListener("click",()=>{const open=!localeMobileNav.classList.contains("open");localeHamburger.classList.toggle("active",open);localeMobileNav.classList.toggle("open",open);localeHamburger.setAttribute("aria-expanded",open?"true":"false");});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeNav();});}\n</script>\n'''
+              ko = ko.replace('<script src="../assets/language-routing.js"></script>', nav_js + '<script src="../assets/language-routing.js"></script>')
+          ko = ko.replace('아래 금액은 세금 포함입니다. 23:00 이후에는 1인당 심야 요금 ¥800이 추가됩니다.',
+                          '아래 금액은 세금 포함입니다. 23:00 이후에 도착하시는 경우 1인당 심야 요금 ¥800이 추가됩니다.')
+          write('ko/index.html', ko)
+
+          # 7) Shop: truthful treatment-space/head-care names and all reservation chips clickable.
+          shop = (root / 'shop.html').read_text(encoding='utf-8')
+          shop = shop.replace('<span class="info-chip">HotPepper</span>',
+                              '<a href="https://beauty.hotpepper.jp/kr/slnH000397723/" target="_blank" rel="noopener" class="info-chip">HotPepper</a>')
+          shop = shop.replace('<span class="info-chip">LINE予約・相談</span>',
+                              '<a href="https://page.line.me/017hlpiu" target="_blank" rel="noopener" class="info-chip">LINE予約・相談</a>')
+          shop = shop.replace('壁で仕切られた個室空間（入口カーテン）', '壁で仕切られた施術スペース（入口カーテン）')
+          shop = shop.replace('ドライヘッドスパ', 'ドライヘッドケア')
+          write('shop.html', shop)
+
+          # 8) FAQ: both visible answer and FAQ structured data use the arrival-time trigger.
+          faq = (root / 'faq.html').read_text(encoding='utf-8')
+          faq = faq.replace('23:00以降のご利用は、深夜料金800円を頂戴しております。',
+                            '23:00以降にご来店の場合は、深夜料金800円を頂戴しております。')
+          write('faq.html', faq)
+
+          # 9) Booking: coordinates only. Do not touch booking mechanics, prices, WhatsApp flow or noindex.
+          booking = (root / 'booking.html').read_text(encoding='utf-8')
+          booking = booking.replace('35.5628', '35.5634739').replace('139.7162', '139.7170054')
+          write('booking.html', booking)
+
+          # Remove the temporary audit stylesheet from the repository. It is now obsolete.
+          audit = root / 'assets/site-audit-fixes.css'
+          if audit.exists():
+              audit.unlink()
+              changed.append('assets/site-audit-fixes.css (deleted)')
+
+          # ---- Safety gates ----
+          all_text = '\n'.join(p.read_text(encoding='utf-8', errors='ignore') for p in root.rglob('*') if p.is_file() and p.suffix in {'.html','.css','.js','.xml','.mjs'})
+          checks = [
+              ('runtime audit stylesheet reference removed', 'site-audit-fixes.css' not in all_text),
+              ('runtime audit copy mutator removed', 'applyAuditCopyFixes' not in all_text and 'ensureAuditStyles' not in all_text),
+              ('HPB most-economical source copy removed', '最もお得です' not in (root/'menu.html').read_text(encoding='utf-8')),
+              ('desktop H1 lock present', 'Final production lock: 2026-08-09' in (root/'assets/style.css').read_text(encoding='utf-8')),
+              ('stale Japanese nth-card labels removed', 'recommend-card:nth-child(1)::before{content:' not in (root/'assets/style.css').read_text(encoding='utf-8')),
+              ('Japanese source treatment-space wording fixed', '落ち着ける個室空間' not in (root/'index.html').read_text(encoding='utf-8')),
+              ('English white menu inline color removed', 'href="#menu" style="color:#fff' not in (root/'en/index.html').read_text(encoding='utf-8')),
+              ('Chinese mobile menu present', 'id="hamburger"' in (root/'zh/index.html').read_text(encoding='utf-8') and 'id="mobileNav"' in (root/'zh/index.html').read_text(encoding='utf-8')),
+              ('Korean mobile menu present', 'id="hamburger"' in (root/'ko/index.html').read_text(encoding='utf-8') and 'id="mobileNav"' in (root/'ko/index.html').read_text(encoding='utf-8')),
+              ('Shop private-room overstatement removed', '個室空間' not in (root/'shop.html').read_text(encoding='utf-8')),
+              ('Shop head-care name normalized', 'ドライヘッドスパ' not in (root/'shop.html').read_text(encoding='utf-8')),
+              ('Booking canonical coordinates normalized', '35.5628' not in (root/'booking.html').read_text(encoding='utf-8') and '139.7162' not in (root/'booking.html').read_text(encoding='utf-8')),
+              ('Booking noindex preserved', '<meta name="robots" content="noindex,follow">' in (root/'booking.html').read_text(encoding='utf-8')),
+          ]
+          failed = [name for name, ok in checks if not ok]
+          if failed:
+              raise RuntimeError('Safety gate(s) failed: ' + '; '.join(failed))
+
+          print('Changed files:')
+          for item in changed:
+              print(' -', item)
+          print('All safety gates passed.')
+          PY
+
+      - name: Run repository checks
+        shell: bash
+        run: |
+          set -e
+          if [ -f scripts/check-prices.mjs ]; then node scripts/check-prices.mjs; fi
+          for f in scripts/check-*.mjs; do
+            [ -f "$f" ] || continue
+            [ "$f" = "scripts/check-prices.mjs" ] && continue
+            echo "Running $f"
+            node "$f"
+          done
+
+      - name: Commit generated refactor and remove one-shot workflow
+        shell: bash
+        run: |
+          set -e
+          rm -f .github/workflows/site-final-lock.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --stat
+          git commit -m "fix: finalize responsive copy and SEO consistency"
+          git push origin HEAD:fix/site-final-lock-20260809
