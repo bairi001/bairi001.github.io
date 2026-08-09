@@ -1,0 +1,60 @@
+name: Apply menu photo final lock
+
+on:
+  push:
+    branches:
+      - fix/menu-photo-final-lock-20260810
+    paths:
+      - '.menu-photo-fix/READY'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply exact menu photo mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('menu.html')
+          s=p.read_text()
+          rules={
+            'bodycare': '<img src="assets/img/premium-seitai.webp" alt="施術着を着たまま肩・背中を丁寧にもみほぐす整体ボディケア" loading="lazy" width="2048" height="1365">',
+            'aroma': '<img src="assets/img/menu-aroma-back.webp" alt="背中をオイルでゆっくり流すアロマリンパ・オイルトリートメント" loading="lazy" width="1254" height="1254">',
+            'head': '<img src="assets/img/head-scalp-care.webp" alt="頭まわりを両手で丁寧にほぐすドライヘッドケア" loading="lazy" width="1254" height="1254">',
+          }
+          for ident,img in rules.items():
+              pat=rf'(<section\s+class="menu-section"\s+id="{ident}">[\s\S]*?<div class="menu-photo">)\s*<img\b[^>]*>([\s\S]*?</div>)'
+              s,n=re.subn(pat,rf'\1\n          {img}\2',s,count=1)
+              if n != 1: raise SystemExit(f'could not replace image in #{ident}')
+          p.write_text(s)
+
+          w=Path('.github/workflows/site-checks.yml')
+          text=w.read_text()
+          if 'node scripts/check-menu-images.mjs' not in text:
+              marker='node scripts/check-seo.mjs'
+              if marker not in text: raise SystemExit('site-checks marker not found')
+              text=text.replace(marker, marker+'\n          node scripts/check-menu-images.mjs',1)
+              w.write_text(text)
+          PY
+          rm -rf .menu-photo-fix
+          rm -f .github/workflows/apply-menu-photo-lock.yml
+      - name: Commit exact mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m '锁定菜单主图与用户指定服务语义'
+          git push
