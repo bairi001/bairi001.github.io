@@ -3,8 +3,8 @@
 
   if (typeof I18N !== "object" || typeof $ !== "function") return;
 
-  // Temporary channel switch. Set to true after WhatsApp Business access is restored.
-  const WHATSAPP_CHANNEL_ENABLED = false;
+  // WhatsApp Business access was restored on 2026-08-10.
+  const WHATSAPP_CHANNEL_ENABLED = true;
 
   Object.assign(I18N.en, {
     formLead: WHATSAPP_CHANNEL_ENABLED
@@ -51,7 +51,10 @@
     trustSpaceSub: "편안하게 쉴 수 있는 공간"
   });
 
-  let bookingMode = WEB_FORM_ENABLED ? "web" : "whatsapp";
+  const requestedMode = new URLSearchParams(location.search).get("mode");
+  let bookingMode = requestedMode === "whatsapp" && WHATSAPP_CHANNEL_ENABLED
+    ? "whatsapp"
+    : (WEB_FORM_ENABLED ? "web" : "whatsapp");
   const previewLabel = document.querySelector('[data-i18n="preview"]');
   const hideRedundantHpbBanner = () => {
     const banner = $("jaHpbBanner");
