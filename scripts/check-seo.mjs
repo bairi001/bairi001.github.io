@@ -106,8 +106,19 @@ for (const [file, phrase] of Object.entries(lateNightChecks)) {
 
 const menu = indexableHtml["menu.html"];
 if ((menu.match(/HotPepperでこのメニューを見る/g) || []).length !== 0) fail("menu.html", "repeated per-menu HotPepper CTA has returned");
-for (const image of ["body-shoulder-care-new.webp", "aroma-leg-care-new.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
-  if (!menu.includes(image)) fail("menu.html", `new treatment image is not statically referenced: ${image}`);
+for (const image of ["premium-seitai.webp", "menu-aroma-back.webp", "head-scalp-care.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
+  if (!menu.includes(image)) fail("menu.html", `approved treatment image is not statically referenced: ${image}`);
+}
+const menuImageLocks = {
+  bodycare: { image: "premium-seitai.webp", width: 'width="1254"', height: 'height="1050"', forbidden: ["body-shoulder-care-new.webp"] },
+  aroma: { image: "menu-aroma-back.webp", width: 'width="1800"', height: 'height="1005"', forbidden: ["aroma-leg-care-new.webp"] },
+  head: { image: "head-scalp-care.webp", width: 'width="1254"', height: 'height="1254"', forbidden: ["decollete-care.webp"] }
+};
+for (const [id, rule] of Object.entries(menuImageLocks)) {
+  const section = menu.match(new RegExp(`<section[^>]+id=["']${id}["'][\\s\\S]*?<\\/section>`, "i"))?.[0] || "";
+  if (!section.includes(rule.image)) fail("menu.html", `${id} must use ${rule.image}`);
+  if (!section.includes(rule.width) || !section.includes(rule.height)) fail("menu.html", `${id} must keep approved high-resolution intrinsic dimensions`);
+  for (const wrong of rule.forbidden) if (section.includes(wrong)) fail("menu.html", `${id} contains semantically incorrect image ${wrong}`);
 }
 
 for (const file of ["index.html", "menu.html", "shop.html", "faq.html", "en/index.html", "zh/index.html", "ko/index.html", "assets/language-routing.js", "assets/secondary-pages.js"]) {
