@@ -1,6 +1,13 @@
 (() => {
   "use strict";
 
+  if (!document.querySelector('script[data-site-closeout]')) {
+    const siteCloseout = document.createElement("script");
+    siteCloseout.src = "/assets/site-closeout.js";
+    siteCloseout.async = false;
+    siteCloseout.dataset.siteCloseout = "1";
+    document.head.append(siteCloseout);
+  }
 
   const STORAGE_KEY = "sya_lang";
   const DISMISSED_KEY = "sya_lang_dismissed";
