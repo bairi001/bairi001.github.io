@@ -126,11 +126,22 @@ for (const required of ["labels.course", "labels.date", "labels.time", "labels.g
 }
 
 for (const phrase of ["Open daily","毎日営業","每天营业","매일 영업","Private room space","個室空間"]) { if (booking.includes(phrase)) fail("booking.html", `stale raw booking claim remains: ${phrase}`); }
-for (const phrase of ["予約時刻ではなく実際のご来店時刻が基準です","arrive at or after 11:00 PM","1月1日休み","入口カーテン"]) { if (!booking.includes(phrase)) fail("booking.html", `truthful raw booking wording missing: ${phrase}`); }
+for (const phrase of ["予約時刻ではなく実際のご来店時刻が基準です","arrive at or after 11:00 PM","1月1日休み","個室仕様の施術スペース","Private treatment spaces","独立护理空间","독립형 관리 공간"]) { if (!booking.includes(phrase)) fail("booking.html", `truthful raw booking wording missing: ${phrase}`); }
 if (booking.includes("isLate()")) fail("booking.html", "selected booking time must not calculate or append the late-night fee");
 for (const file of ["index.html","shop.html","en/index.html"]) { const html=indexableHtml[file]; for (const image of ["shop-front.jpg","premium-seitai.webp","menu-aroma-back.webp","menu-foot-close.webp","head-scalp-care.webp"]) if (!html.includes(image)) fail(file, `LocalBusiness representative image missing: ${image}`); }
 const legacyCloseout = await read("assets/site-closeout.js");
 for (const stale of ["body-shoulder-care-new.webp","aroma-leg-care-new.webp","Open daily","Private room space","patchMenu","patchFaq"]) if (legacyCloseout.includes(stale)) fail("assets/site-closeout.js", `legacy compatibility shim still contains stale DOM patch: ${stale}`);
+
+const spaceWordingLocks = {
+  "index.html": ["個室仕様の施術スペース"],
+  "shop.html": ["個室仕様の施術スペース", "三方を壁で仕切った個室仕様の施術スペースです。入口はカーテンになっています。"],
+  "faq.html": ["個室ですか？", "三方を壁で仕切った個室仕様の施術スペースです。入口はカーテンになっています。"],
+  "en/index.html": ["Private treatment spaces"],
+  "zh/index.html": ["独立护理空间", "三面由隔断墙分隔，入口使用帘子"],
+  "ko/index.html": ["독립형 관리 공간", "세 면은 벽으로 구분되어 있고 입구는 커튼으로 되어 있습니다."]
+};
+for (const [file, phrases] of Object.entries(spaceWordingLocks)) requireFragments(file, indexableHtml[file], phrases, "private-space wording");
+for (const phrase of ["個室仕様の施術スペース","Private treatment spaces","独立护理空间","독립형 관리 공간"]) if (!bookingMode.includes(phrase)) fail("assets/booking-mode.js", `booking runtime space wording missing: ${phrase}`);
 
 const routing = await read("assets/language-routing.js");
 if (/https?:\/\/wa\.me\//i.test(routing)) fail("assets/language-routing.js", "homepage WhatsApp CTA must route through booking.html, not directly to wa.me");
@@ -173,7 +184,7 @@ const currentLastmod = [
 for (const url of currentLastmod) {
   const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const value = sitemap.match(new RegExp(`<url><loc>${escaped}</loc><lastmod>([^<]+)</lastmod>`))?.[1];
-  if (value !== "2026-08-10") fail("sitemap.xml", `${url} lastmod should reflect the 2026-08-10 SEO closeout`);
+  if (value !== "2026-08-11") fail("sitemap.xml", `${url} lastmod should reflect the 2026-08-11 private-space wording closeout`);
 }
 
 if (errors.length) {

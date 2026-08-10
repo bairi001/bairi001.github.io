@@ -14,8 +14,8 @@
     hoursHint: "Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. An ¥800 late-night fee applies when you arrive at or after 11:00 PM. All times are JST.",
     trustHours: "Hours",
     trustHoursSub: "11:00 AM–2:00 AM · Closed January 1",
-    trustSpace: "Private treatment space · curtain entrance",
-    trustSpaceSub: "A calm environment for relaxation"
+    trustSpace: "Private treatment spaces",
+    trustSpaceSub: "Three walls with a curtain entrance"
   });
   Object.assign(I18N.zh, {
     formLead: WHATSAPP_CHANNEL_ENABLED
@@ -25,8 +25,8 @@
     hoursHint: "营业时间11:00～次日2:00（1月1日休息），最晚预约申请为次日1:00。若到店时间为23:00或之后，加收800日元深夜费用。所有时间均为日本标准时间（JST）。",
     trustHours: "营业时间",
     trustHoursSub: "11:00－次日2:00 · 1月1日休息",
-    trustSpace: "相对独立的护理空间 · 入口帘隔断",
-    trustSpaceSub: "安静舒适的放松环境"
+    trustSpace: "独立护理空间",
+    trustSpaceSub: "三面隔断墙，入口使用帘子"
   });
   Object.assign(I18N.ja, {
     formLead: WHATSAPP_CHANNEL_ENABLED
@@ -36,8 +36,8 @@
     hoursHint: "営業時間11:00〜翌2:00（1月1日休み）。最終予約リクエストは翌1:00です。23:00以降にご来店の場合、深夜料金800円。すべて日本標準時（JST）です。",
     trustHours: "営業時間",
     trustHoursSub: "11:00〜翌2:00 · 1月1日休み",
-    trustSpace: "落ち着ける施術スペース · 入口カーテン",
-    trustSpaceSub: "ゆっくり過ごせるリラクゼーション空間"
+    trustSpace: "個室仕様の施術スペース",
+    trustSpaceSub: "三方を壁で仕切り、入口はカーテンです。"
   });
   Object.assign(I18N.ko, {
     formLead: WHATSAPP_CHANNEL_ENABLED
@@ -47,8 +47,8 @@
     hoursHint: "영업시간은 11:00~다음 날 2:00이며 1월 1일은 휴무입니다. 마지막 예약 신청은 다음 날 1:00입니다. 23:00 이후 도착 시 심야 요금 800엔이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다.",
     trustHours: "영업시간",
     trustHoursSub: "11:00~다음 날 2:00 · 1월 1일 휴무",
-    trustSpace: "분리된 관리 공간 · 커튼 출입구",
-    trustSpaceSub: "편안하게 쉴 수 있는 공간"
+    trustSpace: "독립형 관리 공간",
+    trustSpaceSub: "세 면이 벽으로 구분되어 있고 입구는 커튼입니다."
   });
 
   const requestedMode = new URLSearchParams(location.search).get("mode");
