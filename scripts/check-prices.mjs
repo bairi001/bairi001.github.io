@@ -61,8 +61,8 @@ for (const item of prices.items) {
   const expectedKey = item.id === "bodyFoot90" ? "satisfaction90" : item.id;
   expect("booking.html", `${item.id} duration/price mismatch`, new RegExp(`key:"${expectedKey}",min:${item.duration},price:${item.price}`));
 }
-expect("booking.html", "Late-night start time mismatch", />=1380:false/);
-expect("booking.html", "Late-night fee mismatch", new RegExp(`isLate\\(\\)\\?${prices.lateNightFee.price}:0`));
+if (/isLate\(\)/.test(files["booking.html"])) errors.push("booking.html: selected booking time must not trigger the late-night fee");
+expect("booking.html", "Arrival-based late-night rule missing", /予約時刻ではなく実際のご来店時刻が基準です/);
 
 const localizedLabels = {
   "zh/index.html": {

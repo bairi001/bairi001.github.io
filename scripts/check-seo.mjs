@@ -106,7 +106,7 @@ for (const [file, phrase] of Object.entries(lateNightChecks)) {
 
 const menu = indexableHtml["menu.html"];
 if ((menu.match(/HotPepperでこのメニューを見る/g) || []).length !== 0) fail("menu.html", "repeated per-menu HotPepper CTA has returned");
-for (const image of ["body-shoulder-care-new.webp", "aroma-leg-care-new.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
+for (const image of ["premium-seitai.webp", "menu-aroma-back.webp", "head-scalp-care.webp", "leg-option-care-new.webp", "decollete-care-new.webp"]) {
   if (!menu.includes(image)) fail("menu.html", `new treatment image is not statically referenced: ${image}`);
 }
 
@@ -125,6 +125,13 @@ for (const required of ["labels.course", "labels.date", "labels.time", "labels.g
   if (!booking.includes(required)) fail("booking.html", `structured WhatsApp message field missing: ${required}`);
 }
 
+for (const phrase of ["Open daily","毎日営業","每天营业","매일 영업","Private room space","個室空間"]) { if (booking.includes(phrase)) fail("booking.html", `stale raw booking claim remains: ${phrase}`); }
+for (const phrase of ["予約時刻ではなく実際のご来店時刻が基準です","arrive at or after 11:00 PM","1月1日休み","入口カーテン"]) { if (!booking.includes(phrase)) fail("booking.html", `truthful raw booking wording missing: ${phrase}`); }
+if (booking.includes("isLate()")) fail("booking.html", "selected booking time must not calculate or append the late-night fee");
+for (const file of ["index.html","shop.html","en/index.html"]) { const html=indexableHtml[file]; for (const image of ["shop-front.jpg","premium-seitai.webp","menu-aroma-back.webp","menu-foot-close.webp","head-scalp-care.webp"]) if (!html.includes(image)) fail(file, `LocalBusiness representative image missing: ${image}`); }
+const legacyCloseout = await read("assets/site-closeout.js");
+for (const stale of ["body-shoulder-care-new.webp","aroma-leg-care-new.webp","Open daily","Private room space","patchMenu","patchFaq"]) if (legacyCloseout.includes(stale)) fail("assets/site-closeout.js", `legacy compatibility shim still contains stale DOM patch: ${stale}`);
+
 const routing = await read("assets/language-routing.js");
 if (/https?:\/\/wa\.me\//i.test(routing)) fail("assets/language-routing.js", "homepage WhatsApp CTA must route through booking.html, not directly to wa.me");
 if (/configureHomeMobileCta|replaceChildren\s*\(/.test(routing)) fail("assets/language-routing.js", "mobile conversion CTA must be static HTML, not rebuilt at runtime");
@@ -133,6 +140,9 @@ if (!routing.includes('gridTemplateColumns = "minmax(0,1fr) minmax(0,1fr) minmax
 
 const staticCtas = {
   "index.html": ['data-channel="hpb">HotPepper予約', 'data-channel="web">ウェブ予約', 'data-channel="line">LINE相談'],
+  "menu.html": ['data-channel="hpb">HotPepper予約', 'data-channel="web">ウェブ予約', 'data-channel="line">LINE相談'],
+  "shop.html": ['data-channel="hpb">HotPepper予約', 'data-channel="web">ウェブ予約', 'data-channel="line">LINE相談'],
+  "faq.html": ['data-channel="hpb">HotPepper予約', 'data-channel="web">ウェブ予約', 'data-channel="line">LINE相談'],
   "en/index.html": ['data-channel="web">Book Online', 'data-channel="whatsapp">WhatsApp', 'data-channel="phone">Call'],
   "zh/index.html": ['data-channel="web">网页预约', 'data-channel="whatsapp">WhatsApp', 'data-channel="line">LINE'],
   "ko/index.html": ['data-channel="web">온라인 예약', 'data-channel="whatsapp">WhatsApp', 'data-channel="line">LINE']
