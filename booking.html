@@ -257,8 +257,8 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
     </figure>
     <div class="trust-list">
       <div class="trust-item"><span class="trust-num">01</span><div><strong data-i18n="trustAccess">1 min from JR Kamata Station</strong><span data-i18n="trustAccessSub">East Exit, walk 1 minute</span></div></div>
-      <div class="trust-item"><span class="trust-num">02</span><div><strong data-i18n="trustHours">Open daily</strong><span data-i18n="trustHoursSub">11:00 AM – 2:00 AM (next day)</span></div></div>
-      <div class="trust-item"><span class="trust-num">03</span><div><strong data-i18n="trustSpace">Private room space · Female friendly</strong><span data-i18n="trustSpaceSub">A calm environment for relaxation</span></div></div>
+      <div class="trust-item"><span class="trust-num">02</span><div><strong data-i18n="trustHours">Hours</strong><span data-i18n="trustHoursSub">11:00 AM – 2:00 AM · Closed January 1</span></div></div>
+      <div class="trust-item"><span class="trust-num">03</span><div><strong data-i18n="trustSpace">Private treatment space · curtain entrance</strong><span data-i18n="trustSpaceSub">A calm environment for relaxation</span></div></div>
     </div>
     <p class="story-foot"><a href="/" data-i18n="backHome">← Back to the official website</a></p>
   </aside>
@@ -278,7 +278,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
       <header class="form-intro">
         <p class="eyebrow" data-i18n="eyebrow">Appointment Request</p>
         <h1 data-i18n="formTitle">Request your preferred time</h1>
-        <p data-i18n="formLead">Complete the form and send it via WhatsApp. We will check availability and reply to confirm your appointment.</p>
+        <p data-i18n="formLead">Choose your course and preferred time, then send your request on this website or via WhatsApp. We will check availability and reply to confirm your appointment.</p>
       </header>
       <section class="channel-panel" aria-labelledby="channelTitle">
         <h2 class="channel-title" id="channelTitle" data-i18n="channelTitle">Choose a booking channel</h2>
@@ -300,7 +300,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
             <label class="field-label" for="time"><span data-i18n="preferredTime">Preferred time</span><span class="required" data-i18n="required">required</span></label>
             <div class="field-control"><select id="time" name="time" required></select></div>
           </div>
-          <p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. <strong>Late-night fee ¥800 after 11:00 PM. All times are JST.</strong></p>
+          <p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. <strong>An ¥800 late-night fee applies only when you actually arrive at or after 11:00 PM. All times are JST.</strong></p>
         </div>
 
         <fieldset class="form-section">
@@ -440,13 +440,13 @@ const NOMINATIONS=[
 
 const I18N={
   en:{
-    storyTitle:"A quiet moment<br>for your tired body.",storyLead:"Foot reflexology, body care and aroma oil treatments, one minute from JR Kamata Station.",photoAlt:"Relaxing scalp and head massage",trustAccess:"1 min from JR Kamata Station",trustAccessSub:"East Exit, walk 1 minute",trustHours:"Open daily",trustHoursSub:"11:00 AM – 2:00 AM (next day)",trustSpace:"Private room space · Female friendly",trustSpaceSub:"A calm environment for relaxation",backHome:"← Back to the official website",eyebrow:"Appointment Request",formTitle:"Request your preferred time",formLead:"Complete the form and send it via WhatsApp. We will check availability and reply to confirm your appointment.",course:"Course",required:"required",preferredDate:"Preferred date",preferredTime:"Preferred time",hoursHint:"Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. Late-night fee ¥800 after 11:00 PM.",guests:"Number of guests",groupHint:"For two or more guests, we will confirm the available staff and start times in our reply.",extras:"Add-ons and nomination (optional)",nomination:"Therapist nomination",name:"Your name",note:"Note",optional:"optional",preview:"WhatsApp message preview",submit:"Send Booking Request via WhatsApp",confirmLine:"Your appointment is confirmed only after we reply.",policyTitle:"Cancellation, late arrival and salon policy",policyCopy:"<p>Please contact us as early as possible if your plans change. Same-day cancellations or no-shows may incur a fee of up to 50% of the course price.</p><p>If you are more than 10 minutes late without contacting us, your appointment may be released and the treatment time may be shortened.</p><p>We provide relaxation treatments only. No sexual services are offered; inappropriate requests will be refused.</p>",privacy:"Privacy Policy",selectCourse:"Select a course…",selectTime:"Select a preferred time…",namePh:"e.g. John Smith",notePh:"Requests, areas of concern, or questions (optional)",fillAll:"Select a course, date and time, then enter your name to preview the message.",estimateSingle:n=>`Estimated price for 1 guest: ¥${n.toLocaleString()}${isLate()?" (including the ¥800 late-night fee)":""}. Final price is confirmed by the salon.`,estimateGroup:n=>`Listed amount per guest: ¥${n.toLocaleString()}${isLate()?" + ¥800 late-night fee":""}. We will confirm the group total.`,groups:{popular:"Popular Set Courses",body:"Pressure Point Body Massage",foot:"Foot Reflexology",aroma:"Aroma Oil Treatment"},msgTitle:"Hello, I would like to request an appointment at Shin Yuu An.",msgLabels:{course:"Course",date:"Preferred date",time:"Preferred time",guests:"Guests",addons:"Add-ons",nomination:"Nomination",name:"Name",note:"Note",fee:"Late-night fee",close:"I understand that the appointment is confirmed only after your reply."}
+    storyTitle:"A quiet moment<br>for your tired body.",storyLead:"Foot reflexology, body care and aroma oil treatments, one minute from JR Kamata Station.",photoAlt:"Relaxing scalp and head massage",trustAccess:"1 min from JR Kamata Station",trustAccessSub:"East Exit, walk 1 minute",trustHours:"Hours",trustHoursSub:"11:00 AM – 2:00 AM · Closed January 1",trustSpace:"Private treatment space · curtain entrance",trustSpaceSub:"A calm environment for relaxation",backHome:"← Back to the official website",eyebrow:"Appointment Request",formTitle:"Request your preferred time",formLead:"Choose your course and preferred time, then send your request on this website or via WhatsApp. We will check availability and reply to confirm your appointment.",course:"Course",required:"required",preferredDate:"Preferred date",preferredTime:"Preferred time",hoursHint:"Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. An ¥800 late-night fee applies when you arrive at or after 11:00 PM. All times are JST.",guests:"Number of guests",groupHint:"For two or more guests, we will confirm the available staff and start times in our reply.",extras:"Add-ons and nomination (optional)",nomination:"Therapist nomination",name:"Your name",note:"Note",optional:"optional",preview:"WhatsApp message preview",submit:"Send Booking Request via WhatsApp",confirmLine:"Your appointment is confirmed only after we reply.",policyTitle:"Cancellation, late arrival and salon policy",policyCopy:"<p>Please contact us as early as possible if your plans change. Same-day cancellations or no-shows may incur a fee of up to 50% of the course price.</p><p>If you are more than 10 minutes late without contacting us, your appointment may be released and the treatment time may be shortened.</p><p>We provide relaxation treatments only. No sexual services are offered; inappropriate requests will be refused.</p>",privacy:"Privacy Policy",selectCourse:"Select a course…",selectTime:"Select a preferred time…",namePh:"e.g. John Smith",notePh:"Requests, areas of concern, or questions (optional)",fillAll:"Select a course, date and time, then enter your name to preview the message.",estimateSingle:n=>`Estimated price for 1 guest: ¥${n.toLocaleString()}. An ¥800 late-night fee applies only if you arrive at or after 11:00 PM. Final price is confirmed by the salon.`,estimateGroup:n=>`Listed amount per guest: ¥${n.toLocaleString()}. An ¥800 late-night fee applies per guest only if arrival is at or after 11:00 PM. We will confirm the group total.`,groups:{popular:"Popular Set Courses",body:"Pressure Point Body Massage",foot:"Foot Reflexology",aroma:"Aroma Oil Treatment"},msgTitle:"Hello, I would like to request an appointment at Shin Yuu An.",msgLabels:{course:"Course",date:"Preferred date",time:"Preferred time",guests:"Guests",addons:"Add-ons",nomination:"Nomination",name:"Name",note:"Note",fee:"Late-night fee",close:"I understand that the appointment is confirmed only after your reply."}
   },
   zh:{
-    storyTitle:"让一天的疲惫，<br>静静地舒展开。",storyLead:"足底护理、身体放松与香薰精油护理，距离JR蒲田站东口步行1分钟。",photoAlt:"舒缓头部护理",trustAccess:"JR蒲田站步行1分钟",trustAccessSub:"东口出站，步行约1分钟",trustHours:"每天营业",trustHoursSub:"11:00－次日凌晨2:00",trustSpace:"相对独立的护理空间 · 女性也可安心到店",trustSpaceSub:"安静舒适的放松环境",backHome:"← 返回官方网站",eyebrow:"预约申请",formTitle:"选择您希望的到店时间",formLead:"填写后通过WhatsApp发送预约申请。我们确认空位后会回复，收到回复后预约才正式成立。",course:"选择套餐",required:"必填",preferredDate:"希望日期",preferredTime:"希望时间",hoursHint:"每天11:00－次日凌晨2:00营业，最晚预约申请时间为凌晨1:00。23:00以后加收深夜费¥800。",guests:"到店人数",groupHint:"两位以上客人，我们将在回复时确认可安排的员工人数和开始时间。",extras:"附加项目与指定技师（可选）",nomination:"指定技师",name:"您的姓名",note:"备注",optional:"选填",preview:"WhatsApp消息预览",submit:"通过WhatsApp发送预约申请",confirmLine:"收到本店回复后，预约才正式成立。",policyTitle:"取消、迟到及店铺服务说明",policyCopy:"<p>如果行程有变，请尽早联系我们。当日取消或无故不到店，可能收取最高为套餐价格50%的费用。</p><p>迟到超过10分钟且未联系我们，预约可能被取消，护理时间也可能相应缩短。</p><p>本店只提供正规放松护理，不提供任何色情服务；不当要求将被拒绝。</p>",privacy:"隐私政策",selectCourse:"请选择套餐…",selectTime:"请选择希望时间…",namePh:"例：王小明",notePh:"希望护理的部位、问题或其他要求（选填）",fillAll:"请选择套餐、日期和时间，并填写姓名后查看消息预览。",estimateSingle:n=>`1位客人预估价格：¥${n.toLocaleString()}${isLate()?"（已包含深夜费¥800）":""}。最终价格由店铺回复确认。`,estimateGroup:n=>`每位客人所选项目价格：¥${n.toLocaleString()}${isLate()?"，另加深夜费¥800":""}。团体总价将在回复时确认。`,groups:{popular:"人气组合套餐",body:"身体放松",foot:"足底护理",aroma:"香薰精油护理"},msgTitle:"您好，我想向身悠晏申请预约。",msgLabels:{course:"套餐",date:"希望日期",time:"希望时间",guests:"人数",addons:"附加项目",nomination:"指定技师",name:"姓名",note:"备注",fee:"深夜费",close:"我已了解：收到店铺回复后预约才正式成立。"}
+    storyTitle:"让一天的疲惫，<br>静静地舒展开。",storyLead:"足底护理、身体放松与香薰精油护理，距离JR蒲田站东口步行1分钟。",photoAlt:"舒缓头部护理",trustAccess:"JR蒲田站步行1分钟",trustAccessSub:"东口出站，步行约1分钟",trustHours:"营业时间",trustHoursSub:"11:00－次日2:00 · 1月1日休息",trustSpace:"相对独立的护理空间 · 女性也可安心到店",trustSpaceSub:"安静舒适的放松环境",backHome:"← 返回官方网站",eyebrow:"预约申请",formTitle:"选择您希望的到店时间",formLead:"选择套餐和希望时间后，可通过本网页或WhatsApp发送预约申请。收到店铺回复后，预约才正式成立。",course:"选择套餐",required:"必填",preferredDate:"希望日期",preferredTime:"希望时间",hoursHint:"营业时间11:00～次日2:00（1月1日休息），最晚预约申请为次日1:00。若实际到店时间为23:00或之后，每位加收800日元深夜费；以实际到店时间为准。所有时间均为日本标准时间（JST）。",guests:"到店人数",groupHint:"两位以上客人，我们将在回复时确认可安排的员工人数和开始时间。",extras:"附加项目与指定技师（可选）",nomination:"指定技师",name:"您的姓名",note:"备注",optional:"选填",preview:"WhatsApp消息预览",submit:"通过WhatsApp发送预约申请",confirmLine:"收到本店回复后，预约才正式成立。",policyTitle:"取消、迟到及店铺服务说明",policyCopy:"<p>如果行程有变，请尽早联系我们。当日取消或无故不到店，可能收取最高为套餐价格50%的费用。</p><p>迟到超过10分钟且未联系我们，预约可能被取消，护理时间也可能相应缩短。</p><p>本店只提供正规放松护理，不提供任何色情服务；不当要求将被拒绝。</p>",privacy:"隐私政策",selectCourse:"请选择套餐…",selectTime:"请选择希望时间…",namePh:"例：王小明",notePh:"希望护理的部位、问题或其他要求（选填）",fillAll:"请选择套餐、日期和时间，并填写姓名后查看消息预览。",estimateSingle:n=>`1位客人所选项目预估价格：¥${n.toLocaleString()}。若实际到店时间为23:00或之后，另加深夜费¥800。最终价格由店铺回复确认。`,estimateGroup:n=>`每位客人所选项目价格：¥${n.toLocaleString()}。若实际到店时间为23:00或之后，每位另加深夜费¥800。团体总价将在回复时确认。`,groups:{popular:"人气组合套餐",body:"身体放松",foot:"足底护理",aroma:"香薰精油护理"},msgTitle:"您好，我想向身悠晏申请预约。",msgLabels:{course:"套餐",date:"希望日期",time:"希望时间",guests:"人数",addons:"附加项目",nomination:"指定技师",name:"姓名",note:"备注",fee:"深夜费",close:"我已了解：收到店铺回复后预约才正式成立。"}
   },
   ja:{
-    storyTitle:"一日の疲れを、<br>静かにほどく。",storyLead:"足裏・整体・アロマの本格リラクゼーション。JR蒲田駅東口から徒歩1分です。",photoAlt:"頭部をやさしくほぐすヘッドケア",trustAccess:"JR蒲田駅から徒歩1分",trustAccessSub:"東口を出て徒歩約1分",trustHours:"毎日営業",trustHoursSub:"11:00〜翌2:00",trustSpace:"個室空間 · 女性も通いやすい",trustSpaceSub:"落ち着いて過ごせる空間",backHome:"← 公式サイトへ戻る",eyebrow:"Reservation Request",formTitle:"ご希望の日時をお知らせください",formLead:"フォーム入力後、WhatsAppで予約リクエストを送信します。空き状況を確認し、当店からの返信をもって予約確定となります。",course:"コース",required:"必須",preferredDate:"希望日",preferredTime:"希望時間",hoursHint:"毎日11:00〜翌2:00営業、最終予約リクエストは翌1:00です。23時以降は深夜料金800円。",guests:"人数",groupHint:"2名様以上の場合、対応スタッフ数と開始時間を返信時に確認いたします。",extras:"オプション・指名（任意）",nomination:"スタッフ指名",name:"お名前",note:"ご要望",optional:"任意",preview:"WhatsApp送信内容プレビュー",submit:"WhatsAppで予約リクエストを送信",confirmLine:"当店からの返信をもって予約確定となります。",policyTitle:"キャンセル・遅刻・当店のサービスについて",policyCopy:"<p>予定変更の際は、できるだけ早めにご連絡ください。当日キャンセルまたは無断キャンセルは、コース料金の最大50％を頂戴する場合があります。</p><p>ご連絡なく10分以上遅れた場合、予約を解除し、施術時間を短縮する場合があります。</p><p>当店は通常のリラクゼーション施術のみを提供しています。性的サービスは一切行っておらず、不適切な要求はお断りします。</p>",privacy:"プライバシーポリシー",selectCourse:"コースを選択…",selectTime:"希望時間を選択…",namePh:"例：山田太郎",notePh:"気になる部位・ご質問・ご要望（任意）",fillAll:"コース・日付・時間を選択し、お名前を入力すると送信内容が表示されます。",estimateSingle:n=>`1名様の概算料金：¥${n.toLocaleString()}${isLate()?"（深夜料金800円を含む）":""}。最終料金は当店からの返信でご確認ください。`,estimateGroup:n=>`1名様あたりの選択料金：¥${n.toLocaleString()}${isLate()?"＋深夜料金800円":""}。合計は返信時に確認いたします。`,groups:{popular:"人気セットコース",body:"整体ボディケア",foot:"足つぼ",aroma:"アロマオイル"},msgTitle:"身悠晏の予約を希望します。",msgLabels:{course:"コース",date:"希望日",time:"希望時間",guests:"人数",addons:"オプション",nomination:"指名",name:"名前",note:"要望",fee:"深夜料金",close:"当店からの返信をもって予約確定となることを確認しました。"}
+    storyTitle:"一日の疲れを、<br>静かにほどく。",storyLead:"足裏・整体・アロマの本格リラクゼーション。JR蒲田駅東口から徒歩1分です。",photoAlt:"頭部をやさしくほぐすヘッドケア",trustAccess:"JR蒲田駅から徒歩1分",trustAccessSub:"東口を出て徒歩約1分",trustHours:"営業時間",trustHoursSub:"11:00〜翌2:00 · 1月1日休み",trustSpace:"落ち着ける施術スペース · 入口カーテン",trustSpaceSub:"落ち着いて過ごせる空間",backHome:"← 公式サイトへ戻る",eyebrow:"Reservation Request",formTitle:"ご希望の日時をお知らせください",formLead:"コースと希望日時を入力し、ウェブまたはWhatsAppから予約リクエストを送信できます。空き状況を確認後、当店からの返信をもって予約確定となります。",course:"コース",required:"必須",preferredDate:"希望日",preferredTime:"希望時間",hoursHint:"営業時間11:00〜翌2:00（1月1日休み）。最終予約リクエストは翌1:00です。実際のご来店が23:00以降の場合、深夜料金800円。予約時刻ではなく実際のご来店時刻が基準です。",guests:"人数",groupHint:"2名様以上の場合、対応スタッフ数と開始時間を返信時に確認いたします。",extras:"オプション・指名（任意）",nomination:"スタッフ指名",name:"お名前",note:"ご要望",optional:"任意",preview:"WhatsApp送信内容プレビュー",submit:"WhatsAppで予約リクエストを送信",confirmLine:"当店からの返信をもって予約確定となります。",policyTitle:"キャンセル・遅刻・当店のサービスについて",policyCopy:"<p>予定変更の際は、できるだけ早めにご連絡ください。当日キャンセルまたは無断キャンセルは、コース料金の最大50％を頂戴する場合があります。</p><p>ご連絡なく10分以上遅れた場合、予約を解除し、施術時間を短縮する場合があります。</p><p>当店は通常のリラクゼーション施術のみを提供しています。性的サービスは一切行っておらず、不適切な要求はお断りします。</p>",privacy:"プライバシーポリシー",selectCourse:"コースを選択…",selectTime:"希望時間を選択…",namePh:"例：山田太郎",notePh:"気になる部位・ご質問・ご要望（任意）",fillAll:"コース・日付・時間を選択し、お名前を入力すると送信内容が表示されます。",estimateSingle:n=>`1名様の選択料金：¥${n.toLocaleString()}。実際のご来店が23:00以降の場合は深夜料金800円が加算されます。最終料金は当店からの返信でご確認ください。`,estimateGroup:n=>`1名様あたりの選択料金：¥${n.toLocaleString()}。実際のご来店が23:00以降の場合は1名様につき深夜料金800円が加算されます。合計は返信時に確認いたします。`,groups:{popular:"人気セットコース",body:"整体ボディケア",foot:"足つぼ",aroma:"アロマオイル"},msgTitle:"身悠晏の予約を希望します。",msgLabels:{course:"コース",date:"希望日",time:"希望時間",guests:"人数",addons:"オプション",nomination:"指名",name:"名前",note:"要望",fee:"深夜料金",close:"当店からの返信をもって予約確定となることを確認しました。"}
   },
   ko:{
     storyTitle:"하루의 피로를,<br>차분하게 풀어보세요.",
@@ -454,19 +454,19 @@ const I18N={
     photoAlt:"편안한 헤드 케어",
     trustAccess:"JR 가마타역 도보 1분",
     trustAccessSub:"동쪽 출구에서 도보 약 1분",
-    trustHours:"매일 영업",
-    trustHoursSub:"11:00－다음 날 2:00",
+    trustHours:"영업시간",
+    trustHoursSub:"11:00－다음 날 2:00 · 1월 1일 휴무",
     trustSpace:"커튼 입구의 독립적인 공간",
     trustSpaceSub:"차분하게 머물 수 있는 릴랙세이션 공간",
     backHome:"← 한국어 공식 페이지로",
     eyebrow:"예약 신청",
     formTitle:"희망 방문 시간을 알려 주세요",
-    formLead:"양식을 작성한 뒤 WhatsApp으로 예약 신청을 보내 주세요. 매장에서 가능 여부를 확인해 답변드리며, 답변을 받은 뒤 예약이 확정됩니다.",
+    formLead:"코스와 희망 시간을 입력한 뒤 웹페이지 또는 WhatsApp으로 예약 신청을 보낼 수 있습니다. 매장의 답변을 받은 뒤 예약이 확정됩니다.",
     course:"코스",
     required:"필수",
     preferredDate:"희망 날짜",
     preferredTime:"희망 시간",
-    hoursHint:"매일 11:00－다음 날 2:00 영업, 마지막 예약 신청은 다음 날 1:00입니다. 23:00 이후에는 심야 요금 ¥800이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다.",
+    hoursHint:"영업시간은 11:00~다음 날 2:00이며 1월 1일은 휴무입니다. 마지막 예약 신청은 다음 날 1:00입니다. 실제 도착 시간이 23:00 이후인 경우 1인당 심야 요금 800엔이 추가되며, 예약 시간이 아닌 실제 도착 시간을 기준으로 합니다. 모든 시간은 일본 표준시(JST)입니다.",
     guests:"방문 인원",
     groupHint:"2명 이상은 가능한 직원 수와 시작 시간을 답변으로 안내드립니다.",
     extras:"추가 옵션 및 지명 (선택)",
@@ -485,8 +485,8 @@ const I18N={
     namePh:"예: 홍길동",
     notePh:"원하는 부위, 질문 또는 요청 사항 (선택)",
     fillAll:"코스, 날짜, 시간을 선택하고 성함을 입력하면 메시지를 미리 볼 수 있습니다.",
-    estimateSingle:n=>`1인 예상 금액: ¥${n.toLocaleString()}${isLate()?" (심야 요금 ¥800 포함)":""}. 최종 금액은 매장의 답변으로 확인해 주세요.`,
-    estimateGroup:n=>`1인당 선택 금액: ¥${n.toLocaleString()}${isLate()?"＋심야 요금 ¥800":""}. 전체 금액은 답변 시 안내드립니다.`,
+    estimateSingle:n=>`1인 선택 금액: ¥${n.toLocaleString()}. 실제 도착 시간이 23:00 이후인 경우 심야 요금 ¥800이 추가됩니다. 최종 금액은 매장의 답변으로 확인해 주세요.`,
+    estimateGroup:n=>`1인당 선택 금액: ¥${n.toLocaleString()}. 실제 도착 시간이 23:00 이후인 경우 1인당 심야 요금 ¥800이 추가됩니다. 전체 금액은 답변 시 안내드립니다.`,
     groups:{popular:"인기 세트 코스",body:"바디 릴랙세이션",foot:"발 케어",aroma:"아로마 오일 트리트먼트"},
     msgTitle:"신유안에 예약을 신청합니다.",
     msgLabels:{course:"코스",date:"희망 날짜",time:"희망 시간",guests:"인원",addons:"추가 옵션",nomination:"지명",name:"이름",note:"메모",fee:"심야 요금",close:"매장의 답변을 받은 뒤 예약이 확정됨을 확인했습니다."}
@@ -499,7 +499,7 @@ Object.assign(I18N.en,{
   replyNote:"We usually reply as soon as possible during opening hours. Replies may be delayed when we are busy.",
   openingWhatsapp:"Opening WhatsApp…",whatsFallback:"If WhatsApp does not open, tap this link again.",phoneFallback:"Or call 03-6874-6808.",webSubmitting:"Sending your booking request…",webSent:"Booking request sent.",webSentLocked:"Booking request sent. Please do not submit the same request again. Your appointment is confirmed only after we reply.",webError:"The request could not be sent. Your entries have been kept.",validEmail:"Enter a valid email address.",consentRequired:"Please agree to the Privacy Policy.",
   accessTitle:"How to find the salon",accessAddress:"5-12-3 Kamata, Ota-ku, Tokyo 144-0052 · Kitajima Building 4F",accessDirections:"About a 1-minute walk from JR Kamata Station East Exit. Enter the building, walk to the back, and take the elevator inside the entrance to the 4th floor.",openMap:"Open in Google Maps →",accessPhotoAlt:"Kitajima Building entrance and elevator",
-  hoursHint:"Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. Late-night fee ¥800 after 11:00 PM. All times are Japan Standard Time (JST)."
+  hoursHint:"Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. An ¥800 late-night fee applies when you actually arrive at or after 11:00 PM. All times are Japan Standard Time (JST)."
 });
 Object.assign(I18N.zh,{
   channelTitle:"选择预约方式",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"电话 03-6874-6808",channelWeb:"网页预约",
@@ -507,7 +507,7 @@ Object.assign(I18N.zh,{
   replyNote:"营业时间内通常会尽快回复，繁忙时可能有所延迟。",
   openingWhatsapp:"正在打开WhatsApp……",whatsFallback:"如果WhatsApp没有打开，请再次点击此链接。",phoneFallback:"也可致电 03-6874-6808。",webSubmitting:"正在发送预约申请……",webSent:"预约申请已发送。",webSentLocked:"预约申请已发送，请勿重复提交。收到店铺回复后，预约才正式成立。",webError:"发送失败，已保留您填写的内容。",validEmail:"请输入有效的电子邮箱。",consentRequired:"请先同意隐私政策。",
   accessTitle:"如何找到店铺",accessAddress:"〒144-0052 东京都大田区蒲田5-12-3 北岛大楼4楼",accessDirections:"从JR蒲田站东口步行约1分钟。进入大楼后请向里面走，乘入口内部的电梯到4楼。",openMap:"在Google Maps中查看 →",accessPhotoAlt:"北岛大楼入口与电梯指引",
-  hoursHint:"每天11:00－次日凌晨2:00营业，最晚预约申请时间为凌晨1:00。23:00以后加收深夜费¥800。所有时间均为日本标准时间（JST）。"
+  hoursHint:"营业时间11:00～次日2:00（1月1日休息），最晚预约申请为次日1:00。若实际到店时间为23:00或之后，每位加收800日元深夜费；以实际到店时间为准。所有时间均为日本标准时间（JST）。"
 });
 Object.assign(I18N.ja,{
   channelTitle:"予約方法を選ぶ",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"電話 03-6874-6808",channelWeb:"ウェブ予約",
@@ -515,7 +515,7 @@ Object.assign(I18N.ja,{
   replyNote:"営業時間内は通常できるだけ早く返信いたします。混雑時は返信が遅れる場合があります。",
   openingWhatsapp:"WhatsAppを開いています…",whatsFallback:"WhatsAppが開かない場合は、こちらをもう一度押してください。",phoneFallback:"または 03-6874-6808 へお電話ください。",webSubmitting:"予約リクエストを送信しています…",webSent:"予約リクエストを送信しました。",webSentLocked:"予約リクエストを送信しました。同じ内容を再送信しないでください。当店からの返信をもって予約確定となります。",webError:"送信できませんでした。入力内容は保持されています。",validEmail:"正しいメールアドレスを入力してください。",consentRequired:"プライバシーポリシーへの同意が必要です。",
   accessTitle:"店舗までの行き方",accessAddress:"〒144-0052 東京都大田区蒲田5-12-3 北島ビル4F",accessDirections:"JR蒲田駅東口から徒歩約1分です。ビルに入って奥へ進み、入口内部のエレベーターで4Fまでお越しください。",openMap:"Google Mapsで開く →",accessPhotoAlt:"北島ビル入口とエレベーター案内",
-  hoursHint:"毎日11:00〜翌2:00営業、最終予約リクエストは翌1:00です。23時以降は深夜料金800円。すべて日本標準時（JST）です。"
+  hoursHint:"営業時間11:00〜翌2:00（1月1日休み）。最終予約リクエストは翌1:00です。実際のご来店が23:00以降の場合、深夜料金800円。予約時刻ではなく実際のご来店時刻が基準です。すべて日本標準時（JST）です。"
 });
 Object.assign(I18N.ko,{
   channelTitle:"예약 방법 선택",channelWhatsApp:"WhatsApp",channelLine:"LINE",channelHpb:"HotPepper Beauty",channelPhone:"전화 03-6874-6808",channelWeb:"웹 예약",
@@ -539,7 +539,6 @@ const allCourses=()=>COURSE_GROUPS.flatMap(group=>group.items);
 const selectedCourse=()=>allCourses().find(item=>item.key===$("course").value);
 const selectedAddons=()=>ADDONS.filter(item=>document.querySelector(`[data-addon="${item.key}"]`)?.checked);
 const selectedNomination=()=>NOMINATIONS.find(item=>document.querySelector('input[name="nomination"]:checked')?.value===item.key)||NOMINATIONS[0];
-const isLate=()=>{const value=$("time").value;return value?Number(value.split("|")[0])>=1380:false};
 
 function resolveLanguage(){
   const normalize=value=>{
@@ -673,7 +672,7 @@ function timeLabel(){return $("time").value?$("time").value.split("|")[1]:""}
 
 function currentPrice(){
   const course=selectedCourse();if(!course)return 0;
-  return course.price+selectedAddons().reduce((sum,item)=>sum+item.price,0)+selectedNomination().price+(isLate()?800:0);
+  return course.price+selectedAddons().reduce((sum,item)=>sum+item.price,0)+selectedNomination().price;
 }
 
 function utmReference(){
@@ -689,7 +688,6 @@ function messageText(){
   const lines=[I18N[lang].msgTitle,"",`■ ${labels.course}: ${course[lang]} (${money(course.price)})`,`■ ${labels.date}: ${formatDate($("date").value)}`,`■ ${labels.time}: ${timeLabel()}`,`■ ${labels.guests}: ${guests}`,`■ ${labels.name}: ${$("name").value.trim()}`];
   if(addons.length)lines.push(`■ ${labels.addons}: ${addons.map(item=>`${item[lang]} (${money(item.price)})`).join(", ")}`);
   if(nomination.key!=="none")lines.push(`■ ${labels.nomination}: ${nomination[lang]} (${money(nomination.price)})`);
-  if(isLate())lines.push(`■ ${labels.fee}: ¥800`);
   if($("note").value.trim())lines.push(`■ ${labels.note}: ${$("note").value.trim()}`);
   lines.push("",labels.close);
   const reference=utmReference();
