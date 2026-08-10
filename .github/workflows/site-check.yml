@@ -22,3 +22,5 @@ jobs:
         run: node scripts/check-prices.mjs
       - name: Check SEO consistency
         run: node scripts/check-seo.mjs
+      - name: Check menu image semantics
+        run: node scripts/check-menu-images.mjs
