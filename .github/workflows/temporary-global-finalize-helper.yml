@@ -17,6 +17,25 @@ jobs:
         with:
           ref: agent/global-seo-visual-finalize-20260810
           fetch-depth: 0
+      - name: Normalize static booking placeholders
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('booking.html')
+          s=p.read_text(encoding='utf-8')
+          replacements={
+            '<strong data-i18n="trustHours">Open daily</strong><span data-i18n="trustHoursSub">11:00 AM – 2:00 AM (next day)</span>':'<strong data-i18n="trustHours">Hours</strong><span data-i18n="trustHoursSub">11:00 AM – 2:00 AM · Closed January 1</span>',
+            '<strong data-i18n="trustSpace">Private room space · Female friendly</strong>':'<strong data-i18n="trustSpace">Private treatment space · curtain entrance</strong>',
+            '<p data-i18n="formLead">Complete the form and send it via WhatsApp. We will check availability and reply to confirm your appointment.</p>':'<p data-i18n="formLead">Choose your course and preferred time, then send your request on this website or via WhatsApp. We will check availability and reply to confirm your appointment.</p>',
+            '<p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. <strong>Late-night fee ¥800 after 11:00 PM. All times are JST.</strong></p>':'<p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. <strong>An ¥800 late-night fee applies only when you actually arrive at or after 11:00 PM. All times are JST.</strong></p>'
+          }
+          for old,new in replacements.items():
+              if old not in s and new not in s:
+                  raise SystemExit(f'missing booking static anchor: {old[:70]}')
+              s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
       - name: Apply audited fixes
         run: python scripts/global-finalize.py
       - name: Validate static site
