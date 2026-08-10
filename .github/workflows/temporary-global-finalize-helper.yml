@@ -34,6 +34,14 @@ jobs:
               if old not in s and new not in s:
                   raise SystemExit(f'missing booking static anchor: {old[:70]}')
               s=s.replace(old,new,1)
+          late_hints={
+            'hoursHint:"Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. Late-night fee ¥800 after 11:00 PM. All times are Japan Standard Time (JST)."':'hoursHint:"Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. An ¥800 late-night fee applies when you actually arrive at or after 11:00 PM. All times are Japan Standard Time (JST)."',
+            'hoursHint:"每天11:00－次日凌晨2:00营业，最晚预约申请时间为凌晨1:00。23:00以后加收深夜费¥800。所有时间均为日本标准时间（JST）。"':'hoursHint:"营业时间11:00～次日2:00（1月1日休息），最晚预约申请为次日1:00。若实际到店时间为23:00或之后，每位加收800日元深夜费；以实际到店时间为准。所有时间均为日本标准时间（JST）。"',
+            'hoursHint:"毎日11:00〜翌2:00営業、最終予約リクエストは翌1:00です。23時以降は深夜料金800円。すべて日本標準時（JST）です。"':'hoursHint:"営業時間11:00〜翌2:00（1月1日休み）。最終予約リクエストは翌1:00です。実際のご来店が23:00以降の場合、深夜料金800円。予約時刻ではなく実際のご来店時刻が基準です。すべて日本標準時（JST）です。"',
+            'hoursHint:"매일 11:00－다음 날 2:00 영업, 마지막 예약 신청은 다음 날 1:00입니다. 23:00 이후에는 심야 요금 ¥800이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다."':'hoursHint:"영업시간은 11:00~다음 날 2:00이며 1월 1일은 휴무입니다. 마지막 예약 신청은 다음 날 1:00입니다. 실제 도착 시간이 23:00 이후인 경우 1인당 심야 요금 800엔이 추가되며, 예약 시간이 아닌 실제 도착 시간을 기준으로 합니다. 모든 시간은 일본 표준시(JST)입니다."'
+          }
+          for old,new in late_hints.items():
+              s=s.replace(old,new)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Apply audited fixes
