@@ -63,6 +63,8 @@ if (sitemap.includes("https://shinyuuan.jp/privacy.html")) fail("sitemap.xml", "
 
 const importantPaths = [
   "/ashitsubo-fukurahagi.html",
+  "/bodycare-kamata.html",
+  "/aroma-oil-kamata.html",
   "/kamata-late-night.html",
   "/headspa-kamata.html",
   "/en/foot-massage-kamata.html",
@@ -173,8 +175,26 @@ for (const file of ["shop.html", "faq.html"]) {
 }
 if (indexableHtml["shop.html"].includes("完整な")) fail("shop.html", "mixed-language WhatsApp helper copy remains");
 
+const jpExposureLocks = {
+  "index.html": ["蒲田のマッサージ・リラクゼーション", "マッサージ・", "個室仕様の施術スペース", "男性のお客様も歓迎"],
+  "ashitsubo-fukurahagi.html": ["足裏マッサージ", "足つぼ", "ふくらはぎマッサージ", "足裏リフレクソロジー"],
+  "bodycare-kamata.html": ["蒲田でもみほぐし・マッサージ", "整体ボディケア", "個室仕様", "エレベーター"],
+  "aroma-oil-kamata.html": ["オイルマッサージ", "アロマリンパ", "アロママッサージ", "個室仕様", "エレベーター"]
+};
+for (const [file, phrases] of Object.entries(jpExposureLocks)) requireFragments(file, indexableHtml[file], phrases, "Japanese money-keyword coverage");
+
+for (const [file, html] of Object.entries(indexableHtml)) {
+  if (/(nuru|adult|soap|soapy|風俗|リンガム)/i.test(html)) fail(file, "adult/incorrect-intent keyword leaked into an indexable page");
+  if (/(指圧|あん摩)/.test(html)) fail(file, "regulated massage-service wording leaked into an indexable page");
+}
+
+if (sitemapUrls.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs after Japanese money-page expansion, found ${sitemapUrls.length}`);
+
 const currentLastmod = [
   "https://shinyuuan.jp/",
+  "https://shinyuuan.jp/ashitsubo-fukurahagi.html",
+  "https://shinyuuan.jp/bodycare-kamata.html",
+  "https://shinyuuan.jp/aroma-oil-kamata.html",
   "https://shinyuuan.jp/shop.html",
   "https://shinyuuan.jp/faq.html",
   "https://shinyuuan.jp/en/",
@@ -184,11 +204,11 @@ const currentLastmod = [
 for (const url of currentLastmod) {
   const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const value = sitemap.match(new RegExp(`<url><loc>${escaped}</loc><lastmod>([^<]+)</lastmod>`))?.[1];
-  if (value !== "2026-08-11") fail("sitemap.xml", `${url} lastmod should reflect the 2026-08-11 private-space wording closeout`);
+  if (value !== "2026-08-11") fail("sitemap.xml", `${url} lastmod should reflect the 2026-08-11 SEO closeout`);
 }
 
 if (errors.length) {
   console.error(`SEO consistency check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages: canonical/index rules, structured data, internal links, January closure, official logo, static multilingual mobile CTAs, restored WhatsApp handoff, search-intent H1s, local-business facts and regression guards.`);
+console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages: canonical/index rules, structured data, internal links, Japanese money-keyword coverage, incorrect-intent exclusions, January closure, official logo, static multilingual mobile CTAs, restored WhatsApp handoff, search-intent H1s, local-business facts and regression guards.`);
