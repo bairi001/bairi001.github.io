@@ -59,6 +59,8 @@ jobs:
           s=s.replace('if(info.size<60000)fail(`${l.file} suspiciously compressed ${info.size}`);','if(info.size<40000)fail(`${l.file} suspiciously small ${info.size}`);')
           p.write_text(s,encoding='utf-8')
           PY
+      - name: Keep workflow files out of helper commit
+        run: git checkout HEAD -- .github/workflows
       - name: Validate static site
         run: node scripts/check-site.mjs
       - name: Validate prices and arrival-based late fee
