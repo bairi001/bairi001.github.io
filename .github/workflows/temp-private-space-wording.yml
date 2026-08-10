@@ -1,0 +1,124 @@
+name: Temporary private-space wording helper
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.head_ref == 'fix/private-space-wording-20260811'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out target branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/private-space-wording-20260811
+          fetch-depth: 0
+
+      - name: Apply exact private-space wording
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def rep(path, old, new, expected=1):
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              n=s.count(old)
+              if n != expected:
+                  raise SystemExit(f'{path}: expected {expected} occurrence(s), found {n}: {old[:80]}')
+              p.write_text(s.replace(old,new),encoding='utf-8')
+
+          # Japanese homepage: premium wording without implying a fully enclosed room.
+          rep('index.html',
+              '<li>当日予約OK</li><li>落ち着ける施術スペース</li><li>女性も通いやすい</li>',
+              '<li>当日予約OK</li><li>個室仕様の施術スペース</li><li>女性も通いやすい</li>')
+
+          # Shop: concise premium label + transparent structural explanation.
+          rep('shop.html',
+              '<tr><th>設備</th><td><div class="info-chip-list"><span class="info-chip">壁で仕切られた施術スペース（入口カーテン）</span><span class="info-chip">お着替え貸出あり</span><span class="info-chip">エレベーターあり</span></div></td></tr>',
+              '<tr><th>設備</th><td><div class="info-chip-list"><span class="info-chip">個室仕様の施術スペース</span><span class="info-chip">お着替え貸出あり</span><span class="info-chip">エレベーターあり</span></div><span style="display:block;margin-top:7px;font-size:.8rem;color:#5F6B68;line-height:1.7;">三方を壁で仕切った個室仕様の施術スペースです。入口はカーテンになっています。</span></td></tr>')
+
+          # FAQ: answer the private-space question explicitly for users and search engines.
+          rep('faq.html',
+              '{"@type":"Question","name":"貴重品の保管はできますか？","acceptedAnswer":{"@type":"Answer","text":"貴重品はお手元での管理をお願いしております。施術スペースまでお持ちいただけますので、ご安心ください。"}},',
+              '{"@type":"Question","name":"個室ですか？","acceptedAnswer":{"@type":"Answer","text":"三方を壁で仕切った個室仕様の施術スペースです。入口はカーテンになっています。"}},\n    {"@type":"Question","name":"貴重品の保管はできますか？","acceptedAnswer":{"@type":"Answer","text":"貴重品はお手元での管理をお願いしております。施術スペースまでお持ちいただけますので、ご安心ください。"}},')
+          rep('faq.html',
+              '<h3 class="faq-group-title">施術について</h3>',
+              '<h3 class="faq-group-title">施術について</h3>\n<div class="faq-item"><button class="faq-q"><span class="faq-q-label">Q.</span><span class="faq-q-text">個室ですか？</span><span class="faq-toggle-icon">＋</span></button><div class="faq-a"><div class="faq-a-inner">三方を壁で仕切った個室仕様の施術スペースです。入口はカーテンになっています。</div></div></div>')
+
+          # English homepage: keep the premium short label; detailed structure is on booking information.
+          rep('en/index.html','Private treatment spaces · curtain entrance','Private treatment spaces')
+
+          # Chinese/Korean salon descriptions: lead with privacy/independence, explain structure second.
+          rep('zh/index.html',
+              '护理空间入口以帘子分隔，形成相对独立的空间；并非完全封闭的独立包间。',
+              '店内为独立护理空间，三面由隔断墙分隔，入口使用帘子，整体安静、相对私密。')
+          rep('ko/index.html',
+              '관리 공간 입구는 커튼으로 구분되어 비교적 독립적으로 이용할 수 있습니다. 완전히 밀폐된 개별실은 아닙니다.',
+              '독립형 관리 공간으로, 세 면은 벽으로 구분되어 있고 입구는 커튼으로 되어 있습니다. 차분하고 비교적 프라이빗하게 이용하실 수 있습니다.')
+
+          # Booking raw HTML and embedded translations.
+          rep('booking.html',
+              '<strong data-i18n="trustSpace">Private treatment space · curtain entrance</strong><span data-i18n="trustSpaceSub">A calm environment for relaxation</span>',
+              '<strong data-i18n="trustSpace">Private treatment spaces</strong><span data-i18n="trustSpaceSub">Three walls with a curtain entrance</span>')
+          rep('booking.html','trustSpace:"Private treatment space · curtain entrance",trustSpaceSub:"A calm environment for relaxation"','trustSpace:"Private treatment spaces",trustSpaceSub:"Three walls with a curtain entrance"')
+          rep('booking.html','trustSpace:"相对独立的护理空间 · 女性也可安心到店",trustSpaceSub:"安静舒适的放松环境"','trustSpace:"独立护理空间",trustSpaceSub:"三面隔断墙，入口使用帘子"')
+          rep('booking.html','trustSpace:"落ち着ける施術スペース · 入口カーテン",trustSpaceSub:"落ち着いて過ごせる空間"','trustSpace:"個室仕様の施術スペース",trustSpaceSub:"三方を壁で仕切り、入口はカーテンです。"')
+          rep('booking.html','trustSpace:"커튼 입구의 독립적인 공간"','trustSpace:"독립형 관리 공간"')
+          rep('booking.html','trustSpaceSub:"차분하게 머물 수 있는 릴랙세이션 공간"','trustSpaceSub:"세 면이 벽으로 구분되어 있고 입구는 커튼입니다."')
+
+          # Booking runtime overrides must match the raw HTML exactly.
+          rep('assets/booking-mode.js','trustSpace: "Private treatment space · curtain entrance",\n    trustSpaceSub: "A calm environment for relaxation"','trustSpace: "Private treatment spaces",\n    trustSpaceSub: "Three walls with a curtain entrance"')
+          rep('assets/booking-mode.js','trustSpace: "相对独立的护理空间 · 入口帘隔断",\n    trustSpaceSub: "安静舒适的放松环境"','trustSpace: "独立护理空间",\n    trustSpaceSub: "三面隔断墙，入口使用帘子"')
+          rep('assets/booking-mode.js','trustSpace: "落ち着ける施術スペース · 入口カーテン",\n    trustSpaceSub: "ゆっくり過ごせるリラクゼーション空間"','trustSpace: "個室仕様の施術スペース",\n    trustSpaceSub: "三方を壁で仕切り、入口はカーテンです。"')
+          rep('assets/booking-mode.js','trustSpace: "분리된 관리 공간 · 커튼 출입구",\n    trustSpaceSub: "편안하게 쉴 수 있는 공간"','trustSpace: "독립형 관리 공간",\n    trustSpaceSub: "세 면이 벽으로 구분되어 있고 입구는 커튼입니다."')
+
+          # SEO guard: preserve the ban on overclaiming, but lock the new truthful wording.
+          p=Path('scripts/check-seo.mjs'); s=p.read_text(encoding='utf-8')
+          old='for (const phrase of ["予約時刻ではなく実際のご来店時刻が基準です","arrive at or after 11:00 PM","1月1日休み","入口カーテン"]) { if (!booking.includes(phrase)) fail("booking.html", `truthful raw booking wording missing: ${phrase}`); }'
+          new='for (const phrase of ["予約時刻ではなく実際のご来店時刻が基準です","arrive at or after 11:00 PM","1月1日休み","個室仕様の施術スペース","Private treatment spaces","独立护理空间","독립형 관리 공간"]) { if (!booking.includes(phrase)) fail("booking.html", `truthful raw booking wording missing: ${phrase}`); }'
+          if s.count(old)!=1: raise SystemExit('scripts/check-seo.mjs: booking truth lock anchor mismatch')
+          s=s.replace(old,new)
+          anchor='const routing = await read("assets/language-routing.js");'
+          block='''const spaceWordingLocks = {\n  "index.html": ["個室仕様の施術スペース"],\n  "shop.html": ["個室仕様の施術スペース", "三方を壁で仕切った個室仕様の施術スペースです。入口はカーテンになっています。"],\n  "faq.html": ["個室ですか？", "三方を壁で仕切った個室仕様の施術スペースです。入口はカーテンになっています。"],\n  "en/index.html": ["Private treatment spaces"],\n  "zh/index.html": ["独立护理空间", "三面由隔断墙分隔，入口使用帘子"],\n  "ko/index.html": ["독립형 관리 공간", "세 면은 벽으로 구분되어 있고 입구는 커튼으로 되어 있습니다."]\n};\nfor (const [file, phrases] of Object.entries(spaceWordingLocks)) requireFragments(file, indexableHtml[file], phrases, "private-space wording");\nfor (const phrase of ["個室仕様の施術スペース","Private treatment spaces","独立护理空间","독립형 관리 공간"]) if (!bookingMode.includes(phrase)) fail("assets/booking-mode.js", `booking runtime space wording missing: ${phrase}`);\n\n'''
+          if s.count(anchor)!=1: raise SystemExit('scripts/check-seo.mjs: routing anchor mismatch')
+          s=s.replace(anchor,block+anchor,1)
+          s=s.replace('value !== "2026-08-10"','value !== "2026-08-11"')
+          s=s.replace('lastmod should reflect the 2026-08-10 SEO closeout','lastmod should reflect the 2026-08-11 private-space wording closeout')
+          p.write_text(s,encoding='utf-8')
+
+          # Only genuinely changed indexable pages get a new sitemap lastmod.
+          p=Path('sitemap.xml'); s=p.read_text(encoding='utf-8')
+          targets=['https://shinyuuan.jp/','https://shinyuuan.jp/shop.html','https://shinyuuan.jp/faq.html','https://shinyuuan.jp/en/','https://shinyuuan.jp/zh/','https://shinyuuan.jp/ko/']
+          for url in targets:
+              pat=re.compile(r'(<url><loc>'+re.escape(url)+r'</loc><lastmod>)2026-08-10(</lastmod>)')
+              s,n=pat.subn(r'\g<1>2026-08-11\2',s,count=1)
+              if n!=1: raise SystemExit(f'sitemap lastmod anchor mismatch: {url}')
+          p.write_text(s,encoding='utf-8')
+          PY
+
+      - name: Check static site
+        run: node scripts/check-site.mjs
+      - name: Check prices
+        run: node scripts/check-prices.mjs
+      - name: Check SEO consistency
+        run: node scripts/check-seo.mjs
+      - name: Check menu image semantics
+        run: node scripts/check-menu-images.mjs
+
+      - name: Commit verified changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html shop.html faq.html en/index.html zh/index.html ko/index.html booking.html assets/booking-mode.js scripts/check-seo.mjs sitemap.xml
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m '统一个室规格与多语言私密空间表述'
+          git push origin HEAD:fix/private-space-wording-20260811
