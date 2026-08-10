@@ -31,22 +31,28 @@ jobs:
             '03':('assets/img/menu-aroma-back.webp','背中をオイルでゆっくり流すアロマリンパ・オイルトリートメント','1800','1005'),
           }
           for num,(src,alt,w,h) in rules.items():
-              pat=re.compile(r'(<article class="service-card">\s*)<img\b[^>]*>([\s\S]*?<div class="service-card-num">Service '+num+r'</div>[\s\S]*?</article>)')
-              s,n=pat.subn(rf'\1<img src="{src}" alt="{alt}" loading="lazy" width="{w}" height="{h}">\2',s,count=1)
-              if n!=1:
-                  raise SystemExit(f'homepage Service {num} exact card replacement failed')
+              marker=f'<div class="service-card-num">Service {num}</div>'
+              pos=s.find(marker)
+              if pos<0: raise SystemExit(f'homepage Service {num} marker missing')
+              start=s.rfind('<article class="service-card">',0,pos)
+              end=s.find('</article>',pos)
+              if start<0 or end<0: raise SystemExit(f'homepage Service {num} article boundary missing')
+              block=s[start:end+10]
+              block2,n=re.subn(r'<img\b[^>]*>',f'<img src="{src}" alt="{alt}" loading="lazy" width="{w}" height="{h}">',block,count=1)
+              if n!=1: raise SystemExit(f'homepage Service {num} image replacement failed')
+              s=s[:start]+block2+s[end+10:]
           p.write_text(s,encoding='utf-8')
 
           p=Path('scripts/check-menu-images.mjs')
           c=p.read_text(encoding='utf-8')
+          # Remove any earlier broad or regex-based service-card guard.
+          c=re.sub(r'function serviceCard\(html,num\)\{.*?const serviceLocks=.*?\}\n', '', c, flags=re.S)
+          c=re.sub(r'if\(!home\.includes\("premium-seitai\.webp"\).*?;','',c)
+          c=re.sub(r'if\(!home\.includes\("menu-aroma-back\.webp"\).*?;','',c)
           marker='const head=await text("headspa-kamata.html");'
-          strict='''function serviceCard(html,num){return html.match(new RegExp(`<article class="service-card">[\\s\\S]*?<div class="service-card-num">Service ${num}</div>[\\s\\S]*?</article>`,"i"))?.[0]||""}\nconst serviceLocks={"01":"premium-foot.webp","02":"premium-seitai.webp","03":"menu-aroma-back.webp"};\nfor(const[num,image]of Object.entries(serviceLocks)){const card=serviceCard(home,num);if(!card)fail(`home Service ${num} card missing`);else if(!card.includes(image))fail(`home Service ${num} must use ${image}`);}\n'''
-          if 'const serviceLocks=' not in c:
-              if marker not in c: raise SystemExit('image checker insertion anchor missing')
-              c=c.replace(marker,strict+marker,1)
-          # Remove earlier broad homepage checks that can pass when images are on the wrong card.
-          c=re.sub(r'if\(!home\.includes\("premium-seitai\.webp"\).*?fail\("home body-care service photo mapping missing"\);','',c)
-          c=re.sub(r'if\(!home\.includes\("menu-aroma-back\.webp"\).*?fail\("home aroma service mapping missing"\);','',c)
+          strict='''function serviceCard(html,num){const marker=`<div class="service-card-num">Service ${num}</div>`;const pos=html.indexOf(marker);if(pos<0)return"";const start=html.lastIndexOf('<article class="service-card">',pos);const end=html.indexOf('</article>',pos);return start>=0&&end>=0?html.slice(start,end+10):""}\nconst serviceLocks={"01":"premium-foot.webp","02":"premium-seitai.webp","03":"menu-aroma-back.webp"};\nfor(const[num,image]of Object.entries(serviceLocks)){const card=serviceCard(home,num);if(!card)fail(`home Service ${num} card missing`);else if(!card.includes(image))fail(`home Service ${num} must use ${image}`);}\n'''
+          if marker not in c: raise SystemExit('image checker insertion anchor missing')
+          c=c.replace(marker,strict+marker,1)
           p.write_text(c,encoding='utf-8')
           PY
       - name: Validate static site
