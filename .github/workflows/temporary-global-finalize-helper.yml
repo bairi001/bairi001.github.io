@@ -17,66 +17,54 @@ jobs:
         with:
           ref: agent/global-seo-visual-finalize-20260810
           fetch-depth: 0
-      - name: Normalize static booking placeholders
+      - name: Fix homepage service cards exactly
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path('booking.html')
+          import re
+          p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          replacements={
-            '<strong data-i18n="trustHours">Open daily</strong><span data-i18n="trustHoursSub">11:00 AM – 2:00 AM (next day)</span>':'<strong data-i18n="trustHours">Hours</strong><span data-i18n="trustHoursSub">11:00 AM – 2:00 AM · Closed January 1</span>',
-            '<strong data-i18n="trustSpace">Private room space · Female friendly</strong>':'<strong data-i18n="trustSpace">Private treatment space · curtain entrance</strong>',
-            '<p data-i18n="formLead">Complete the form and send it via WhatsApp. We will check availability and reply to confirm your appointment.</p>':'<p data-i18n="formLead">Choose your course and preferred time, then send your request on this website or via WhatsApp. We will check availability and reply to confirm your appointment.</p>',
-            '<p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. <strong>Late-night fee ¥800 after 11:00 PM. All times are JST.</strong></p>':'<p class="hint" style="grid-column:1/-1" data-i18n="hoursHint">Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. <strong>An ¥800 late-night fee applies only when you actually arrive at or after 11:00 PM. All times are JST.</strong></p>'
+          rules={
+            '01':('assets/img/premium-foot.webp','足裏の反射区を親指で丁寧に押すリフレクソロジー','1254','1050'),
+            '02':('assets/img/premium-seitai.webp','施術着を着たまま肩・背中を丁寧にもみほぐす整体ボディケア','1254','1050'),
+            '03':('assets/img/menu-aroma-back.webp','背中をオイルでゆっくり流すアロマリンパ・オイルトリートメント','1800','1005'),
           }
-          for old,new in replacements.items():
-              if old not in s and new not in s:
-                  raise SystemExit(f'missing booking static anchor: {old[:70]}')
-              s=s.replace(old,new,1)
-          late_hints={
-            'hoursHint:"Open daily 11:00 AM – 2:00 AM. Last booking request 1:00 AM. Late-night fee ¥800 after 11:00 PM. All times are Japan Standard Time (JST)."':'hoursHint:"Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. An ¥800 late-night fee applies when you actually arrive at or after 11:00 PM. All times are Japan Standard Time (JST)."',
-            'hoursHint:"每天11:00－次日凌晨2:00营业，最晚预约申请时间为凌晨1:00。23:00以后加收深夜费¥800。所有时间均为日本标准时间（JST）。"':'hoursHint:"营业时间11:00～次日2:00（1月1日休息），最晚预约申请为次日1:00。若实际到店时间为23:00或之后，每位加收800日元深夜费；以实际到店时间为准。所有时间均为日本标准时间（JST）。"',
-            'hoursHint:"毎日11:00〜翌2:00営業、最終予約リクエストは翌1:00です。23時以降は深夜料金800円。すべて日本標準時（JST）です。"':'hoursHint:"営業時間11:00〜翌2:00（1月1日休み）。最終予約リクエストは翌1:00です。実際のご来店が23:00以降の場合、深夜料金800円。予約時刻ではなく実際のご来店時刻が基準です。すべて日本標準時（JST）です。"',
-            'hoursHint:"매일 11:00－다음 날 2:00 영업, 마지막 예약 신청은 다음 날 1:00입니다. 23:00 이후에는 심야 요금 ¥800이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다."':'hoursHint:"영업시간은 11:00~다음 날 2:00이며 1월 1일은 휴무입니다. 마지막 예약 신청은 다음 날 1:00입니다. 실제 도착 시간이 23:00 이후인 경우 1인당 심야 요금 800엔이 추가되며, 예약 시간이 아닌 실제 도착 시간을 기준으로 합니다. 모든 시간은 일본 표준시(JST)입니다."'
-          }
-          for old,new in late_hints.items():
-              s=s.replace(old,new)
-          s=s.replace('estimateSingle:n=>`1인 예상 금액: ¥${n.toLocaleString()}${isLate()?" (심야 요금 ¥800 포함)":""}. 최종 금액은 매장의 답변으로 확인해 주세요.`','estimateSingle:n=>`1인 선택 금액: ¥${n.toLocaleString()}. 실제 도착 시간이 23:00 이후인 경우 심야 요금 ¥800이 추가됩니다. 최종 금액은 매장의 답변으로 확인해 주세요.`')
-          s=s.replace('estimateGroup:n=>`1인당 선택 금액: ¥${n.toLocaleString()}${isLate()?"＋심야 요금 ¥800":""}. 전체 금액은 답변 시 안내드립니다.`','estimateGroup:n=>`1인당 선택 금액: ¥${n.toLocaleString()}. 실제 도착 시간이 23:00 이후인 경우 1인당 심야 요금 ¥800이 추가됩니다. 전체 금액은 답변 시 안내드립니다.`')
-          s=s.replace('const isLate=()=>{const value=$("time").value;return value?Number(value.split("|")[0])>=1380:false};\n','')
+          for num,(src,alt,w,h) in rules.items():
+              pat=re.compile(r'(<article class="service-card">\s*)<img\b[^>]*>([\s\S]*?<div class="service-card-num">Service '+num+r'</div>[\s\S]*?</article>)')
+              s,n=pat.subn(rf'\1<img src="{src}" alt="{alt}" loading="lazy" width="{w}" height="{h}">\2',s,count=1)
+              if n!=1:
+                  raise SystemExit(f'homepage Service {num} exact card replacement failed')
           p.write_text(s,encoding='utf-8')
-          PY
-      - name: Apply audited fixes
-        run: python scripts/global-finalize.py
-      - name: Use pixel dimensions as the image quality lock
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
+
           p=Path('scripts/check-menu-images.mjs')
-          s=p.read_text(encoding='utf-8')
-          s=s.replace('if(info.size<60000)fail(`${l.file} suspiciously compressed ${info.size}`);','if(info.size<40000)fail(`${l.file} suspiciously small ${info.size}`);')
-          p.write_text(s,encoding='utf-8')
+          c=p.read_text(encoding='utf-8')
+          marker='const head=await text("headspa-kamata.html");'
+          strict='''function serviceCard(html,num){return html.match(new RegExp(`<article class="service-card">[\\s\\S]*?<div class="service-card-num">Service ${num}</div>[\\s\\S]*?</article>`,"i"))?.[0]||""}\nconst serviceLocks={"01":"premium-foot.webp","02":"premium-seitai.webp","03":"menu-aroma-back.webp"};\nfor(const[num,image]of Object.entries(serviceLocks)){const card=serviceCard(home,num);if(!card)fail(`home Service ${num} card missing`);else if(!card.includes(image))fail(`home Service ${num} must use ${image}`);}\n'''
+          if 'const serviceLocks=' not in c:
+              if marker not in c: raise SystemExit('image checker insertion anchor missing')
+              c=c.replace(marker,strict+marker,1)
+          # Remove earlier broad homepage checks that can pass when images are on the wrong card.
+          c=re.sub(r'if\(!home\.includes\("premium-seitai\.webp"\).*?fail\("home body-care service photo mapping missing"\);','',c)
+          c=re.sub(r'if\(!home\.includes\("menu-aroma-back\.webp"\).*?fail\("home aroma service mapping missing"\);','',c)
+          p.write_text(c,encoding='utf-8')
           PY
-      - name: Keep workflow files out of helper commit
-        run: git checkout HEAD -- .github/workflows
       - name: Validate static site
         run: node scripts/check-site.mjs
       - name: Validate prices and arrival-based late fee
         run: node scripts/check-prices.mjs
       - name: Validate SEO consistency
         run: node scripts/check-seo.mjs
-      - name: Validate image semantics and quality
+      - name: Validate exact image semantics and quality
         run: node scripts/check-menu-images.mjs
       - name: Commit verified branch changes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add index.html scripts/check-menu-images.mjs
           if git diff --cached --quiet; then
             echo 'No branch changes to commit.'
             exit 0
           fi
-          git commit -m '全站落实图片语义、到店深夜费与SEO防回归'
+          git commit -m '精确锁定首页三项服务图片语义'
           git push origin HEAD:agent/global-seo-visual-finalize-20260810
