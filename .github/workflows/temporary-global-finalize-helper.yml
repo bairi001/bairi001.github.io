@@ -42,6 +42,7 @@ jobs:
           }
           for old,new in late_hints.items():
               s=s.replace(old,new)
+          s=s.replace('const isLate=()=>{const value=$("time").value;return value?Number(value.split("|")[0])>=1380:false};\n','')
           p.write_text(s,encoding='utf-8')
           PY
       - name: Apply audited fixes
