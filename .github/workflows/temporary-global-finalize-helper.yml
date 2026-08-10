@@ -1,0 +1,40 @@
+name: Temporary global finalize helper
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.head_ref == 'agent/global-seo-visual-finalize-20260810'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out target PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/global-seo-visual-finalize-20260810
+          fetch-depth: 0
+      - name: Apply audited fixes
+        run: python scripts/global-finalize.py
+      - name: Validate static site
+        run: node scripts/check-site.mjs
+      - name: Validate prices and arrival-based late fee
+        run: node scripts/check-prices.mjs
+      - name: Validate SEO consistency
+        run: node scripts/check-seo.mjs
+      - name: Validate image semantics and quality
+        run: node scripts/check-menu-images.mjs
+      - name: Commit verified branch changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No branch changes to commit.'
+            exit 0
+          fi
+          git commit -m '全站落实图片语义、到店深夜费与SEO防回归'
+          git push origin HEAD:agent/global-seo-visual-finalize-20260810
