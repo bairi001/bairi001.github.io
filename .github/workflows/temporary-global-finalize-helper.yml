@@ -42,6 +42,8 @@ jobs:
           }
           for old,new in late_hints.items():
               s=s.replace(old,new)
+          s=s.replace('estimateSingle:n=>`1인 예상 금액: ¥${n.toLocaleString()}${isLate()?" (심야 요금 ¥800 포함)":""}. 최종 금액은 매장의 답변으로 확인해 주세요.`','estimateSingle:n=>`1인 선택 금액: ¥${n.toLocaleString()}. 실제 도착 시간이 23:00 이후인 경우 심야 요금 ¥800이 추가됩니다. 최종 금액은 매장의 답변으로 확인해 주세요.`')
+          s=s.replace('estimateGroup:n=>`1인당 선택 금액: ¥${n.toLocaleString()}${isLate()?"＋심야 요금 ¥800":""}. 전체 금액은 답변 시 안내드립니다.`','estimateGroup:n=>`1인당 선택 금액: ¥${n.toLocaleString()}. 실제 도착 시간이 23:00 이후인 경우 1인당 심야 요금 ¥800이 추가됩니다. 전체 금액은 답변 시 안내드립니다.`')
           s=s.replace('const isLate=()=>{const value=$("time").value;return value?Number(value.split("|")[0])>=1380:false};\n','')
           p.write_text(s,encoding='utf-8')
           PY
