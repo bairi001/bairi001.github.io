@@ -50,11 +50,12 @@ try {
     requireText(html, 'data-required-outside="true"', "required fields kept outside details");
     requireText(html, 'data-primary-button="メールアプリで送る"', "safe fallback button while direct submit is disabled");
     requireText(html, 'data-direct-state="現在はメールまたはLINEで送信できます。直接送信機能は公開前テスト中です。"', "disabled direct-submit state");
-    requireText(html, "recruit_form_view|", "form view event");
-    requireText(html, "recruit_form_start|", "single form start event");
-    const startCount = (html.match(/recruit_form_start\|/g) || []).length;
+    const events = html.match(/data-events="([^"]*)"/)?.[1] || "";
+    if (!events.includes("recruit_form_view|")) errors.push("runtime harness missing form view event");
+    if (!events.includes("recruit_form_start|")) errors.push("runtime harness missing form start event");
+    const startCount = (events.match(/recruit_form_start\|/g) || []).length;
     if (startCount !== 1) errors.push(`expected one recruit_form_start event, found ${startCount}`);
-    if (html.includes("recruit_form_submit_success|")) errors.push("disabled direct-submit mode emitted a success event");
+    if (events.includes("recruit_form_submit_success|")) errors.push("disabled direct-submit mode emitted a success event");
   }
 } finally {
   server.kill("SIGTERM");
