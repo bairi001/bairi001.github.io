@@ -55,7 +55,9 @@ for (const [file, descriptionFragments] of Object.entries(jobs)) {
   } else if (!job.baseSalary) {
     fail(file, "employee JobPosting must retain its real baseSalary");
   }
-  if (!html.includes('href="/recruit.html#apply"')) fail(file, "missing crawlable application-consultation link");
+  if (!/href="\/recruit\.html(?:\?job=(?:contractor|full-time|part-time))?#apply"/.test(html)) {
+    fail(file, "missing crawlable application-consultation link");
+  }
   for (const fragment of descriptionFragments) {
     if (!job.description?.includes(fragment)) fail(file, `JobPosting description missing ${fragment}`);
   }
@@ -80,4 +82,4 @@ if (errors.length) {
   console.error(`Final freeze check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log("Final freeze check passed: intent ownership, money-page links, late-night targeting, truthful JobPosting data, and sitemap lastmod are locked.");
+console.log("Final freeze check passed: intent ownership, money-page links, late-night targeting, truthful JobPosting data, contextual application links, and sitemap lastmod are locked.");
