@@ -26,3 +26,5 @@ jobs:
         run: node scripts/check-final-freeze.mjs
       - name: Check menu image semantics
         run: node scripts/check-menu-images.mjs
+      - name: Check Smart Booking V2
+        run: node scripts/check-booking-v2.mjs
