@@ -7,9 +7,17 @@ on:
     paths:
       - scripts/apply-recruit-v2.mjs
       - .github/workflows/apply-recruit-v2.yml
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   patch:
