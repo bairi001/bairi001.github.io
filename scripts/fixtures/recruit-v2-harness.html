@@ -37,23 +37,19 @@ function gtag(){
 <div id="eventLog"></div>
 <script src="../../assets/recruit-direct-apply.js"></script>
 <script>
-setTimeout(()=>{
-  document.getElementById('applicantName').value='TEST';
-  document.getElementById('applicantName').dispatchEvent(new Event('input',{bubbles:true}));
-  setTimeout(()=>{
-    const optional=document.getElementById('recruitOptionalDetails');
-    const requiredIds=['applicantName','contactMethod','contactValue','experience','workStyle'];
-    document.body.dataset.testReady='true';
-    document.body.dataset.workStyle=document.getElementById('workStyle').value;
-    document.body.dataset.context=Boolean(document.querySelector('.rp-direct-context'));
-    document.body.dataset.optional=Boolean(optional);
-    document.body.dataset.optionalContains=Boolean(optional?.querySelector('#availability')&&optional?.querySelector('#visitDate')&&optional?.querySelector('#applicantMessage'));
-    document.body.dataset.requiredOutside=requiredIds.every(id=>!optional?.contains(document.getElementById(id)));
-    document.body.dataset.directState=document.getElementById('recruitDirectState')?.textContent||'';
-    document.body.dataset.primaryButton=document.getElementById('emailApply')?.textContent||'';
-    document.body.dataset.events=document.getElementById('eventLog').textContent;
-  },50);
-},50);
+document.getElementById('applicantName').value='TEST';
+document.getElementById('applicantName').dispatchEvent(new Event('input',{bubbles:true}));
+const optional=document.getElementById('recruitOptionalDetails');
+const requiredIds=['applicantName','contactMethod','contactValue','experience','workStyle'];
+document.body.dataset.testReady='true';
+document.body.dataset.workStyle=document.getElementById('workStyle').value;
+document.body.dataset.context=Boolean(document.querySelector('.rp-direct-context'));
+document.body.dataset.optional=Boolean(optional);
+document.body.dataset.optionalContains=Boolean(optional?.querySelector('#availability')&&optional?.querySelector('#visitDate')&&optional?.querySelector('#applicantMessage'));
+document.body.dataset.requiredOutside=requiredIds.every(id=>!optional?.contains(document.getElementById(id)));
+document.body.dataset.directState=document.getElementById('recruitDirectState')?.textContent||'';
+document.body.dataset.primaryButton=document.getElementById('emailApply')?.textContent||'';
+document.body.dataset.events=document.getElementById('eventLog').textContent;
 </script>
 </body>
 </html>
