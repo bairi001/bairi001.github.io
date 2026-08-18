@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Recruit V2 Runtime Harness</title>
+<style>
+:root{--rp-green:#20705f;--rp-soft:#eef7f3;--rp-line:rgba(32,112,95,.2)}
+</style>
+<script>
+window.dataLayer=[];
+function gtag(){
+  const args=[...arguments];
+  dataLayer.push(args);
+  const output=document.getElementById('eventLog');
+  if(output&&args[0]==='event') output.textContent += `${args[1]}|`;
+}
+</script>
+</head>
+<body>
+<form class="rp-form" id="recruitForm" data-recruit-v2="prepared" novalidate>
+  <div class="rp-form-grid">
+    <div><label for="applicantName">名前</label><input id="applicantName"></div>
+    <div><label for="contactMethod">連絡方法</label><select id="contactMethod"><option value="">選択</option><option>LINE</option><option>メール</option><option>電話</option></select></div>
+    <div class="rp-field-full"><label for="contactValue">連絡先</label><input id="contactValue"></div>
+    <div><label for="experience">経験</label><select id="experience"><option value="">選択</option><option>未経験</option><option>1年未満</option><option>1年以上3年未満</option><option>3年以上</option><option>ブランクあり</option></select></div>
+    <div><label for="workStyle">働き方</label><select id="workStyle"><option value="">選択</option><option>業務委託</option><option>正社員・契約社員</option><option>アルバイト・パート</option><option>未経験研修枠</option><option>まだ決めていない</option></select></div>
+    <div class="rp-field-full" id="skillWrapper"><label><input type="checkbox" name="skill" value="もみほぐし">もみほぐし</label></div>
+    <div class="rp-field-full"><input id="availability"></div>
+    <div><input id="visitDate" type="date"></div>
+    <div><select id="source"><option value="">選択</option><option>Google検索</option></select></div>
+    <div class="rp-field-full"><textarea id="applicantMessage"></textarea></div>
+  </div>
+  <label class="rp-consent"><input type="checkbox" id="recruitConsent"><span>同意</span></label>
+  <div class="rp-form-actions"><button type="button" id="emailApply">メールアプリで送る</button><button type="button" id="lineApply">LINE</button><button type="button" id="copyApply">コピー</button></div>
+  <div id="formStatus"></div>
+</form>
+<div id="eventLog"></div>
+<script src="../../assets/recruit-direct-apply.js"></script>
+<script>
+setTimeout(()=>{
+  document.getElementById('applicantName').value='TEST';
+  document.getElementById('applicantName').dispatchEvent(new Event('input',{bubbles:true}));
+  setTimeout(()=>{
+    const optional=document.getElementById('recruitOptionalDetails');
+    const requiredIds=['applicantName','contactMethod','contactValue','experience','workStyle'];
+    document.body.dataset.testReady='true';
+    document.body.dataset.workStyle=document.getElementById('workStyle').value;
+    document.body.dataset.context=Boolean(document.querySelector('.rp-direct-context'));
+    document.body.dataset.optional=Boolean(optional);
+    document.body.dataset.optionalContains=Boolean(optional?.querySelector('#availability')&&optional?.querySelector('#visitDate')&&optional?.querySelector('#applicantMessage'));
+    document.body.dataset.requiredOutside=requiredIds.every(id=>!optional?.contains(document.getElementById(id)));
+    document.body.dataset.directState=document.getElementById('recruitDirectState')?.textContent||'';
+    document.body.dataset.primaryButton=document.getElementById('emailApply')?.textContent||'';
+    document.body.dataset.events=document.getElementById('eventLog').textContent;
+  },50);
+},50);
+</script>
+</body>
+</html>
