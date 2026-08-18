@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import process from "node:process";
 
 const errors = [];
@@ -9,7 +10,8 @@ const requireText = (file, content, text, label = text) => {
 };
 
 for (const file of ["assets/booking-mode.js", "assets/secondary-pages.js"]) {
-  const result = spawnSync(process.execPath, ["--check", new URL(`../${file}`, import.meta.url)], { encoding: "utf8" });
+  const path = fileURLToPath(new URL(`../${file}`, import.meta.url));
+  const result = spawnSync(process.execPath, ["--check", path], { encoding: "utf8" });
   if (result.status !== 0) errors.push(`${file}: JavaScript syntax check failed: ${result.stderr.trim()}`);
 }
 
@@ -27,12 +29,10 @@ for (const [text, label] of [
   ["origin_page", "origin page analytics"],
   ["showAllCourses", "course-group expansion control"],
   ["filterableServices", "relevant-course filtering"],
-  ["preferred = (lang === \"ja\" ? [\"hpb\", \"web\"] : [\"web\", \"whatsapp\"])", "language-specific primary channels"]
+  ["preferred = (lang === \"ja\" ? [\"hpb\", \"web\"] : [\"web\", \"whatsapp\"])", "language-specific primary channels"],
+  ["23:00以降に実際にご来店の場合のみ深夜料金800円", "arrival-based late-night fee wording"],
+  ["originalTrackEvent(\"booking_form_duplicate\", eventParameters);\n      return;", "duplicate event early return"]
 ]) requireText("assets/booking-mode.js", booking, text, label);
-
-if (/booking_form_submit_success[\s\S]{0,160}duplicate\s*===\s*true[\s\S]{0,160}originalTrackEvent\(name/.test(booking)) {
-  errors.push("assets/booking-mode.js: duplicate submissions can still fall through to the success key event");
-}
 
 const secondary = await read("assets/secondary-pages.js");
 for (const [path, service] of [
@@ -49,7 +49,6 @@ requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("origi
 
 const bookingHtml = await read("booking.html");
 requireText("booking.html", bookingHtml, '<script src="assets/booking-mode.js"></script>', "booking-mode runtime include");
-requireText("booking.html", bookingHtml, "23:00以降にご来店の場合", "arrival-based late-night fee wording");
 requireText("booking.html", bookingHtml, "FORM_LIVE_TESTED = true", "live-tested web form lock");
 
 if (errors.length) {
