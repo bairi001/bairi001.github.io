@@ -1,0 +1,92 @@
+name: Activate Recruit Direct Apply V2
+
+on:
+  push:
+    branches:
+      - feat/recruit-direct-apply-v2
+    paths:
+      - scripts/activate-recruit-v2.mjs
+      - .github/workflows/activate-recruit-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  activate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/recruit-direct-apply-v2
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify deployed Recruit Web App POST and duplicate guard
+        run: |
+          node --input-type=module <<'NODE'
+          import { randomUUID } from 'node:crypto';
+
+          const endpoint = 'https://script.google.com/macros/s/AKfycbzAAWxxBqoCOGGMgxtXPJekDEA7MLYz2MEvRI9g5cLX9Bnmx377ABZIdKXdMh9q_nE1/exec';
+          const token = randomUUID();
+          const payload = {
+            requestType: 'recruit',
+            name: `TEST RECRUIT ${token.slice(0, 8)}`,
+            contactMethod: 'LINE',
+            contactValue: `TEST_${token}`,
+            experience: '3年以上',
+            workStyle: '業務委託',
+            skills: 'もみほぐし、足つぼ、オイル',
+            availability: 'AUTOMATED BACKEND TEST',
+            visitDate: '',
+            source: 'GitHub Actions test',
+            message: 'TEST RECRUIT - deployment verification only. Please ignore.',
+            originJob: 'contractor',
+            originPage: '/recruit.html',
+            utm_source: 'github_actions',
+            utm_medium: 'internal_test',
+            utm_campaign: 'recruit_v2_launch',
+            utm_content: 'backend_verification',
+            submissionId: randomUUID(),
+            startedAt: new Date(Date.now() - 5000).toISOString(),
+            website: ''
+          };
+
+          async function submit() {
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              redirect: 'follow',
+              body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+          }
+
+          const first = await submit();
+          if (first?.ok !== true || first?.service) {
+            throw new Error(`First POST did not reach doPost: ${JSON.stringify(first)}`);
+          }
+          const second = await submit();
+          if (second?.ok !== true || second?.duplicate !== true) {
+            throw new Error(`Duplicate guard failed: ${JSON.stringify(second)}`);
+          }
+          console.log('Recruit Web App POST, sheet/mail path, and duplicate response completed.');
+          NODE
+      - name: Activate endpoint and update runtime assertions
+        run: node scripts/activate-recruit-v2.mjs
+      - name: Check Recruit V2 static rules
+        run: node scripts/check-recruit-v2.mjs
+      - name: Run Recruit V2 in headless Chromium
+        run: node scripts/check-recruit-runtime.mjs
+      - name: Commit activation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Recruit V2：验证后端并启用官网直投"
+          git pull --rebase origin feat/recruit-direct-apply-v2
+          git push origin HEAD:feat/recruit-direct-apply-v2
