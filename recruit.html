@@ -237,10 +237,10 @@ body{font-family:var(--rp-body);color:var(--rp-ink);background:#fff;margin:0}
 
 <section class="rp-section rp-section-soft" id="apply">
   <div class="rp-container">
-    <div class="rp-center"><span class="rp-eyebrow">Quick Entry</span><h2 class="rp-title">30秒の簡易フォーム</h2><p class="rp-lead">正式応募だけでなく、見学や条件相談にも利用できます。</p></div>
+    <div class="rp-center"><span class="rp-eyebrow">Quick Entry</span><h2 class="rp-title">最短1分の応募・見学相談</h2><p class="rp-lead">必須項目を入力し、正式応募・店舗見学・条件相談に利用できます。</p></div>
     <div class="rp-form-shell">
-      <aside class="rp-form-intro"><h3>送信前に準備するものはありません</h3><p>入力内容から応募相談文を作り、メールまたはLINEで送れます。</p><ul><li>履歴書は初回不要</li><li>店舗見学だけでも可</li><li>未経験研修の相談可</li><li>収入・勤務時間の質問可</li></ul></aside>
-      <form class="rp-form" id="recruitForm" novalidate>
+      <aside class="rp-form-intro"><h3>送信前に準備するものはありません</h3><p>必須項目だけで相談できます。直接送信の公開前はメールまたはLINEを利用できます。</p><ul><li>履歴書は初回不要</li><li>店舗見学だけでも可</li><li>未経験研修の相談可</li><li>収入・勤務時間の質問可</li></ul></aside>
+      <form class="rp-form" id="recruitForm" data-recruit-v2="prepared" novalidate>
         <div class="rp-form-grid">
           <div><label class="rp-label" for="applicantName">お名前<span class="rp-required">必須</span></label><input class="rp-input" id="applicantName" autocomplete="name" maxlength="60" required></div>
           <div><label class="rp-label" for="contactMethod">希望連絡方法<span class="rp-required">必須</span></label><select class="rp-select" id="contactMethod" required><option value="">選択してください</option><option>LINE</option><option>メール</option><option>電話</option></select></div>
@@ -324,5 +324,6 @@ document.getElementById('emailApply').addEventListener('click',()=>{if(!validate
 document.getElementById('lineApply').addEventListener('click',async()=>{if(!validateRecruitForm())return;const lineTab=window.open('about:blank','_blank');const ok=await copyText(getApplicationText());track('recruit_apply_click',{channel:'line'});document.getElementById('formStatus').textContent=ok?'応募内容をコピーしました。LINEのトーク画面に貼り付けて送信してください。':'コピーできませんでした。「内容だけコピー」をもう一度お試しください。';if(ok&&lineTab){lineTab.opener=null;lineTab.location.href='https://page.line.me/017hlpiu'}else if(lineTab){lineTab.close()}});
 document.getElementById('copyApply').addEventListener('click',async()=>{if(!validateRecruitForm())return;const ok=await copyText(getApplicationText());track('recruit_apply_click',{channel:'copy'});document.getElementById('formStatus').textContent=ok?'応募内容をコピーしました。LINEまたはメールに貼り付けて送信してください。':'コピーできませんでした。入力内容を手動でコピーしてください。'});
 </script>
+<script src="assets/recruit-direct-apply.js"></script>
 </body>
 </html>
