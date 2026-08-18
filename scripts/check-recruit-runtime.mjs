@@ -1,0 +1,68 @@
+import { spawn, spawnSync } from "node:child_process";
+import process from "node:process";
+
+const errors = [];
+const findBrowser = () => {
+  for (const candidate of ["google-chrome", "chromium", "chromium-browser"]) {
+    const result = spawnSync("which", [candidate], { encoding: "utf8" });
+    if (result.status === 0 && result.stdout.trim()) return result.stdout.trim();
+  }
+  return "";
+};
+const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+const requireText = (html, text, label) => {
+  if (!html.includes(text)) errors.push(`runtime harness missing ${label}`);
+};
+
+const browser = findBrowser();
+if (!browser) {
+  console.error("Recruit V2 runtime check failed: Chrome/Chromium is unavailable on the runner.");
+  process.exit(1);
+}
+
+const port = 18766;
+const server = spawn("python3", ["-m", "http.server", String(port), "--bind", "127.0.0.1"], {
+  cwd: new URL("..", import.meta.url),
+  stdio: "ignore"
+});
+
+try {
+  await wait(700);
+  const url = `http://127.0.0.1:${port}/scripts/fixtures/recruit-v2-harness.html?job=contractor&utm_source=indeed&utm_medium=job_board`;
+  const result = spawnSync(browser, [
+    "--headless=new",
+    "--no-sandbox",
+    "--disable-gpu",
+    "--disable-dev-shm-usage",
+    "--dump-dom",
+    url
+  ], { encoding: "utf8", timeout: 30000, maxBuffer: 8 * 1024 * 1024 });
+
+  if (result.status !== 0) {
+    errors.push(`headless browser exited with ${result.status}: ${(result.stderr || "").trim()}`);
+  } else {
+    const html = result.stdout;
+    requireText(html, 'data-test-ready="true"', "ready marker");
+    requireText(html, 'data-work-style="業務委託"', "contractor job preselection");
+    requireText(html, 'data-context="true"', "job-context notice");
+    requireText(html, 'data-optional="true"', "collapsed optional details");
+    requireText(html, 'data-optional-contains="true"', "optional fields moved into details");
+    requireText(html, 'data-required-outside="true"', "required fields kept outside details");
+    requireText(html, 'data-primary-button="このサイトから相談を送信"', "safe fallback button while direct submit is disabled");
+    requireText(html, 'data-direct-state="このサイトから直接送信できます。メールアプリを開く必要はありません。"', "disabled direct-submit state");
+    const events = html.match(/data-events="([^"]*)"/)?.[1] || "";
+    if (!events.includes("recruit_form_view|")) errors.push("runtime harness missing form view event");
+    if (!events.includes("recruit_form_start|")) errors.push("runtime harness missing form start event");
+    const startCount = (events.match(/recruit_form_start\|/g) || []).length;
+    if (startCount !== 1) errors.push(`expected one recruit_form_start event, found ${startCount}`);
+    if (events.includes("recruit_form_submit_success|")) errors.push("disabled direct-submit mode emitted a success event");
+  }
+} finally {
+  server.kill("SIGTERM");
+}
+
+if (errors.length) {
+  console.error(`Recruit V2 runtime check failed:\n- ${errors.join("\n- ")}`);
+  process.exit(1);
+}
+console.log("Recruit Direct Apply V2 runtime check passed in headless Chromium.");
