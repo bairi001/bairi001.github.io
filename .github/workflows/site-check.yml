@@ -32,3 +32,5 @@ jobs:
         run: node scripts/check-booking-runtime.mjs
       - name: Check Recruit Direct Apply V2
         run: node scripts/check-recruit-v2.mjs
+      - name: Run Recruit Direct Apply V2 in headless Chromium
+        run: node scripts/check-recruit-runtime.mjs
