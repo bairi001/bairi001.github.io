@@ -2,8 +2,8 @@
   "use strict";
 
   const CONFIG = Object.freeze({
-    enabled: false,
-    endpoint: "",
+    enabled: true,
+    endpoint: "https://script.google.com/macros/s/AKfycbzAAWxxBqoCOGGMgxtXPJekDEA7MLYz2MEvRI9g5cLX9Bnmx377ABZIdKXdMh9q_nE1/exec",
     timeoutMs: 12000
   });
   const form = document.getElementById("recruitForm");

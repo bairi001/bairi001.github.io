@@ -48,8 +48,8 @@ try {
     requireText(html, 'data-optional="true"', "collapsed optional details");
     requireText(html, 'data-optional-contains="true"', "optional fields moved into details");
     requireText(html, 'data-required-outside="true"', "required fields kept outside details");
-    requireText(html, 'data-primary-button="メールアプリで送る"', "safe fallback button while direct submit is disabled");
-    requireText(html, 'data-direct-state="現在はメールまたはLINEで送信できます。直接送信機能は公開前テスト中です。"', "disabled direct-submit state");
+    requireText(html, 'data-primary-button="このサイトから相談を送信"', "safe fallback button while direct submit is disabled");
+    requireText(html, 'data-direct-state="このサイトから直接送信できます。メールアプリを開く必要はありません。"', "disabled direct-submit state");
     const events = html.match(/data-events="([^"]*)"/)?.[1] || "";
     if (!events.includes("recruit_form_view|")) errors.push("runtime harness missing form view event");
     if (!events.includes("recruit_form_start|")) errors.push("runtime harness missing form start event");
