@@ -45,4 +45,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add recruit.html recruit/contractor.html recruit/full-time.html recruit/part-time.html
           git commit -m "Recruit V2：接入直投运行时与岗位预选"
+          git pull --rebase origin feat/recruit-direct-apply-v2
           git push origin HEAD:feat/recruit-direct-apply-v2
