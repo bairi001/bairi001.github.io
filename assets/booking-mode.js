@@ -80,6 +80,11 @@
     };
   };
   const roundUp = (value, step) => Math.ceil(value / step) * step;
+  const currentDayEarlyTimes = () => [
+    { minutes: 0, label: "00:00" },
+    { minutes: 30, label: "00:30" },
+    { minutes: 60, label: "01:00" }
+  ];
   const baseTimes = () => {
     const times = [];
     for (let hour = 11; hour <= 23; hour += 1) {
@@ -100,6 +105,10 @@
     if (dateValue < now.date) return [];
     if (dateValue > now.date) return baseTimes();
     const earliest = roundUp(now.minutes + 1, 30);
+    if (now.minutes < 120) {
+      const currentNight = currentDayEarlyTimes().filter(item => item.minutes >= earliest);
+      return [...currentNight, ...baseTimes()];
+    }
     return baseTimes().filter(item => item.minutes >= earliest);
   };
   const fillTimeSelect = (select, dateValue, placeholder) => {
