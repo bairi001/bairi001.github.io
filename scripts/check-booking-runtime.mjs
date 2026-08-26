@@ -26,17 +26,19 @@ const server = spawn("python3", ["-m", "http.server", String(port), "--bind", "1
   stdio: "ignore"
 });
 
+const dump = url => spawnSync(browser, [
+  "--headless=new",
+  "--no-sandbox",
+  "--disable-gpu",
+  "--disable-dev-shm-usage",
+  "--dump-dom",
+  url
+], { encoding: "utf8", timeout: 30000, maxBuffer: 8 * 1024 * 1024 });
+
 try {
   await wait(700);
-  const url = `http://127.0.0.1:${port}/scripts/fixtures/booking-v2-harness.html?lang=ja&service=aroma&origin=aroma-oil-kamata&cta=service_hero`;
-  const result = spawnSync(browser, [
-    "--headless=new",
-    "--no-sandbox",
-    "--disable-gpu",
-    "--disable-dev-shm-usage",
-    "--dump-dom",
-    url
-  ], { encoding: "utf8", timeout: 30000, maxBuffer: 8 * 1024 * 1024 });
+  const baseUrl = `http://127.0.0.1:${port}/scripts/fixtures/booking-v2-harness.html?lang=ja&service=aroma&origin=aroma-oil-kamata&cta=service_hero`;
+  const result = dump(baseUrl);
 
   if (result.status !== 0) {
     errors.push(`headless browser exited with ${result.status}: ${(result.stderr || "").trim()}`);
@@ -47,7 +49,8 @@ try {
     requireText(html, 'data-first-time="11:00"', "opening-time slot remains available before opening");
     requireText(html, 'data-story-image="/assets/img/head-scalp-care.webp"', "booking page does not visually rewrite itself from referrer context");
     requireText(html, 'data-alternative="false"', "second-choice scheduling block removed");
-    requireText(html, 'data-visible-channels="4"', "Web, WhatsApp, LINE and phone all visible together");
+    requireText(html, 'data-visible-channels="4"', "four direct booking channels");
+    requireText(html, 'data-channel-list="web|whatsapp|line|phone"', "exact Web, WhatsApp, LINE and phone channel list without HotPepper");
     requireText(html, 'data-payload-note="Second input|origin: aroma-oil-kamata / cta: service_hero"', "web payload origin attribution");
     requireText(html, "booking_form_start:web", "deduplicated web form start");
     requireText(html, "booking_form_duplicate:", "duplicate submission event");
@@ -57,6 +60,13 @@ try {
       errors.push("duplicate submission was recorded as a success event");
     }
   }
+
+  const afterMidnight = dump(`${baseUrl}&clock=after_midnight`);
+  if (afterMidnight.status !== 0) {
+    errors.push(`after-midnight browser exited with ${afterMidnight.status}: ${(afterMidnight.stderr || "").trim()}`);
+  } else {
+    requireText(afterMidnight.stdout, 'data-first-time="00:30"', "00:30 current-calendar late-night slot at 00:10 JST");
+  }
 } finally {
   server.kill("SIGTERM");
 }
@@ -65,4 +75,4 @@ if (errors.length) {
   console.error(`Booking Simple Recovery runtime check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log("Booking Simple Recovery runtime check passed in headless Chromium.");
+console.log("Booking Simple Recovery runtime check passed in headless Chromium, including after-midnight availability.");
