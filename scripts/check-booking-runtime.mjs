@@ -16,7 +16,7 @@ const requireText = (html, text, label) => {
 
 const browser = findBrowser();
 if (!browser) {
-  console.error("Smart Booking runtime check failed: Chrome/Chromium is unavailable on the runner.");
+  console.error("Booking Simple Recovery runtime check failed: Chrome/Chromium is unavailable on the runner.");
   process.exit(1);
 }
 
@@ -43,11 +43,11 @@ try {
   } else {
     const html = result.stdout;
     requireText(html, 'data-test-ready="true"', "ready marker");
-    requireText(html, 'data-course-options="SELECT COURSE|アロマ30 — ¥2980|アロマ60 — ¥4980"', "Aroma-only course options");
-    requireText(html, 'data-first-time="12:00"', "quiet-hours noon floor");
-    requireText(html, 'data-story-image="assets/img/menu-aroma-back.webp"', "contextual Aroma image");
-    requireText(html, 'data-alternative="true"', "alternative scheduling controls");
-    requireText(html, 'data-visible-channels="2"', "two primary channels");
+    requireText(html, 'data-course-options="SELECT COURSE|試し — ¥4800|整体30 — ¥2400|足45 — ¥3980|アロマ30 — ¥2980|アロマ60 — ¥4980"', "all course groups remain visible");
+    requireText(html, 'data-first-time="11:00"', "opening-time slot remains available before opening");
+    requireText(html, 'data-story-image="/assets/img/head-scalp-care.webp"', "booking page does not visually rewrite itself from referrer context");
+    requireText(html, 'data-alternative="false"', "second-choice scheduling block removed");
+    requireText(html, 'data-visible-channels="4"', "Web, WhatsApp, LINE and phone all visible together");
     requireText(html, "booking_form_start:web", "deduplicated web form start");
     requireText(html, "booking_form_duplicate:", "duplicate submission event");
     const startCount = (html.match(/booking_form_start:web/g) || []).length;
@@ -61,7 +61,7 @@ try {
 }
 
 if (errors.length) {
-  console.error(`Smart Booking runtime check failed:\n- ${errors.join("\n- ")}`);
+  console.error(`Booking Simple Recovery runtime check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log("Smart Booking runtime check passed in headless Chromium.");
+console.log("Booking Simple Recovery runtime check passed in headless Chromium.");
