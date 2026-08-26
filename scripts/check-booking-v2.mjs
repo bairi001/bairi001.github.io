@@ -23,6 +23,7 @@ for (const [text, label] of [
   ["const order = [\"web\", \"whatsapp\", \"line\", \"phone\"]", "four always-visible direct booking channels"],
   ["requestedCourse", "explicit course preselection without filtering"],
   ["service_context", "service context analytics"],
+  ["course_group", "course group analytics"],
   ["origin_page", "origin page analytics"],
   ["booking_form_duplicate", "duplicate submission analytics separation"],
   ["roundUp", "elapsed-time-only same-day slot filtering"],
