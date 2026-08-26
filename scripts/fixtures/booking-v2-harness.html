@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja">
-<head><meta charset="utf-8"><title>Smart Booking V2 runtime harness</title><style>[hidden]{display:none}</style></head>
+<head><meta charset="utf-8"><title>Booking Simple Recovery runtime harness</title><style>[hidden]{display:none}</style></head>
 <body>
 <aside class="story"><div class="story-copy"><p data-i18n="storyTitle"></p><p data-i18n="storyLead"></p></div><figure class="story-photo"><img data-alt-key="photoAlt" src="/assets/img/head-scalp-care.webp" alt=""></figure></aside>
 <section class="form-side"><div class="form-wrap">
@@ -21,7 +21,10 @@
 <script>
 (() => {
   const RealDate = Date;
-  const fixed = new RealDate("2026-08-18T00:00:00Z");
+  const clock = new URLSearchParams(location.search).get("clock");
+  const fixed = clock === "after_midnight"
+    ? new RealDate("2026-08-17T15:10:00Z")
+    : new RealDate("2026-08-18T00:00:00Z");
   class MockDate extends RealDate {
     constructor(...args) { super(...(args.length ? args : [fixed.getTime()])); }
     static now() { return fixed.getTime(); }
@@ -38,7 +41,7 @@ for (const language of ["ja", "en", "zh", "ko"]) {
     storyTitle: "story", storyLead: "lead", formTitle: "form", formLead: "formlead", hoursHint: "hours", photoAlt: "photo"
   };
 }
-let lang = "ja";
+let lang = new URLSearchParams(location.search).get("lang") || "ja";
 let guests = "1";
 const WEB_FORM_ENABLED = true;
 const COURSE_GROUPS = [
@@ -86,7 +89,7 @@ $("bookingForm").addEventListener("input", () => trackEvent("booking_form_start"
 $("bookingForm").addEventListener("submit", event => { event.preventDefault(); trackEvent("booking_whatsapp_open", { language: lang }); });
 $("date").value = "2026-08-18";
 $("date").min = "2026-08-18";
-applyLanguage("ja");
+applyLanguage(lang);
 </script>
 <script src="/assets/booking-mode.js"></script>
 <script>
@@ -95,12 +98,26 @@ $("name").dispatchEvent(new Event("input", { bubbles: true }));
 $("note").value = "Second input";
 $("note").dispatchEvent(new Event("input", { bubbles: true }));
 trackEvent("booking_form_submit_success", { duplicate: true });
+const whatsappLink = document.querySelector('[data-channel="whatsapp"]');
+const webLink = document.querySelector('[data-channel="web"]');
+whatsappLink?.click();
+document.documentElement.dataset.whatsappMode = [$("webFields").hidden,$("preview").hidden,$("submitButton").hidden,$("webSubmitMount").hidden].join("|");
+webLink?.click();
+document.documentElement.dataset.webMode = [$("webFields").hidden,$("preview").hidden,$("submitButton").hidden,$("webSubmitMount").hidden].join("|");
+document.querySelector('[data-guests="3"]')?.click();
+document.documentElement.dataset.guests = guests;
 document.documentElement.dataset.testReady = "true";
+document.documentElement.dataset.lang = lang;
+document.documentElement.dataset.formLead = document.querySelector('[data-i18n="formLead"]')?.textContent || "";
 document.documentElement.dataset.courseOptions = [...$("course").options].map(option => option.textContent).join("|");
+document.documentElement.dataset.selectedCourse = $("course").value;
 document.documentElement.dataset.firstTime = $("time").options[1]?.textContent || "";
 document.documentElement.dataset.storyImage = document.querySelector(".story-photo img")?.getAttribute("src") || "";
 document.documentElement.dataset.alternative = String(Boolean($("bookingAlternative")));
 document.documentElement.dataset.visibleChannels = String(document.querySelectorAll("#channelActions > .channel-button").length);
+document.documentElement.dataset.channelList = [...document.querySelectorAll("#channelActions > .channel-button")].map(link => link.dataset.channel).join("|");
+document.documentElement.dataset.channelHrefs = [...document.querySelectorAll("#channelActions > .channel-button")].map(link => `${link.dataset.channel}:${link.getAttribute("href")}`).join("|");
+document.documentElement.dataset.payloadNote = String(webPayload().note || "").replace(/\n/g, "|");
 document.documentElement.dataset.events = window.__events.map(event => `${event.name}:${event.parameters.channel || ""}`).join("|");
 </script>
 </body>
