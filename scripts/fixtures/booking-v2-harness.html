@@ -41,7 +41,7 @@ for (const language of ["ja", "en", "zh", "ko"]) {
     storyTitle: "story", storyLead: "lead", formTitle: "form", formLead: "formlead", hoursHint: "hours", photoAlt: "photo"
   };
 }
-let lang = "ja";
+let lang = new URLSearchParams(location.search).get("lang") || "ja";
 let guests = "1";
 const WEB_FORM_ENABLED = true;
 const COURSE_GROUPS = [
@@ -89,7 +89,7 @@ $("bookingForm").addEventListener("input", () => trackEvent("booking_form_start"
 $("bookingForm").addEventListener("submit", event => { event.preventDefault(); trackEvent("booking_whatsapp_open", { language: lang }); });
 $("date").value = "2026-08-18";
 $("date").min = "2026-08-18";
-applyLanguage("ja");
+applyLanguage(lang);
 </script>
 <script src="/assets/booking-mode.js"></script>
 <script>
@@ -98,13 +98,25 @@ $("name").dispatchEvent(new Event("input", { bubbles: true }));
 $("note").value = "Second input";
 $("note").dispatchEvent(new Event("input", { bubbles: true }));
 trackEvent("booking_form_submit_success", { duplicate: true });
+const whatsappLink = document.querySelector('[data-channel="whatsapp"]');
+const webLink = document.querySelector('[data-channel="web"]');
+whatsappLink?.click();
+document.documentElement.dataset.whatsappMode = [$("webFields").hidden,$("preview").hidden,$("submitButton").hidden,$("webSubmitMount").hidden].join("|");
+webLink?.click();
+document.documentElement.dataset.webMode = [$("webFields").hidden,$("preview").hidden,$("submitButton").hidden,$("webSubmitMount").hidden].join("|");
+document.querySelector('[data-guests="3"]')?.click();
+document.documentElement.dataset.guests = guests;
 document.documentElement.dataset.testReady = "true";
+document.documentElement.dataset.lang = lang;
+document.documentElement.dataset.formLead = document.querySelector('[data-i18n="formLead"]')?.textContent || "";
 document.documentElement.dataset.courseOptions = [...$("course").options].map(option => option.textContent).join("|");
+document.documentElement.dataset.selectedCourse = $("course").value;
 document.documentElement.dataset.firstTime = $("time").options[1]?.textContent || "";
 document.documentElement.dataset.storyImage = document.querySelector(".story-photo img")?.getAttribute("src") || "";
 document.documentElement.dataset.alternative = String(Boolean($("bookingAlternative")));
 document.documentElement.dataset.visibleChannels = String(document.querySelectorAll("#channelActions > .channel-button").length);
 document.documentElement.dataset.channelList = [...document.querySelectorAll("#channelActions > .channel-button")].map(link => link.dataset.channel).join("|");
+document.documentElement.dataset.channelHrefs = [...document.querySelectorAll("#channelActions > .channel-button")].map(link => `${link.dataset.channel}:${link.getAttribute("href")}`).join("|");
 document.documentElement.dataset.payloadNote = String(webPayload().note || "").replace(/\n/g, "|");
 document.documentElement.dataset.events = window.__events.map(event => `${event.name}:${event.parameters.channel || ""}`).join("|");
 </script>
