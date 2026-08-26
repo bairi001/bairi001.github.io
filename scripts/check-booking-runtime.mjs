@@ -48,6 +48,7 @@ try {
     requireText(html, 'data-story-image="/assets/img/head-scalp-care.webp"', "booking page does not visually rewrite itself from referrer context");
     requireText(html, 'data-alternative="false"', "second-choice scheduling block removed");
     requireText(html, 'data-visible-channels="4"', "Web, WhatsApp, LINE and phone all visible together");
+    requireText(html, 'data-payload-note="Second input|origin: aroma-oil-kamata / cta: service_hero"', "web payload origin attribution");
     requireText(html, "booking_form_start:web", "deduplicated web form start");
     requireText(html, "booking_form_duplicate:", "duplicate submission event");
     const startCount = (html.match(/booking_form_start:web/g) || []).length;
