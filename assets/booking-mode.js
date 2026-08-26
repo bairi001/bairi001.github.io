@@ -61,6 +61,7 @@
   let formStartSent = false;
   const previewLabel = document.querySelector('[data-i18n="preview"]');
   const originalTrackEvent = trackEvent;
+  const originalWebPayload = webPayload;
 
   const tokyoParts = () => {
     const parts = new Intl.DateTimeFormat("en-CA", {
@@ -184,6 +185,13 @@
       return;
     }
     originalTrackEvent(name, eventParameters);
+  };
+
+  webPayload = function() {
+    const payload = originalWebPayload();
+    const attribution = `origin: ${bookingContext.originPage} / cta: ${bookingContext.originCta}`;
+    payload.note = [payload.note, attribution].filter(Boolean).join("\n").slice(0, 300);
+    return payload;
   };
 
   const hideLegacyBanner = () => {
