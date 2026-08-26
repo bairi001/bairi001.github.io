@@ -21,7 +21,10 @@
 <script>
 (() => {
   const RealDate = Date;
-  const fixed = new RealDate("2026-08-18T00:00:00Z");
+  const clock = new URLSearchParams(location.search).get("clock");
+  const fixed = clock === "after_midnight"
+    ? new RealDate("2026-08-17T15:10:00Z")
+    : new RealDate("2026-08-18T00:00:00Z");
   class MockDate extends RealDate {
     constructor(...args) { super(...(args.length ? args : [fixed.getTime()])); }
     static now() { return fixed.getTime(); }
@@ -101,6 +104,7 @@ document.documentElement.dataset.firstTime = $("time").options[1]?.textContent |
 document.documentElement.dataset.storyImage = document.querySelector(".story-photo img")?.getAttribute("src") || "";
 document.documentElement.dataset.alternative = String(Boolean($("bookingAlternative")));
 document.documentElement.dataset.visibleChannels = String(document.querySelectorAll("#channelActions > .channel-button").length);
+document.documentElement.dataset.channelList = [...document.querySelectorAll("#channelActions > .channel-button")].map(link => link.dataset.channel).join("|");
 document.documentElement.dataset.payloadNote = String(webPayload().note || "").replace(/\n/g, "|");
 document.documentElement.dataset.events = window.__events.map(event => `${event.name}:${event.parameters.channel || ""}`).join("|");
 </script>
