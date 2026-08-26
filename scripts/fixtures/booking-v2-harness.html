@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja">
-<head><meta charset="utf-8"><title>Smart Booking V2 runtime harness</title><style>[hidden]{display:none}</style></head>
+<head><meta charset="utf-8"><title>Booking Simple Recovery runtime harness</title><style>[hidden]{display:none}</style></head>
 <body>
 <aside class="story"><div class="story-copy"><p data-i18n="storyTitle"></p><p data-i18n="storyLead"></p></div><figure class="story-photo"><img data-alt-key="photoAlt" src="/assets/img/head-scalp-care.webp" alt=""></figure></aside>
 <section class="form-side"><div class="form-wrap">
@@ -101,6 +101,7 @@ document.documentElement.dataset.firstTime = $("time").options[1]?.textContent |
 document.documentElement.dataset.storyImage = document.querySelector(".story-photo img")?.getAttribute("src") || "";
 document.documentElement.dataset.alternative = String(Boolean($("bookingAlternative")));
 document.documentElement.dataset.visibleChannels = String(document.querySelectorAll("#channelActions > .channel-button").length);
+document.documentElement.dataset.payloadNote = String(webPayload().note || "").replace(/\n/g, "|");
 document.documentElement.dataset.events = window.__events.map(event => `${event.name}:${event.parameters.channel || ""}`).join("|");
 </script>
 </body>
