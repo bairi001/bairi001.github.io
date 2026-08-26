@@ -175,6 +175,7 @@
     language: lang,
     service_context: bookingContext.service,
     course_id: selectedCourse()?.key || "none",
+    course_group: COURSE_GROUPS.find(group => group.items.some(item => item.key === selectedCourse()?.key))?.key || "none",
     origin_page: bookingContext.originPage,
     origin_cta: bookingContext.originCta,
     guests_bucket: String(guests || "1"),
