@@ -62,6 +62,13 @@ const bookingHtml = await read("booking.html");
 requireText("booking.html", bookingHtml, '<script src="assets/booking-mode.js"></script>', "booking-mode runtime include");
 requireText("booking.html", bookingHtml, "FORM_LIVE_TESTED = true", "live-tested web form lock");
 requireText("booking.html", bookingHtml, '<meta name="robots" content="noindex,follow">', "booking page remains noindex");
+for (const [text, label] of [
+  ["webOutcomeUnknown:", "multilingual unknown-outcome copy"],
+  ["webSubmissionOutcomeUnknownSignature", "same-payload timeout lock"],
+  ["booking_form_submit_unknown", "unknown-outcome analytics"],
+  ['error?.name==="AbortError"', "timeout detection"],
+  ['reason:"backend_rejected"', "explicit backend rejection analytics"]
+]) requireText("booking.html", bookingHtml, text, label);
 
 if (errors.length) {
   console.error(`Booking Simple Recovery check failed:\n- ${errors.join("\n- ")}`);
