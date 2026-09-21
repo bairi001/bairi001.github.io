@@ -551,3 +551,61 @@ body::before{content:none!important;display:none!important;background-image:none
   body.japanese-home .premium-hero h1 em{white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;max-width:100%;}
   body.japanese-home .premium-hero h1 em{font-size:.94em;}
 }
+
+
+/* Localized home readability fix: 2026-09-22
+   Keep Chinese/Korean hero copy inside the mobile viewport and make
+   high-value quick facts use clear, larger sans-serif numerals. */
+body.localized-home .premium-hero h1 span,
+body.localized-home .premium-hero h1 em{
+  max-width:100%;
+  white-space:normal;
+  word-break:normal;
+  overflow-wrap:anywhere;
+}
+body.localized-home .trust-ribbon strong{
+  flex:0 0 auto;
+  font-family:var(--font-body);
+  font-size:clamp(1.4rem,2.1vw,1.75rem);
+  font-weight:800;
+  line-height:1;
+  letter-spacing:0;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  white-space:nowrap;
+}
+body.localized-home .trust-ribbon span{
+  min-width:0;
+  font-size:clamp(.8rem,1.05vw,.92rem);
+  line-height:1.45;
+  letter-spacing:0;
+}
+@media(max-width:700px){
+  body.localized-home .premium-hero h1{
+    font-size:clamp(2rem,8.4vw,2.65rem);
+    line-height:1.32;
+    letter-spacing:.025em;
+  }
+  html[lang="ko"] body.localized-home .premium-hero h1 span,
+  html[lang="ko"] body.localized-home .premium-hero h1 em{
+    word-break:keep-all;
+    overflow-wrap:anywhere;
+  }
+  body.localized-home .trust-ribbon{
+    padding:0 12px;
+  }
+  body.localized-home .trust-ribbon>div{
+    min-width:0;
+    align-items:center;
+    gap:10px;
+    padding:18px 12px;
+  }
+  body.localized-home .trust-ribbon strong{
+    font-size:clamp(1.42rem,6vw,1.65rem);
+  }
+  body.localized-home .trust-ribbon span{
+    font-size:.84rem;
+    line-height:1.4;
+    overflow-wrap:anywhere;
+  }
+}
