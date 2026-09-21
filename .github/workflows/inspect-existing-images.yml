@@ -1,0 +1,41 @@
+name: Inspect existing image assets
+on:
+  push:
+    branches: ["fix/final-home-images-20260921"]
+    paths: [".github/workflows/inspect-existing-images.yml"]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y imagemagick
+      - name: Build contact sheet
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/thumbs
+          n=0
+          while IFS= read -r -d '' f; do
+            size=$(stat -c%s "$f")
+            if [ "$size" -lt 300000 ]; then continue; fi
+            name=$(basename "$f")
+            safe=$(printf '%03d' "$n")
+            convert "$f" -auto-orient -thumbnail '360x260>' -background white -gravity south -splice 0x44 \
+              -fill black -pointsize 14 -annotate +0+12 "$name" "/tmp/thumbs/${safe}.jpg"
+            printf '%s\t%s\n' "$safe" "$f" >> /tmp/image-index.tsv
+            n=$((n+1))
+          done < <(find assets/img -maxdepth 1 -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print0 | sort -z)
+          montage /tmp/thumbs/*.jpg -tile 4x -geometry +8+8 -background white /tmp/contact-sheet.jpg
+          cp /tmp/image-index.tsv /tmp/contact-sheet-index.tsv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image-contact-sheet
+          path: |
+            /tmp/contact-sheet.jpg
+            /tmp/contact-sheet-index.tsv
