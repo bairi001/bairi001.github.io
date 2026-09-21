@@ -66,16 +66,16 @@ for (const [file, descriptionFragments] of Object.entries(jobs)) {
 const sitemap = await read("sitemap.xml");
 const locs = [...sitemap.matchAll(/<loc>(https:\/\/shinyuuan\.jp\/[^<]*)<\/loc>/g)].map(match => match[1]);
 if (locs.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs, found ${locs.length}`);
-for (const url of [
-  "https://shinyuuan.jp/menu.html",
-  "https://shinyuuan.jp/kamata-late-night.html",
-  "https://shinyuuan.jp/recruit/contractor.html",
-  "https://shinyuuan.jp/recruit/full-time.html",
-  "https://shinyuuan.jp/recruit/part-time.html"
-]) {
+for (const [url, expectedDate] of Object.entries({
+  "https://shinyuuan.jp/menu.html": "2026-09-21",
+  "https://shinyuuan.jp/kamata-late-night.html": "2026-08-11",
+  "https://shinyuuan.jp/recruit/contractor.html": "2026-08-18",
+  "https://shinyuuan.jp/recruit/full-time.html": "2026-08-18",
+  "https://shinyuuan.jp/recruit/part-time.html": "2026-08-18"
+})) {
   const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const date = sitemap.match(new RegExp(`<loc>${escaped}</loc><lastmod>([^<]+)</lastmod>`))?.[1];
-  if (date !== "2026-08-11") fail("sitemap.xml", `${url} lastmod should be 2026-08-11 after final audit`);
+  if (date !== expectedDate) fail("sitemap.xml", `${url} lastmod should be ${expectedDate}`);
 }
 
 if (errors.length) {
