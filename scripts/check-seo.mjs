@@ -94,6 +94,18 @@ for (const file of ["index.html", "shop.html", "en/index.html"]) {
   if (!html.includes(`"logo":"${logoPath}"`)) fail(file, "LocalBusiness structured data is missing the official square logo");
 }
 
+const multilingualClarityChecks = {
+  "zh/index.html": ["支付方式：</strong>现金、信用卡、PayPay", "1月1日休息"],
+  "ko/index.html": ["결제 방법:</strong> 현금, 신용카드, PayPay", "1월 1일 휴무"],
+  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services"],
+  "en/late-night-massage-kamata.html": ["in-store salon in Kamata", "do not provide hotel or outcall services"]
+};
+for (const [file, phrases] of Object.entries(multilingualClarityChecks)) {
+  for (const phrase of phrases) {
+    if (!indexableHtml[file]?.includes(phrase)) fail(file, `multilingual clarity missing: ${phrase}`);
+  }
+}
+
 const lateNightChecks = {
   "menu.html": "深夜料金（23:00以降にご来店の場合）",
   "kamata-late-night.html": "23:00以降にご来店の場合",
@@ -190,23 +202,24 @@ for (const [file, html] of Object.entries(indexableHtml)) {
 
 if (sitemapUrls.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs after Japanese money-page expansion, found ${sitemapUrls.length}`);
 
-const currentLastmod = [
-  "https://shinyuuan.jp/",
-  "https://shinyuuan.jp/ashitsubo-fukurahagi.html",
-  "https://shinyuuan.jp/bodycare-kamata.html",
-  "https://shinyuuan.jp/aroma-oil-kamata.html",
-  "https://shinyuuan.jp/shop.html",
-  "https://shinyuuan.jp/faq.html",
-  "https://shinyuuan.jp/en/",
-  "https://shinyuuan.jp/zh/",
-  "https://shinyuuan.jp/ko/"
-];
-for (const url of currentLastmod) {
+const expectedLastmod = {
+  "https://shinyuuan.jp/": "2026-08-11",
+  "https://shinyuuan.jp/ashitsubo-fukurahagi.html": "2026-08-11",
+  "https://shinyuuan.jp/bodycare-kamata.html": "2026-08-11",
+  "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-08-11",
+  "https://shinyuuan.jp/shop.html": "2026-08-11",
+  "https://shinyuuan.jp/faq.html": "2026-08-11",
+  "https://shinyuuan.jp/en/": "2026-08-11",
+  "https://shinyuuan.jp/zh/": "2026-09-21",
+  "https://shinyuuan.jp/ko/": "2026-09-21",
+  "https://shinyuuan.jp/en/late-night-massage-kamata.html": "2026-09-21",
+  "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-09-21"
+};
+for (const [url, expectedDate] of Object.entries(expectedLastmod)) {
   const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const value = sitemap.match(new RegExp(`<url><loc>${escaped}</loc><lastmod>([^<]+)</lastmod>`))?.[1];
-  if (value !== "2026-08-11") fail("sitemap.xml", `${url} lastmod should reflect the 2026-08-11 SEO closeout`);
+  if (value !== expectedDate) fail("sitemap.xml", `${url} lastmod should be ${expectedDate}`);
 }
-
 if (errors.length) {
   console.error(`SEO consistency check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
