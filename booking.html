@@ -842,14 +842,10 @@ async function submitWebForm(){
     $("submitStatus").textContent=I18N[lang].webSentLocked;
     trackEvent("booking_form_submit_success",{language:lang,channel:"web",duplicate:Boolean(result?.duplicate)});
   }catch(error){
-    if(error?.name==="AbortError"){
-      webSubmissionOutcomeUnknownSignature=webSubmissionSignature||webSubmissionSignatureValue();
-      showWebRecoveryStatus(whatsappUrl(),"webOutcomeUnknown");
-      trackEvent("booking_form_submit_unknown",{language:lang,channel:"web",reason:"timeout"});
-    }else{
-      showWebRecoveryStatus(whatsappUrl(),"webError");
-      trackEvent("booking_form_submit_error",{language:lang,channel:"web",reason:"network_or_response"});
-    }
+    const reason=error?.name==="AbortError"?"timeout":"transport_or_response";
+    webSubmissionOutcomeUnknownSignature=webSubmissionSignature||webSubmissionSignatureValue();
+    showWebRecoveryStatus(whatsappUrl(),"webOutcomeUnknown");
+    trackEvent("booking_form_submit_unknown",{language:lang,channel:"web",reason});
   }finally{
     clearTimeout(timeout);
     webSubmissionInFlight=false;
