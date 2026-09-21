@@ -94,6 +94,10 @@ for (const file of ["index.html", "shop.html", "en/index.html"]) {
   if (!html.includes(`"logo":"${logoPath}"`)) fail(file, "LocalBusiness structured data is missing the official square logo");
 }
 
+for (const file of ["zh/index.html", "ko/index.html"]) {
+  if (indexableHtml[file]?.includes("</p>\\n")) fail(file, "literal \\n leaked into rendered paragraph markup");
+}
+
 const multilingualClarityChecks = {
   "zh/index.html": ["支付方式：</strong>现金、信用卡、PayPay", "1月1日休息"],
   "ko/index.html": ["결제 방법:</strong> 현금, 신용카드, PayPay", "1월 1일 휴무"],
@@ -203,7 +207,7 @@ for (const [file, html] of Object.entries(indexableHtml)) {
 if (sitemapUrls.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs after Japanese money-page expansion, found ${sitemapUrls.length}`);
 
 const expectedLastmod = {
-  "https://shinyuuan.jp/": "2026-08-11",
+  "https://shinyuuan.jp/": "2026-09-21",
   "https://shinyuuan.jp/ashitsubo-fukurahagi.html": "2026-08-11",
   "https://shinyuuan.jp/bodycare-kamata.html": "2026-08-11",
   "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-08-11",

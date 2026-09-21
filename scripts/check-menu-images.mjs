@@ -13,5 +13,14 @@ const home=await text("index.html");
 function serviceCard(html,num){const marker=`<div class="service-card-num">Service ${num}</div>`;const pos=html.indexOf(marker);if(pos<0)return"";const start=html.lastIndexOf('<article class="service-card">',pos);const end=html.indexOf('</article>',pos);return start>=0&&end>=0?html.slice(start,end+10):""}
 const serviceLocks={"01":"premium-foot.webp","02":"premium-seitai.webp","03":"menu-aroma-back.webp"};
 for(const[num,image]of Object.entries(serviceLocks)){const card=serviceCard(home,num);if(!card)fail(`home Service ${num} card missing`);else if(!card.includes(image))fail(`home Service ${num} must use ${image}`);}
+const heroFile="assets/img/home-hero-bodycare-20260921.webp";
+if(!home.includes(`src="${heroFile}"`))fail(`home hero must use ${heroFile}`);
+if(!home.includes('alt="施術着の上から背中を丁寧にもみほぐす整体ボディケア"'))fail("home hero alt mismatch");
+try{
+  const image=await bin(heroFile),[w,h]=dims(image),info=await stat(path.join(root,heroFile));
+  if(w!==1100||h!==981)fail(`${heroFile} unexpected dimensions ${w}x${h}`);
+  if(info.size<45000||info.size>200000)fail(`${heroFile} unexpected file size ${info.size}`);
+  if(!home.includes(`width="${w}"`)||!home.includes(`height="${h}"`))fail("home hero intrinsic dimensions mismatch");
+}catch(e){fail(`${heroFile}: ${e.message}`)}
 const head=await text("headspa-kamata.html");if(!head.includes("head-scalp-care.webp"))fail("headspa page must use head-care image");if(head.includes('og:image" content="https://shinyuuan.jp/assets/img/shop-room.jpg"'))fail("headspa OG still uses room photo");
 if(errors.length){console.error(`Menu/image semantic check failed:\n- ${errors.join("\n- ")}`);process.exit(1)}console.log("Menu/image semantic check passed: service-intent photos, intrinsic dimensions, clarity, homepage cards and head-care visual are locked.");
