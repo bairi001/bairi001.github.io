@@ -19,6 +19,12 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
+      - name: Install ImageMagick
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y imagemagick
+
       - name: Optimize mislabeled PNG to real JPEG
         shell: bash
         run: |
