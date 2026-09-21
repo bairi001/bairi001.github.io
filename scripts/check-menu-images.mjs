@@ -1,6 +1,7 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { createHash } from "node:crypto";
 const root=path.resolve(new URL("../",import.meta.url).pathname.replace(/^\/([A-Za-z]:)/,"$1"));
 const errors=[]; const fail=m=>errors.push(m); const text=async p=>readFile(path.join(root,p),"utf8"); const bin=async p=>readFile(path.join(root,p));
 function section(html,id){return html.match(new RegExp(`<section\\b[^>]*id=["']${id}["'][\\s\\S]*?<\\/section>`,"i"))?.[0]||""}
@@ -11,15 +12,25 @@ for(const[id,l]of Object.entries(locks)){const b=section(menu,id);if(!b){fail(`#
 const option=section(menu,"option");if(!option.includes("leg-option-care-new.webp"))fail("leg oil photo must remain Option-only");const mains=["set","foot","bodycare","aroma","head"].map(id=>section(menu,id)).join("\n");if(mains.includes("leg-option-care-new.webp"))fail("leg oil photo used as main image");if(!menu.includes(".menu-photo img{filter:none!important}"))fail("menu main photos must preserve source clarity");
 const home=await text("index.html");
 function serviceCard(html,num){const marker=`<div class="service-card-num">Service ${num}</div>`;const pos=html.indexOf(marker);if(pos<0)return"";const start=html.lastIndexOf('<article class="service-card">',pos);const end=html.indexOf('</article>',pos);return start>=0&&end>=0?html.slice(start,end+10):""}
-const serviceLocks={"01":"premium-foot.webp","02":"premium-seitai.webp","03":"menu-aroma-back.webp"};
+const serviceLocks={"01":"premium-foot.webp","02":"home-service02-pair-room-v2-20260921.webp","03":"menu-aroma-back.webp"};
 for(const[num,image]of Object.entries(serviceLocks)){const card=serviceCard(home,num);if(!card)fail(`home Service ${num} card missing`);else if(!card.includes(image))fail(`home Service ${num} must use ${image}`);}
-const heroFile="assets/img/booking-treatment-waterwood-4k.webp";
+const pairFile="assets/img/home-service02-pair-room-v2-20260921.webp";
+try{
+  const image=await bin(pairFile),[w,h]=dims(image),info=await stat(path.join(root,pairFile)),card=serviceCard(home,"02");
+  if(w!==1200||h!==900)fail(`${pairFile} unexpected dimensions ${w}x${h}`);
+  if(info.size<30000||info.size>150000)fail(`${pairFile} unexpected file size ${info.size}`);
+  if(createHash("sha256").update(image).digest("hex")!=="92f86ce299e3d5718f591ac2617158bf8bfc1d9c2ed719507bfbaaefb65d7d95")fail(`${pairFile} SHA-256 mismatch`);
+  if(!card.includes(`width="${w}"`)||!card.includes(`height="${h}"`))fail("home Service 02 intrinsic dimensions mismatch");
+  if(!card.includes('alt="2名同時に施術を受けられるペアルームでの整体ボディケア"'))fail("home Service 02 alt mismatch");
+}catch(e){fail(`${pairFile}: ${e.message}`)}
+const heroFile="assets/img/home-hero-bodycare-v2-20260921.webp";
 if(!home.includes(`src="${heroFile}"`))fail(`home hero must use ${heroFile}`);
 if(!home.includes('alt="施術着の上から背中を丁寧にもみほぐす整体ボディケア"'))fail("home hero alt mismatch");
 try{
   const image=await bin(heroFile),[w,h]=dims(image),info=await stat(path.join(root,heroFile));
-  if(w!==2400||h!==2011)fail(`${heroFile} unexpected dimensions ${w}x${h}`);
-  if(info.size<80000||info.size>300000)fail(`${heroFile} unexpected file size ${info.size}`);
+  if(w!==1100||h!==923)fail(`${heroFile} unexpected dimensions ${w}x${h}`);
+  if(info.size<25000||info.size>120000)fail(`${heroFile} unexpected file size ${info.size}`);
+  if(createHash("sha256").update(image).digest("hex")!=="08c3fb0fe9a88a6bc819b820f28cad3a724f94c3061f74179efe3e64d302ab56")fail(`${heroFile} SHA-256 mismatch`);
   if(!home.includes(`width="${w}"`)||!home.includes(`height="${h}"`))fail("home hero intrinsic dimensions mismatch");
 }catch(e){fail(`${heroFile}: ${e.message}`)}
 const head=await text("headspa-kamata.html");if(!head.includes("head-scalp-care.webp"))fail("headspa page must use head-care image");if(head.includes('og:image" content="https://shinyuuan.jp/assets/img/shop-room.jpg"'))fail("headspa OG still uses room photo");
