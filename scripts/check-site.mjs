@@ -1,4 +1,4 @@
-import { access, readFile, readdir } from "node:fs/promises";
+import { access, readFile, readdir, stat } from "node:fs/promises";
 import { constants } from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -77,6 +77,45 @@ for (const character of css.replace(/\/\*[\s\S]*?\*\//g, "")) {
   if (depth < 0) break;
 }
 if (depth !== 0) report(path.join(root, "assets", "style.css"), "unbalanced CSS braces");
+
+function jpegDimensions(buffer) {
+  if (buffer.length < 4 || buffer[0] !== 0xff || buffer[1] !== 0xd8) {
+    throw new Error("not a JPEG");
+  }
+  const sofMarkers = new Set([0xc0,0xc1,0xc2,0xc3,0xc5,0xc6,0xc7,0xc9,0xca,0xcb,0xcd,0xce,0xcf]);
+  let offset = 2;
+  while (offset + 3 < buffer.length) {
+    while (offset < buffer.length && buffer[offset] === 0xff) offset += 1;
+    const segmentMarker = buffer[offset++];
+    if (segmentMarker === 0xd9 || segmentMarker === 0xda) break;
+    if (segmentMarker >= 0xd0 && segmentMarker <= 0xd7) continue;
+    if (offset + 1 >= buffer.length) break;
+    const segmentLength = buffer.readUInt16BE(offset);
+    if (segmentLength < 2 || offset + segmentLength > buffer.length) break;
+    if (sofMarkers.has(segmentMarker) && segmentLength >= 7) {
+      return {
+        height: buffer.readUInt16BE(offset + 3),
+        width: buffer.readUInt16BE(offset + 5)
+      };
+    }
+    offset += segmentLength;
+  }
+  throw new Error("JPEG dimensions not found");
+}
+
+const shopAccessPath = path.join(root, "assets", "img", "shop-access.jpg");
+try {
+  const [shopAccess, shopAccessInfo] = await Promise.all([readFile(shopAccessPath), stat(shopAccessPath)]);
+  if (shopAccess[0] !== 0xff || shopAccess[1] !== 0xd8 || shopAccess.at(-2) !== 0xff || shopAccess.at(-1) !== 0xd9) {
+    report(shopAccessPath, "must remain a real JPEG payload");
+  }
+  const { width, height } = jpegDimensions(shopAccess);
+  if (width !== 2390 || height !== 1792) report(shopAccessPath, `unexpected dimensions ${width}x${height}`);
+  if (shopAccessInfo.size > 1500000) report(shopAccessPath, `performance regression: ${shopAccessInfo.size} bytes exceeds 1.5 MB`);
+  if (shopAccessInfo.size < 100000) report(shopAccessPath, `suspiciously small image: ${shopAccessInfo.size} bytes`);
+} catch (error) {
+  report(shopAccessPath, error.message);
+}
 
 const sitemap = await readFile(path.join(root, "sitemap.xml"), "utf8");
 for (const url of ["/", "/en/", "/zh/", "/ko/"]) {
