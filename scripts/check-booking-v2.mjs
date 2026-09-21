@@ -67,6 +67,7 @@ for (const [text, label] of [
   ["webSubmissionOutcomeUnknownSignature", "same-payload timeout lock"],
   ["booking_form_submit_unknown", "unknown-outcome analytics"],
   ['error?.name==="AbortError"', "timeout detection"],
+  ['"transport_or_response"', "transport failure unknown-outcome reason"],
   ['reason:"backend_rejected"', "explicit backend rejection analytics"]
 ]) requireText("booking.html", bookingHtml, text, label);
 
