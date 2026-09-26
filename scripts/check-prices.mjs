@@ -33,7 +33,7 @@ function duration(id) {
 }
 
 function htmlPattern(label, id) {
-  return new RegExp(`${escape(label)}[\\s\\S]{0,180}?(?:${duration(id)}(?:分钟|분|分|min))?[\\s\\S]{0,100}?(?:¥)?${price(id)}(?:円)?`, "i");
+  return new RegExp(`${escape(compact(label))}[\\s\\S]{0,180}?(?:${duration(id)}(?:分钟|분|分|min))?[\\s\\S]{0,100}?(?:¥)?${price(id)}(?:円)?`, "i");
 }
 
 // Japanese menu: only assert entries that are rendered there.
@@ -50,7 +50,7 @@ expect("menu.html", "深夜费不一致", new RegExp(`深夜料金（23:00以降
 // English page intentionally does not list every course.
 expect("en/index.html", "Foot reflexology 45 min price mismatch", htmlPattern("Foot reflexology — 45 min", "foot45"));
 expect("en/index.html", "Foot reflexology 60 min price mismatch", htmlPattern("Foot reflexology — 60 min", "foot60"));
-expect("en/index.html", "Full-body massage 60 min price mismatch", htmlPattern("Full-body massage / Japanese body care (seitai) — 60 min", "body60"));
+expect("en/index.html", "Full-body massage 60 min price mismatch", htmlPattern("Body Relaxation (clothed, no oil) — 60 min", "body60"));
 expect("en/index.html", "Aroma 60 min price mismatch", htmlPattern("Aroma oil massage — 60 min", "aroma60"));
 expect("en/index.html", "Aroma 90 min price mismatch", htmlPattern("Aroma oil massage — 90 min", "aroma90"));
 expect("en/index.html", "Aroma + foot price mismatch", htmlPattern("Aroma oil 60 min + Foot 30 min（90 min）", "aromaFoot90"));
@@ -90,3 +90,4 @@ if (errors.length) {
 }
 
 console.log("Price consistency check passed for menu, English, booking, Chinese, and Korean pages.");
+

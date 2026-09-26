@@ -207,15 +207,15 @@ for (const [file, html] of Object.entries(indexableHtml)) {
 if (sitemapUrls.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs after Japanese money-page expansion, found ${sitemapUrls.length}`);
 
 const expectedLastmod = {
-  "https://shinyuuan.jp/": "2026-09-21",
-  "https://shinyuuan.jp/ashitsubo-fukurahagi.html": "2026-08-11",
-  "https://shinyuuan.jp/bodycare-kamata.html": "2026-08-11",
-  "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-08-11",
+  "https://shinyuuan.jp/": "2026-09-26",
+  "https://shinyuuan.jp/ashitsubo-fukurahagi.html": "2026-09-26",
+  "https://shinyuuan.jp/bodycare-kamata.html": "2026-09-26",
+  "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-09-26",
   "https://shinyuuan.jp/shop.html": "2026-08-11",
-  "https://shinyuuan.jp/faq.html": "2026-08-11",
-  "https://shinyuuan.jp/en/": "2026-08-11",
-  "https://shinyuuan.jp/zh/": "2026-09-21",
-  "https://shinyuuan.jp/ko/": "2026-09-21",
+  "https://shinyuuan.jp/faq.html": "2026-09-26",
+  "https://shinyuuan.jp/en/": "2026-09-26",
+  "https://shinyuuan.jp/zh/": "2026-09-26",
+  "https://shinyuuan.jp/ko/": "2026-09-26",
   "https://shinyuuan.jp/en/late-night-massage-kamata.html": "2026-09-21",
   "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-09-21"
 };
@@ -229,3 +229,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log(`SEO consistency check passed for ${indexableFiles.size} sitemap pages: canonical/index rules, structured data, internal links, Japanese money-keyword coverage, incorrect-intent exclusions, January closure, official logo, static multilingual mobile CTAs, restored WhatsApp handoff, search-intent H1s, local-business facts and regression guards.`);
+

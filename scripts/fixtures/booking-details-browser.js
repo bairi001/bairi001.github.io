@@ -1,0 +1,53 @@
+(async () => {
+  const results=[];
+  const check=(value,message)=>{if(!value)throw new Error(message);results.push(message);};
+  const result=document.createElement('output');result.id='booking-details-qa';document.body.append(result);
+  // Only a local test runner injects this fixture. Never send a real booking.
+  let posts=[];
+  window.fetch=async (_url,options)=>{posts.push(JSON.parse(options.body));return {json:async()=>({ok:true})};};
+  try {
+    const language=new URLSearchParams(location.search).get('lang');
+    check(document.documentElement.lang===(language==='zh'?'zh-Hans':language),'requested language renders');
+    check(document.documentElement.scrollWidth<=window.innerWidth+1,'booking fits the viewport');
+    $('course').value='aroma60';$('course').dispatchEvent(new Event('change',{bubbles:true}));
+    check(Boolean(document.querySelector('[data-addon="herbalOil"]')),'aroma offers herbal oil');
+    check(!document.querySelector('[data-addon="herbalFoot"]'),'aroma alone does not offer foot balm');
+    document.querySelector('[data-guests="2"]').click();
+    check(!$('sameRoomSection').hidden,'two guests can request the same room');
+    $('sameRoom').checked=true;
+    $('sameRoom').dispatchEvent(new Event('change',{bubbles:true}));
+    document.querySelector('[data-addon="hotstone10"]').click();
+    document.querySelector('[data-addon="hotstone20"]').click();
+    check(!document.querySelector('[data-addon="hotstone10"]').checked,'hot stone durations are mutually exclusive');
+    document.querySelector('[data-addon="herbalOil"]').click();
+    document.querySelector('[name="nomination"][value="therapist"]').click();
+    $('name').value='Local QA';$('email').value='qa@example.invalid';$('note').value='Gentle pressure';
+    const future=new Date(Date.now()+3*86400000).toISOString().slice(0,10);
+    $('date').value=future;buildTimes();$('time').value='780|13:00';$('privacyConsent').checked=true;updatePreview();
+    const first=webPayload();
+    check(first.addons.length===2&&first.addons.some(x=>x.id==='hotstone20'),'web payload retains both options');
+    check(first.sameRoomRequested===true&&first.treatmentMinutes===80,'room request and added time reach payload');
+    check(currentPrice()===7980,'60-minute aroma + hot stone 20 + herbal oil + nomination totals 7980 per selected course');
+    check(messageText().includes('Gentle pressure')&&messageText().includes(I18N[lang].sameRoomPending),'WhatsApp keeps note and pending room status');
+    const otherLanguage=language==='en'?'ja':'en';applyLanguage(otherLanguage);
+    check(selectedAddons().length===2&&sameRoomRequested(),'language switching preserves choices');
+    applyLanguage(language);
+    document.querySelector('[data-guests="1"]').click();
+    check($('sameRoomSection').hidden&&!$('sameRoom').checked&&!webPayload().sameRoomRequested,'returning to one guest clears room request');
+    document.querySelector('[data-guests="2"]').click();
+    check(!$('sameRoom').checked,'room request is not silently reselected');
+    $('sameRoom').checked=true;updatePreview();
+    $('course').value='body60';$('course').dispatchEvent(new Event('change',{bubbles:true}));
+    check(!webPayload().addons.some(x=>x.id==='herbalOil'),'course change clears an inapplicable herbal upgrade');
+    $('note').value='長'.repeat(300);updatePreview();
+    check(!$('note').validity.valid,'overlong combined note is visibly rejected');
+    await submitWebForm();check(posts.length===0,'overlong request is not sent or silently truncated');
+    $('note').value='Gentle pressure';updatePreview();
+    check($('note').validity.valid,'shortening note restores validity');
+    await submitWebForm();
+    check(posts.length===1&&posts[0].sameRoomRequested&&posts[0].nomination.id==='therapist','actual submit sends complete choices once');
+    await submitWebForm();check(posts.length===1,'second click after success sends no duplicate');
+    check($('submitStatus').textContent===I18N[lang].webSentLocked,'success remains a request awaiting shop confirmation');
+    result.dataset.status='passed';result.textContent=JSON.stringify(results);
+  } catch(error) {result.dataset.status='failed';result.textContent=error.stack||String(error);}
+})();

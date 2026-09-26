@@ -200,7 +200,9 @@
   webPayload = function() {
     const payload = originalWebPayload();
     const attribution = `origin: ${bookingContext.originPage} / cta: ${bookingContext.originCta}`;
-    payload.note = [payload.note, attribution].filter(Boolean).join("\n").slice(0, 300);
+    const withAttribution = [payload.note, attribution].filter(Boolean).join("\n");
+    // Optional attribution must never truncate a customer's request or options.
+    if (withAttribution.length <= 300) payload.note = withAttribution;
     return payload;
   };
 
@@ -293,6 +295,7 @@
   applyLanguage = function(next, options = {}) {
     originalApplyLanguage(next, options);
     buildCourses();
+    if (typeof buildExtras === "function") buildExtras();
     buildTimes();
     renderChannels();
     hideLegacyBanner();
@@ -349,5 +352,9 @@
   }, true);
 
   applyLanguage(lang);
+  if (params.get("guests") === "2" && params.get("room") === "pair") {
+    document.querySelector('[data-guests="2"]')?.click();
+    if ($("sameRoom")) $("sameRoom").checked = true;
+  }
   updatePreview();
 })();

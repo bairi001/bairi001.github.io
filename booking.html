@@ -291,6 +291,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
           <div class="field-control"><select id="course" name="course" required></select></div>
         </div>
 
+        <details class="form-section"><summary class="extras-toggle" data-i18n="courseInfoTitle">What your course includes</summary><p class="hint" data-i18n="courseDetails"></p></details>
         <div class="form-section date-time-grid">
           <div>
             <label class="field-label" for="date"><span data-i18n="preferredDate">Preferred date</span><span class="required" data-i18n="required">required</span></label>
@@ -314,11 +315,15 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
           <p class="hint" data-i18n="groupHint">For two or more guests, we will confirm the available staff and start times in our reply.</p>
         </fieldset>
 
+        <div class="form-section" id="sameRoomSection" hidden>
+          <label class="addon-item"><input type="checkbox" id="sameRoom" name="sameRoom"><span data-i18n="sameRoomLabel">Request a room for two (no room surcharge)</span></label>
+          <p class="hint" data-i18n="sameRoomHint">Available for all courses. Please request in advance. The same room is confirmed only after we check room and staff availability and explicitly confirm it in our reply.</p>
+        </div>
         <details class="form-section" id="extrasSection">
           <summary class="extras-toggle"><span data-i18n="extras">Add-ons and nomination (optional)</span></summary>
           <div class="extras-grid" id="addonsGrid"></div>
           <p class="nomination-title" data-i18n="nomination">Therapist nomination</p>
-          <div class="nomination-options" id="nominationOptions"></div>
+          <div class="nomination-options" id="nominationOptions"></div><p class="hint" data-i18n="extrasGroupHint">For a group, tell us in the note which guest wants each add-on or nomination. We will confirm availability and the total before treatment.</p>
         </details>
 
         <div class="form-section identity-grid">
@@ -328,7 +333,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
           </div>
           <div class="identity-field">
             <label class="field-label" for="note"><span data-i18n="note">Note</span><span class="required" data-i18n="optional">optional</span></label>
-            <textarea id="note" name="note" maxlength="300"></textarea>
+            <textarea id="note" name="note" maxlength="300" aria-describedby="noteLengthHint"></textarea><p class="hint" id="noteLengthHint" aria-live="polite"></p>
           </div>
         </div>
         <div class="web-fields" id="webFields" hidden>
@@ -395,18 +400,18 @@ const FORM_STARTED_AT=new Date().toISOString();
 
 const COURSE_GROUPS=[
   {key:"popular",items:[
-    {key:"trial60",min:60,price:4800,en:"Trial Course — Body 30 + Foot 30 (60 min)",zh:"体验套餐——整体30＋足底30（60分钟）",ko:"체험 코스 — 바디30＋발30 (60분)",ja:"おためしコース——整体30＋足裏30（60分）"},
-    {key:"recovery70",min:70,price:5500,en:"Recovery Course — Body 30 + Foot 30 + Head 10 (70 min)",zh:"疲劳恢复套餐——整体30＋足底30＋头部10（70分钟）",ko:"피로 케어 — 바디30＋발30＋헤드10 (70분)",ja:"お疲れケア——整体30＋足裏30＋ヘッド10（70分）"},
-    {key:"legs80",min:80,price:6280,en:"Swollen Legs & Stiff Shoulders — Body 40 + Foot 40 (80 min)",zh:"腿部浮肿与肩颈疲劳——整体40＋足底40（80分钟）",ko:"다리와 어깨 케어 — 바디40＋발40 (80분)",ja:"足むくみ・肩まわりケア——整体40＋足裏40（80分）"},
-    {key:"satisfaction90",min:90,price:6800,en:"Premium Satisfaction — Body 60 + Foot 30 (90 min)",zh:"大满足套餐——整体60＋足底30（90分钟）",ko:"프리미엄 만족 코스 — 바디60＋발30 (90분)",ja:"大満足コース——整体60＋足裏30（90分）"},
+    {key:"trial60",min:60,price:4800,en:"Body & Foot — 60 min (30 + 30)",zh:"体验套餐——整体30＋足底30（60分钟）",ko:"체험 코스 — 바디30＋발30 (60분)",ja:"おためしコース——整体30＋足裏30（60分）"},
+    {key:"recovery70",min:70,price:5500,en:"Body, Foot & Head — 70 min (30 + 30 + 10)",zh:"疲劳恢复套餐——整体30＋足底30＋头部10（70分钟）",ko:"피로 케어 — 바디30＋발30＋헤드10 (70분)",ja:"お疲れケア——整体30＋足裏30＋ヘッド10（70分）"},
+    {key:"legs80",min:80,price:6280,en:"Body & Foot — 80 min (40 + 40)",zh:"腿部浮肿与肩颈疲劳——整体40＋足底40（80分钟）",ko:"다리와 어깨 케어 — 바디40＋발40 (80분)",ja:"足むくみ・肩まわりケア——整体40＋足裏40（80分）"},
+    {key:"satisfaction90",min:90,price:6800,en:"Body & Foot — 90 min (60 + 30)",zh:"大满足套餐——整体60＋足底30（90分钟）",ko:"프리미엄 만족 코스 — 바디60＋발30 (90분)",ja:"大満足コース——整体60＋足裏30（90分）"},
     {key:"aromaFoot60",min:60,price:5300,en:"Aroma Oil 30 + Foot 30 (60 min)",zh:"精油30＋足底30（60分钟）",ko:"아로마 오일30＋발30 (60분)",ja:"アロマ30＋足裏30（60分）"},
     {key:"aromaFoot90",min:90,price:7800,en:"Aroma Oil 60 + Foot 30 (90 min)",zh:"精油60＋足底30（90分钟）",ko:"아로마 오일60＋발30 (90분)",ja:"アロマ60＋足裏30（90分）"},
     {key:"aromaFoot120",min:120,price:10500,en:"Aroma Oil 90 + Foot 30 (120 min)",zh:"精油90＋足底30（120分钟）",ko:"아로마 오일90＋발30 (120분)",ja:"アロマ90＋足裏30（120分）"}
   ]},
   {key:"body",items:[
-    {key:"body30",min:30,price:2400,en:"Pressure Point Body Massage 30 min (half body)",zh:"身体放松30分钟（半身）",ko:"바디 릴랙세이션 30분 (반신)",ja:"整体ボディケア30分（半身）"},
-    {key:"body60",min:60,price:3980,en:"Pressure Point Body Massage 60 min",zh:"身体放松60分钟",ko:"바디 릴랙세이션 60분",ja:"整体ボディケア60分"},
-    {key:"body90",min:90,price:6800,en:"Pressure Point Body Massage 90 min",zh:"身体放松90分钟",ko:"바디 릴랙세이션 90분",ja:"整体ボディケア90分"}
+    {key:"body30",min:30,price:2400,en:"Body Relaxation — 30 min (upper or lower body)",zh:"身体放松30分钟（上半身或下半身二选一）",ko:"바디 릴랙세이션 30분 (상반신 또는 하반신 선택)",ja:"整体ボディケア30分（上半身または下半身）"},
+    {key:"body60",min:60,price:3980,en:"Body Relaxation — 60 min",zh:"身体放松60分钟",ko:"바디 릴랙세이션 60분",ja:"整体ボディケア60分"},
+    {key:"body90",min:90,price:6800,en:"Body Relaxation — 90 min",zh:"身体放松90分钟",ko:"바디 릴랙세이션 90분",ja:"整体ボディケア90分"}
   ]},
   {key:"foot",items:[
     {key:"foot30",min:30,price:2800,en:"Foot Reflexology 30 min",zh:"足底护理30分钟",ko:"발 케어 30분",ja:"足つぼ30分"},
@@ -422,9 +427,13 @@ const COURSE_GROUPS=[
 ];
 
 const ADDONS=[
+  {key:"hotstone10",min:10,price:1000,en:"Hot stone — 10 minutes",zh:"热石护理10分钟",ko:"핫스톤 10분",ja:"ホットストーン10分"},
+  {key:"hotstone20",min:20,price:2000,en:"Hot stone — 20 minutes",zh:"热石护理20分钟",ko:"핫스톤 20분",ja:"ホットストーン20分"},
+  {key:"herbalOil",min:0,price:500,en:"Herbal oil upgrade",zh:"更换汉方油",ko:"한방 오일로 변경",ja:"漢方オイルに変更"},
+  {key:"herbalFoot",min:0,price:500,en:"Herbal foot balm upgrade",zh:"更换汉方足膏",ko:"한방 풋밤으로 변경",ja:"漢方フットバームに変更"},
   {key:"calves",min:10,price:1000,en:"Aroma calves & thighs",zh:"小腿与大腿精油护理",ko:"종아리·허벅지 아로마",ja:"ふくらはぎ・太ももアロマ"},
   {key:"decollete",min:10,price:1000,en:"Neck & décolleté oil",zh:"颈部与肩颈精油护理",ko:"목·데콜테 오일",ja:"首・デコルテオイル"},
-  {key:"abdominal",min:10,price:1000,en:"Abdominal therapy",zh:"腹部护理",ko:"복부 케어",ja:"お腹まわりケア"},
+  {key:"abdominal",min:10,price:1000,en:"Abdominal care",zh:"腹部护理",ko:"복부 케어",ja:"お腹まわりケア"},
   {key:"callus",min:10,price:1000,en:"Foot callus care",zh:"足部角质护理",ko:"발 각질 케어",ja:"角質ケア"},
   {key:"hand",min:10,price:1000,en:"Hand & arm massage",zh:"手部与手臂护理",ko:"손·팔 릴랙세이션",ja:"手・腕マッサージ"},
   {key:"head",min:10,price:1000,en:"Eye & head massage",zh:"眼部与头部护理",ko:"눈가·헤드 케어",ja:"目まわり・ヘッドケア"},
@@ -440,7 +449,7 @@ const NOMINATIONS=[
 
 const I18N={
   en:{
-    storyTitle:"A quiet moment<br>for your tired body.",storyLead:"Foot reflexology, body care and aroma oil treatments, one minute from JR Kamata Station.",photoAlt:"Relaxing scalp and head massage",trustAccess:"1 min from JR Kamata Station",trustAccessSub:"East Exit, walk 1 minute",trustHours:"Hours",trustHoursSub:"11:00 AM – 2:00 AM · Closed January 1",trustSpace:"Private treatment spaces",trustSpaceSub:"Three walls with a curtain entrance",backHome:"← Back to the official website",eyebrow:"Appointment Request",formTitle:"Request your preferred time",formLead:"Choose your course and preferred time, then send your request on this website or via WhatsApp. We will check availability and reply to confirm your appointment.",course:"Course",required:"required",preferredDate:"Preferred date",preferredTime:"Preferred time",hoursHint:"Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. An ¥800 late-night fee applies when you arrive at or after 11:00 PM. All times are JST.",guests:"Number of guests",groupHint:"For two or more guests, we will confirm the available staff and start times in our reply.",extras:"Add-ons and nomination (optional)",nomination:"Therapist nomination",name:"Your name",note:"Note",optional:"optional",preview:"WhatsApp message preview",submit:"Send Booking Request via WhatsApp",confirmLine:"Your appointment is confirmed only after we reply.",policyTitle:"Cancellation, late arrival and salon policy",policyCopy:"<p>Please contact us as early as possible if your plans change. Same-day cancellations or no-shows may incur a fee of up to 50% of the course price.</p><p>If you are more than 10 minutes late without contacting us, your appointment may be released and the treatment time may be shortened.</p><p>We provide relaxation treatments only. No sexual services are offered; inappropriate requests will be refused.</p>",privacy:"Privacy Policy",selectCourse:"Select a course…",selectTime:"Select a preferred time…",namePh:"e.g. John Smith",notePh:"Requests, areas of concern, or questions (optional)",fillAll:"Select a course, date and time, then enter your name to preview the message.",estimateSingle:n=>`Estimated price for 1 guest: ¥${n.toLocaleString()}. An ¥800 late-night fee applies only if you arrive at or after 11:00 PM. Final price is confirmed by the salon.`,estimateGroup:n=>`Listed amount per guest: ¥${n.toLocaleString()}. An ¥800 late-night fee applies per guest only if arrival is at or after 11:00 PM. We will confirm the group total.`,groups:{popular:"Popular Set Courses",body:"Pressure Point Body Massage",foot:"Foot Reflexology",aroma:"Aroma Oil Treatment"},msgTitle:"Hello, I would like to request an appointment at Shin Yuu An.",msgLabels:{course:"Course",date:"Preferred date",time:"Preferred time",guests:"Guests",addons:"Add-ons",nomination:"Nomination",name:"Name",note:"Note",fee:"Late-night fee",close:"I understand that the appointment is confirmed only after your reply."}
+    storyTitle:"A quiet moment<br>for your tired body.",storyLead:"Foot reflexology, body care and aroma oil treatments, one minute from JR Kamata Station.",photoAlt:"Relaxing scalp and head massage",trustAccess:"1 min from JR Kamata Station",trustAccessSub:"East Exit, walk 1 minute",trustHours:"Hours",trustHoursSub:"11:00 AM – 2:00 AM · Closed January 1",trustSpace:"Private treatment spaces",trustSpaceSub:"Three walls with a curtain entrance",backHome:"← Back to the official website",eyebrow:"Appointment Request",formTitle:"Request your preferred time",formLead:"Choose your course and preferred time, then send your request on this website or via WhatsApp. We will check availability and reply to confirm your appointment.",course:"Course",required:"required",preferredDate:"Preferred date",preferredTime:"Preferred time",hoursHint:"Hours: 11:00 AM–2:00 AM (closed January 1). Last booking request 1:00 AM. An ¥800 late-night fee applies when you arrive at or after 11:00 PM. All times are JST.",guests:"Number of guests",groupHint:"For two or more guests, we will confirm the available staff and start times in our reply.",extras:"Add-ons and nomination (optional)",nomination:"Therapist nomination",name:"Your name",note:"Note",optional:"optional",preview:"WhatsApp message preview",submit:"Send Booking Request via WhatsApp",confirmLine:"Your appointment is confirmed only after we reply.",policyTitle:"Cancellation, late arrival and salon policy",policyCopy:"<p>Please contact us as early as possible if your plans change. Same-day cancellations or no-shows may incur a fee of up to 50% of the course price.</p><p>If you are more than 10 minutes late without contacting us, your appointment may be released and the treatment time may be shortened.</p><p>We provide relaxation treatments only. No sexual services are offered; inappropriate requests will be refused.</p>",privacy:"Privacy Policy",selectCourse:"Select a course…",selectTime:"Select a preferred time…",namePh:"e.g. John Smith",notePh:"Requests, areas of concern, or questions (optional)",fillAll:"Select a course, date and time, then enter your name to preview the message.",estimateSingle:n=>`Estimated price for 1 guest: ¥${n.toLocaleString()}. An ¥800 late-night fee applies only if you arrive at or after 11:00 PM. Final price is confirmed by the salon.`,estimateGroup:n=>`Listed amount per guest: ¥${n.toLocaleString()}. An ¥800 late-night fee applies per guest only if arrival is at or after 11:00 PM. We will confirm the group total.`,groups:{popular:"Popular Set Courses",body:"Body Relaxation",foot:"Foot Reflexology",aroma:"Aroma Oil Treatment"},msgTitle:"Hello, I would like to request an appointment at Shin Yuu An.",msgLabels:{course:"Course",date:"Preferred date",time:"Preferred time",guests:"Guests",addons:"Add-ons",nomination:"Nomination",name:"Name",note:"Note",fee:"Late-night fee",close:"I understand that the appointment is confirmed only after your reply."}
   },
   zh:{
     storyTitle:"让一天的疲惫，<br>静静地舒展开。",storyLead:"足底护理、身体放松与香薰精油护理，距离JR蒲田站东口步行1分钟。",photoAlt:"舒缓头部护理",trustAccess:"JR蒲田站步行1分钟",trustAccessSub:"东口出站，步行约1分钟",trustHours:"营业时间",trustHoursSub:"11:00－次日2:00 · 1月1日休息",trustSpace:"独立护理空间",trustSpaceSub:"三面隔断墙，入口使用帘子",backHome:"← 返回官方网站",eyebrow:"预约申请",formTitle:"选择您希望的到店时间",formLead:"选择套餐和希望时间后，可通过本网页或WhatsApp发送预约申请。收到店铺回复后，预约才正式成立。",course:"选择套餐",required:"必填",preferredDate:"希望日期",preferredTime:"希望时间",hoursHint:"营业时间11:00～次日2:00（1月1日休息），最晚预约申请为次日1:00。若实际到店时间为23:00或之后，每位加收800日元深夜费；以实际到店时间为准。所有时间均为日本标准时间（JST）。",guests:"到店人数",groupHint:"两位以上客人，我们将在回复时确认可安排的员工人数和开始时间。",extras:"附加项目与指定技师（可选）",nomination:"指定技师",name:"您的姓名",note:"备注",optional:"选填",preview:"WhatsApp消息预览",submit:"通过WhatsApp发送预约申请",confirmLine:"收到本店回复后，预约才正式成立。",policyTitle:"取消、迟到及店铺服务说明",policyCopy:"<p>如果行程有变，请尽早联系我们。当日取消或无故不到店，可能收取最高为套餐价格50%的费用。</p><p>迟到超过10分钟且未联系我们，预约可能被取消，护理时间也可能相应缩短。</p><p>本店只提供正规放松护理，不提供任何色情服务；不当要求将被拒绝。</p>",privacy:"隐私政策",selectCourse:"请选择套餐…",selectTime:"请选择希望时间…",namePh:"例：王小明",notePh:"希望护理的部位、问题或其他要求（选填）",fillAll:"请选择套餐、日期和时间，并填写姓名后查看消息预览。",estimateSingle:n=>`1位客人所选项目预估价格：¥${n.toLocaleString()}。若实际到店时间为23:00或之后，另加深夜费¥800。最终价格由店铺回复确认。`,estimateGroup:n=>`每位客人所选项目价格：¥${n.toLocaleString()}。若实际到店时间为23:00或之后，每位另加深夜费¥800。团体总价将在回复时确认。`,groups:{popular:"人气组合套餐",body:"身体放松",foot:"足底护理",aroma:"香薰精油护理"},msgTitle:"您好，我想向身悠晏申请预约。",msgLabels:{course:"套餐",date:"希望日期",time:"希望时间",guests:"人数",addons:"附加项目",nomination:"指定技师",name:"姓名",note:"备注",fee:"深夜费",close:"我已了解：收到店铺回复后预约才正式成立。"}
@@ -536,6 +545,15 @@ let webSubmissionOutcomeUnknownSignature="";
 
 const $=id=>document.getElementById(id);
 const money=n=>`¥${n.toLocaleString()}`;
+const BOOKING_DETAILS_COPY={
+ en:{sameRoomLabel:"Request a room for two (no room surcharge)",sameRoomHint:"All courses can be provided in the room for two. Please request in advance. Your request does not guarantee the same room; we will check room and staff availability and explicitly confirm it in our reply.",sameRoomPending:"Requested, not yet confirmed",extrasGroupHint:"Prices include tax. For groups, specify in the note which guest wants each add-on or nomination. The salon will confirm the arrangements and total. Hot stone adds 10 or 20 minutes; herbal upgrades change the product used.",noteTooLong:"Your selected options and note exceed the website's limit. Please shorten the note, or send the complete request via WhatsApp.",treatmentTime:"Treatment time (per selected course)",courseDetails:"Body care is performed over clothing without oil; treatment wear is free. Body 30 min covers the upper OR lower body. Foot courses include a free 3–5 min foot bath before the treatment timer starts. Aroma courses include a choice of 6 scents. Hot or cold tea is available free after treatment on request."},
+ ja:{sameRoomLabel:"ペアルーム（2名同室）を希望・お部屋の追加料金なし",sameRoomHint:"すべてのコースでご利用いただけます。事前にご希望をお知らせください。送信時点では同室は確約されません。お部屋とスタッフの空き状況を確認し、返信で同室の可否をお知らせします。",sameRoomPending:"希望あり・未確定",extrasGroupHint:"表示は税込です。複数名の場合、どなたのオプション・指名かをご要望欄にご記入ください。内容と合計金額は当店から確認いたします。ホットストーンは10分または20分の加時、漢方は使用するオイル・足膏の変更です。",noteTooLong:"選択内容とご要望がウェブ送信の文字数上限を超えています。ご要望を短くするか、WhatsAppで全文をお送りください。",treatmentTime:"選択コースの施術時間",courseDetails:"整体は施術着の上から行うオイルなしのケアで、お着替えは無料です。整体30分は上半身・下半身のどちらかをお選びください。足裏の足湯（約3〜5分・無料）は施術時間に含みません。アロマは6種類の香りから選択でき、施術後はご希望により温かいお茶・冷たいお茶をご用意します。"},
+ zh:{sameRoomLabel:"申请双人同室（房间不额外收费）",sameRoomHint:"店内全部课程均可申请双人同室，请提前提出需求。提交申请不代表已安排双人间；店铺核对房间和员工安排后，会在回复中明确确认。",sameRoomPending:"已提出需求，尚未确认",extrasGroupHint:"所列价格含税。多人预约时，请在备注写明哪位客人需要附加项目或指定技师，店铺将确认安排与总价。热石增加10或20分钟；汉方升级为更换所用油或足膏。",noteTooLong:"所选项目与备注超出网页提交的字数上限。请缩短备注，或通过WhatsApp发送完整申请。",treatmentTime:"所选课程施术时长",courseDetails:"身体放松隔衣施术、不用油，提供免费施术服；整体30分钟仅限上半身或下半身二选一。足底课程附赠约3—5分钟泡脚，泡脚结束后开始计算施术时间。芳疗可免费选择6种香味，施术后可按需提供免费热茶或冷茶。"},
+ ko:{sameRoomLabel:"2인 같은 방 요청 (객실 추가 요금 없음)",sameRoomHint:"모든 코스에서 이용할 수 있으며 사전 요청이 필요합니다. 신청만으로 같은 방이 보장되지는 않습니다. 객실과 직원 일정을 확인한 후 답변으로 같은 방 이용 가능 여부를 안내합니다.",sameRoomPending:"요청됨 · 아직 미확정",extrasGroupHint:"표시 금액은 세금 포함입니다. 여러 명 예약 시 각 옵션과 지명을 원하는 분을 메모에 적어 주세요. 매장에서 이용 내용과 총액을 확인합니다. 핫스톤은 10분 또는 20분이 추가되며 한방 옵션은 오일·풋밤 변경입니다.",noteTooLong:"선택한 옵션과 메모가 웹 전송 글자 수 제한을 초과합니다. 메모를 줄이거나 WhatsApp으로 전체 내용을 보내 주세요.",treatmentTime:"선택 코스 관리 시간",courseDetails:"바디 케어는 옷 위로 오일 없이 진행하며 관리복은 무료입니다. 바디 30분은 상반신 또는 하반신 중 선택합니다. 발 코스에는 무료 족욕 약 3~5분이 포함되며 족욕 후부터 관리 시간을 계산합니다. 아로마는 6가지 향 중 선택할 수 있으며 관리 후 요청 시 따뜻한 차나 차가운 차를 무료로 제공합니다."}
+};
+Object.entries({en:"What your course includes",ja:"コース内容・料金に含まれるもの",zh:"课程范围与免费服务",ko:"코스 내용 및 무료 서비스"}).forEach(([code,title])=>I18N[code].courseInfoTitle=title);
+Object.entries(BOOKING_DETAILS_COPY).forEach(([code,copy])=>Object.assign(I18N[code],copy));
+
 const allCourses=()=>COURSE_GROUPS.flatMap(group=>group.items);
 const selectedCourse=()=>allCourses().find(item=>item.key===$("course").value);
 const selectedAddons=()=>ADDONS.filter(item=>document.querySelector(`[data-addon="${item.key}"]`)?.checked);
@@ -592,9 +610,16 @@ function buildTimes(){
   $("time").value=current;
 }
 
+function addonApplicable(item){
+  const key=selectedCourse()?.key||"";
+  if(item.key==="herbalOil")return key.startsWith("aroma");
+  if(item.key==="herbalFoot")return key.startsWith("foot")||["trial60","recovery70","legs80","satisfaction90","aromaFoot60","aromaFoot90","aromaFoot120"].includes(key);
+  return true;
+}
+
 function buildExtras(){
   const selected=new Set(selectedAddons().map(item=>item.key));
-  $("addonsGrid").innerHTML=ADDONS.map(item=>`<label class="addon-item"><input type="checkbox" data-addon="${item.key}" ${selected.has(item.key)?"checked":""}><span class="addon-copy"><span>${item[lang]}</span><small>${item.min} min · ${money(item.price)}</small></span></label>`).join("");
+  $("addonsGrid").innerHTML=ADDONS.filter(addonApplicable).map(item=>`<label class="addon-item"><input type="checkbox" data-addon="${item.key}" ${selected.has(item.key)?"checked":""}><span class="addon-copy"><span>${item[lang]}</span><small>${item.min ? `${item.min} min · ` : ""}${money(item.price)}</small></span></label>`).join("");
   const nomination=selectedNomination().key;
   $("nominationOptions").innerHTML=NOMINATIONS.map(item=>`<label class="nomination-item"><input type="radio" name="nomination" value="${item.key}" ${item.key===nomination?"checked":""}><span>${item[lang]}${item.price?` · ${money(item.price)}`:""}</span></label>`).join("");
 }
@@ -681,6 +706,29 @@ function utmReference(){
   return values.length?values.join("/").slice(0,180):"";
 }
 
+function sameRoomRequested(){
+  return guests==="2"&&Boolean($("sameRoom")?.checked);
+}
+
+function bookingSelectionDetails(){
+  const addons=selectedAddons().map(item=>({id:item.key,label:item[lang],minutes:item.min,price:item.price}));
+  const nomination=selectedNomination();
+  return {addons,nomination:{id:nomination.key,label:nomination[lang],price:nomination.price},sameRoomRequested:sameRoomRequested(),treatmentMinutes:(selectedCourse()?.min||0)+addons.reduce((total,item)=>total+item.minutes,0)};
+}
+
+function bookingRequestNote(){
+  // The live receiver already stores note. Keep choices readable even before
+  // its separate structured-field upgrade is deployed. Never truncate them.
+  const details=bookingSelectionDetails();
+  const lines=[];
+  if(details.addons.length)lines.push("Add-ons: "+details.addons.map(item=>`${item.id} ${item.minutes}m ¥${item.price}`).join(", "));
+  if(details.nomination.id!=="none")lines.push(`Nomination: ${details.nomination.id} ¥${details.nomination.price}`);
+  if(details.sameRoomRequested)lines.push("Same-room requested (2 guests; pending confirmation)");
+  if(details.addons.length)lines.push(`Treatment: ${details.treatmentMinutes} min`);
+  if($("note").value.trim())lines.push($("note").value.trim());
+  return lines.join("\n");
+}
+
 function messageText(){
   const course=selectedCourse();
   const labels=I18N[lang].msgLabels;
@@ -689,6 +737,8 @@ function messageText(){
   const lines=[I18N[lang].msgTitle,"",`■ ${labels.course}: ${course[lang]} (${money(course.price)})`,`■ ${labels.date}: ${formatDate($("date").value)}`,`■ ${labels.time}: ${timeLabel()}`,`■ ${labels.guests}: ${guests}`,`■ ${labels.name}: ${$("name").value.trim()}`];
   if(addons.length)lines.push(`■ ${labels.addons}: ${addons.map(item=>`${item[lang]} (${money(item.price)})`).join(", ")}`);
   if(nomination.key!=="none")lines.push(`■ ${labels.nomination}: ${nomination[lang]} (${money(nomination.price)})`);
+  if(sameRoomRequested())lines.push(`■ ${I18N[lang].sameRoomLabel}: ${I18N[lang].sameRoomPending}`);
+  if(addons.length)lines.push(`■ ${I18N[lang].treatmentTime}: ${bookingSelectionDetails().treatmentMinutes} min`);
   if($("note").value.trim())lines.push(`■ ${labels.note}: ${$("note").value.trim()}`);
   lines.push("",labels.close);
   const reference=utmReference();
@@ -698,6 +748,12 @@ function messageText(){
 }
 
 function updatePreview(){
+  const pairSection=$("sameRoomSection");
+  if(pairSection){pairSection.hidden=guests!=="2";if(guests!=="2")$("sameRoom").checked=false;}
+  const requestNote=bookingRequestNote();
+  const tooLong=requestNote.length>300;
+  $("note").setCustomValidity(tooLong?I18N[lang].noteTooLong:"");
+  $("noteLengthHint").textContent=tooLong?I18N[lang].noteTooLong:"";
   const complete=Boolean(selectedCourse()&&$("date").value&&$("time").value&&$("name").value.trim());
   $("preview").textContent=complete?messageText():I18N[lang].fillAll;
   $("submitButton").disabled=!complete;
@@ -734,6 +790,7 @@ function webSubmissionSignatureValue(){
     email:$("email").value.trim().toLowerCase(),
     phone:$("phone").value.trim(),
     note:$("note").value.trim(),
+    selection:bookingSelectionDetails(),
     lang
   });
 }
@@ -758,7 +815,8 @@ function webPayload(){
     name:$("name").value.trim().slice(0,60),
     email:$("email").value.trim().slice(0,160),
     phone:$("phone").value.trim().slice(0,40),
-    note:$("note").value.trim().slice(0,300),
+    note:bookingRequestNote(),
+    ...bookingSelectionDetails(),
     lang,
     utm_source:(FIRST_UTM.utm_source||"").slice(0,120),
     utm_medium:(FIRST_UTM.utm_medium||"").slice(0,120),
@@ -813,6 +871,9 @@ async function submitWebForm(){
   if(!$("privacyConsent").checked){
     $("submitStatus").textContent=I18N[lang].consentRequired;$("privacyConsent").focus();return;
   }
+  if(!$("note").validity.valid){
+    $("submitStatus").textContent=I18N[lang].noteTooLong;$("note").focus();return;
+  }
   const payload=webPayload();
   if(!payload.submissionId){
     showWhatsAppStatus(whatsappUrl(),false);return;
@@ -862,7 +923,15 @@ $("guestButtons").addEventListener("click",event=>{const button=event.target.clo
 $("bookingForm").addEventListener("input",updatePreview);
 $("bookingForm").addEventListener("change",updatePreview);
 $("bookingForm").addEventListener("input",()=>trackEvent("booking_form_start",{language:lang,channel:"whatsapp"}),{once:true});
-$("extrasSection").addEventListener("change",updatePreview);
+$("extrasSection").addEventListener("change",event=>{
+  const key=event.target.dataset.addon;
+  if(event.target.checked&&["hotstone10","hotstone20"].includes(key)){
+    const other=document.querySelector(`[data-addon="${key==="hotstone10"?"hotstone20":"hotstone10"}"]`);
+    if(other)other.checked=false;
+  }
+  updatePreview();
+});
+$("course").addEventListener("change",()=>{buildExtras();updatePreview();});
 $("mapLink").addEventListener("click",()=>trackEvent("access_map_click",{language:lang}));
 $("bookingForm").addEventListener("submit",event=>{
   event.preventDefault();
@@ -883,3 +952,4 @@ applyLanguage(resolveLanguage());
 <script src="assets/booking-mode.js"></script>
 </body>
 </html>
+

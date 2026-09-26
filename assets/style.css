@@ -609,3 +609,16 @@ body.localized-home .trust-ribbon span{
     overflow-wrap:anywhere;
   }
 }
+
+
+/* Service facts: reusable, readable disclosures beside the booking decision. */
+.service-facts h2{font-size:clamp(1.35rem,3vw,1.85rem);line-height:1.5;margin:0 0 20px}
+.service-facts h3{font-size:1.1rem;margin:26px 0 12px}
+.service-facts p{line-height:1.9;margin:0 0 18px;overflow-wrap:anywhere}
+.service-facts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.service-facts-grid p{padding:20px;border:1px solid rgba(14,58,67,.13);border-radius:12px;background:#F6F8F4}
+.pair-room-layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:36px;align-items:center}
+.pair-room-layout img{width:100%;height:auto;border-radius:14px}
+.service-fee-note{font-size:.9rem;line-height:1.8;margin:16px 0;color:#0E3A43}
+.menu-course-action{margin-top:18px}
+@media(max-width:760px){.service-facts-grid,.pair-room-layout{grid-template-columns:1fr;gap:16px}.service-facts-grid p{margin-bottom:0}.service-facts .btn-primary{max-width:100%;white-space:normal;text-align:center}}
