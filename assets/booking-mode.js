@@ -19,7 +19,7 @@
   Object.assign(I18N.en, {
     formLead: "Choose any course and preferred time, then send your request on this website or via WhatsApp. We will check availability and reply to confirm your appointment.",
     channelTitle: "Choose how to send your booking request",
-    hoursHint: "Hours: 11:00 AM–2:00 AM (closed January 1). An ¥800 late-night fee applies only when you actually arrive at or after 11:00 PM. All times are JST.",
+    hoursHint: "Hours: 11:00 AM–2:00 AM (closed January 1). Latest appointment start time is 11:30 PM. An ¥800 late-night fee applies only when you actually arrive at or after 11:00 PM. All times are JST.",
     trustHours: "Hours",
     trustHoursSub: "11:00 AM–2:00 AM · Closed January 1",
     trustSpace: "Private treatment spaces",
@@ -28,7 +28,7 @@
   Object.assign(I18N.zh, {
     formLead: "可自由选择全部套餐和希望时间，再通过本网页或WhatsApp发送预约申请。收到店铺回复后，预约才正式成立。",
     channelTitle: "选择预约申请的发送方式",
-    hoursHint: "营业时间11:00～次日2:00（1月1日休息）。仅在实际23:00或之后到店时加收800日元深夜费用。所有时间均为日本标准时间（JST）。",
+    hoursHint: "营业时间11:00～次日2:00（1月1日休息）。最晚可预约到店时间为23:30。仅在实际23:00或之后到店时加收800日元深夜费用。所有时间均为日本标准时间（JST）。",
     trustHours: "营业时间",
     trustHoursSub: "11:00－次日2:00 · 1月1日休息",
     trustSpace: "独立护理空间",
@@ -37,7 +37,7 @@
   Object.assign(I18N.ja, {
     formLead: "すべてのコースから自由に選び、ご希望日時を入力して、ウェブまたはWhatsAppから予約リクエストを送信できます。空き状況を確認後、当店からの返信をもって予約確定となります。",
     channelTitle: "予約リクエストの送信方法を選ぶ",
-    hoursHint: "営業時間11:00〜翌2:00（1月1日休み）。23:00以降に実際にご来店の場合のみ深夜料金800円。すべて日本標準時（JST）です。",
+    hoursHint: "営業時間11:00〜翌2:00（1月1日休み）。最終受付は23:30です。23:00以降に実際にご来店の場合のみ深夜料金800円。すべて日本標準時（JST）です。",
     trustHours: "営業時間",
     trustHoursSub: "11:00〜翌2:00 · 1月1日休み",
     trustSpace: "個室仕様の施術スペース",
@@ -46,7 +46,7 @@
   Object.assign(I18N.ko, {
     formLead: "모든 코스에서 자유롭게 선택하고 희망 시간을 입력한 뒤 웹페이지 또는 WhatsApp으로 예약 신청을 보낼 수 있습니다. 매장의 답변을 받은 뒤 예약이 확정됩니다.",
     channelTitle: "예약 신청을 보낼 방법을 선택하세요",
-    hoursHint: "영업시간은 11:00~다음 날 2:00이며 1월 1일은 휴무입니다. 실제 23시 이후 도착 시에만 심야 요금 800엔이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다.",
+    hoursHint: "영업시간은 11:00~다음 날 2:00이며 1월 1일은 휴무입니다. 마지막 접수 시간은 23:30입니다. 실제 23시 이후 도착 시에만 심야 요금 800엔이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다.",
     trustHours: "영업시간",
     trustHoursSub: "11:00~다음 날 2:00 · 1월 1일 휴무",
     trustSpace: "독립형 관리 공간",
@@ -80,11 +80,6 @@
     };
   };
   const roundUp = (value, step) => Math.ceil(value / step) * step;
-  const currentDayEarlyTimes = () => [
-    { minutes: 0, label: "00:00" },
-    { minutes: 30, label: "00:30" },
-    { minutes: 60, label: "01:00" }
-  ];
   const baseTimes = () => {
     const times = [];
     for (let hour = 11; hour <= 23; hour += 1) {
@@ -92,11 +87,6 @@
         times.push({ minutes: hour * 60 + minute, label: `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}` });
       }
     }
-    times.push(
-      { minutes: 1440, label: "00:00 (next day)" },
-      { minutes: 1470, label: "00:30 (next day)" },
-      { minutes: 1500, label: "01:00 (next day)" }
-    );
     return times;
   };
   const availableTimesFor = dateValue => {
@@ -105,10 +95,6 @@
     if (dateValue < now.date) return [];
     if (dateValue > now.date) return baseTimes();
     const earliest = roundUp(now.minutes + 1, 30);
-    if (now.minutes < 120) {
-      const currentNight = currentDayEarlyTimes().filter(item => item.minutes >= earliest);
-      return [...currentNight, ...baseTimes()];
-    }
     return baseTimes().filter(item => item.minutes >= earliest);
   };
   const fillTimeSelect = (select, dateValue, placeholder) => {
