@@ -96,7 +96,7 @@ try {
   if (afterMidnight.status !== 0) {
     errors.push(`after-midnight browser exited with ${afterMidnight.status}: ${(afterMidnight.stderr || "").trim()}`);
   } else {
-    requireText(afterMidnight.stdout, 'data-first-time="00:30"', "00:30 current-calendar late-night slot at 00:10 JST");
+    requireText(afterMidnight.stdout, 'data-first-time="11:00"', "after midnight, the next selectable slot starts from 11:00 because final reception is 23:30");
   }
 } finally {
   server.kill("SIGTERM");
@@ -106,4 +106,4 @@ if (errors.length) {
   console.error(`Booking Simple Recovery runtime check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log("Booking Simple Recovery runtime check passed in headless Chromium for ja/en/zh/ko, four direct channels, mode switching, guest selection, course preselection and after-midnight availability.");
+console.log("Booking Simple Recovery runtime check passed in headless Chromium for ja/en/zh/ko, four direct channels, mode switching, guest selection, course preselection and the 23:30 final reception rule.");
