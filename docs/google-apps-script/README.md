@@ -1,6 +1,6 @@
 # 身悠晏网页预约 Apps Script 模板
 
-此目录提供可复制到 Google Apps Script 的预约后端模板。当前正式网站的 `FORM_ENDPOINT` 为空，`FORM_PRIVACY_READY=false`、`FORM_LIVE_TESTED=false`，所以网页 POST 尚未对外开放。
+此目录提供预约后端源码。2026-09-26 核对：官网代码已经配置 FORM_ENDPOINT，网页提交入口已启用。修改此文件不会自动更新已部署的 Google Apps Script；本次升级步骤见 BOOKING-DETAILS-DEPLOY.md。不要重新创建台账或清空现有部署属性。
 
 ## 账号与安全
 
@@ -48,3 +48,4 @@
 8. 所有正式域名测试通过后再将 `FORM_LIVE_TESTED` 设为 `true`。
 
 模板不会自动给客人发送确认邮件。预约只有在店铺人工回复后才正式成立。
+

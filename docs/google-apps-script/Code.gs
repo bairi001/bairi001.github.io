@@ -8,7 +8,7 @@
  */
 
 var SERVICE_NAME = "shinyuuan-booking";
-var SERVICE_VERSION = "2";
+var SERVICE_VERSION = "3";
 var MAX_PAYLOAD_BYTES = 20000;
 var MIN_FORM_AGE_MS = 2000;
 var MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
@@ -32,7 +32,11 @@ var SHEET_HEADERS = [
   "utm_campaign",
   "utm_content",
   "mail_status",
-  "processing_status"
+  "processing_status",
+  "addons_json",
+  "nomination_json",
+  "same_room_requested",
+  "treatment_minutes"
 ];
 
 function doGet(e) {
@@ -197,6 +201,20 @@ function validatePayload_(raw) {
     throw new Error("Form age is invalid");
   }
 
+  var addons = raw.addons == null ? [] : raw.addons;
+  if (!Array.isArray(addons) || addons.length > 12) throw new Error("Add-ons are invalid");
+  data.addons = addons.map(function (item) {
+    if (!item || typeof item !== "object" || !/^[a-zA-Z0-9_-]{1,40}$/.test(item.id || "")) throw new Error("Add-on ID is invalid");
+    if (!Number.isInteger(item.minutes) || item.minutes < 0 || item.minutes > 120 || !Number.isInteger(item.price) || item.price < 0 || item.price > 50000) throw new Error("Add-on value is invalid");
+    return {id:item.id, label:sanitizeText_(item.label,100), minutes:item.minutes, price:item.price};
+  });
+  var nomination = raw.nomination || {id:"none",label:"",price:0};
+  if (["none","therapist","manager"].indexOf(nomination.id) < 0 || !Number.isInteger(nomination.price) || nomination.price < 0 || nomination.price > 10000) throw new Error("Nomination is invalid");
+  data.nomination = {id:nomination.id,label:sanitizeText_(nomination.label,100),price:nomination.price};
+  if (raw.sameRoomRequested != null && typeof raw.sameRoomRequested !== "boolean") throw new Error("Room request is invalid");
+  data.sameRoomRequested = raw.sameRoomRequested === true && data.guests === "2";
+  if (raw.treatmentMinutes != null && (!Number.isInteger(raw.treatmentMinutes) || raw.treatmentMinutes < 1 || raw.treatmentMinutes > 600)) throw new Error("Duration is invalid");
+  data.treatmentMinutes = raw.treatmentMinutes || "";
   return data;
 }
 
@@ -244,12 +262,24 @@ function bookingFingerprint_(payload) {
     normalizeBookingKey_(payload.time),
     normalizeBookingKey_(payload.courseId),
     normalizeBookingKey_(payload.guests),
-    normalizeBookingKey_(payload.name)
+    normalizeBookingKey_(payload.name),
+    normalizeBookingKey_(payload.note),
+    normalizeBookingKey_(payload.phone),
+    selectionFingerprint_(payload)
   ].join("|");
   return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, source, Utilities.Charset.UTF_8).map(function(byte) {
     var value = (byte + 256) % 256;
     return ("0" + value.toString(16)).slice(-2);
   }).join("");
+}
+
+function selectionFingerprint_(payload) {
+  return JSON.stringify({
+    addons:(payload.addons||[]).map(function(item){return [item.id,item.minutes,item.price];}).sort(),
+    nomination:(payload.nomination||{}).id||"none",
+    sameRoomRequested:payload.sameRoomRequested===true,
+    treatmentMinutes:payload.treatmentMinutes||""
+  });
 }
 
 function bookingRowMatches_(row, payload) {
@@ -258,7 +288,19 @@ function bookingRowMatches_(row, payload) {
     normalizeBookingKey_(row[6]) === normalizeBookingKey_(payload.time) &&
     normalizeBookingKey_(row[7]) === normalizeBookingKey_(payload.guests) &&
     normalizeBookingKey_(row[8]) === normalizeBookingKey_(payload.name) &&
-    normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email);
+    normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email) &&
+    normalizeBookingKey_(row[10]) === normalizeBookingKey_(payload.phone) &&
+    normalizeBookingKey_(row[11]) === normalizeBookingKey_(payload.note) &&
+    rowSelectionMatches_(row, payload);
+}
+
+function rowSelectionMatches_(row,payload) {
+  if (!row[18]) return true; // Pre-upgrade rows keep selection details in note.
+  try {
+    return selectionFingerprint_({addons:JSON.parse(row[18]),nomination:JSON.parse(row[19]||"{}"),sameRoomRequested:row[20]===true||String(row[20])==="true",treatmentMinutes:Number(row[21])||""}) === selectionFingerprint_(payload);
+  } catch (_) {
+    return false; // A manually edited old row must not block new requests.
+  }
 }
 
 function isDuplicateBooking_(payload, config) {
@@ -268,7 +310,7 @@ function isDuplicateBooking_(payload, config) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
   var startRow = Math.max(2, lastRow - 99);
-  var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, 18).getValues();
+  var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, Math.min(sheet.getMaxColumns(),22)).getValues();
   var cutoff = Date.now() - DUPLICATE_WINDOW_SECONDS * 1000;
   for (var index = rows.length - 1; index >= 0; index--) {
     var receivedText = String(rows[index][1] || "").trim();
@@ -297,7 +339,15 @@ function checkRateLimit_(maxPerHour) {
 function appendBookingRow_(payload, config) {
   var spreadsheet = SpreadsheetApp.openById(config.sheetId);
   var sheet = spreadsheet.getSheets()[0];
+  if (sheet.getMaxColumns() < SHEET_HEADERS.length) sheet.insertColumnsAfter(sheet.getMaxColumns(), SHEET_HEADERS.length-sheet.getMaxColumns());
   if (sheet.getLastRow() === 0) sheet.appendRow(SHEET_HEADERS);
+  else {
+    var extraHeaders = sheet.getRange(1,19,1,4).getValues()[0];
+    for (var col=0;col<4;col++) {
+      if (extraHeaders[col] && extraHeaders[col] !== SHEET_HEADERS[col+18]) throw new Error("Unexpected booking sheet columns");
+    }
+    sheet.getRange(1,19,1,4).setValues([SHEET_HEADERS.slice(18)]);
+  }
 
   var receivedAt = Utilities.formatDate(new Date(), config.timeZone, "yyyy-MM-dd HH:mm:ss");
   var row = [
@@ -318,7 +368,11 @@ function appendBookingRow_(payload, config) {
     payload.utm_campaign,
     payload.utm_content,
     "pending",
-    "recorded"
+    "recorded",
+    JSON.stringify(payload.addons||[]),
+    JSON.stringify(payload.nomination||{id:"none",label:"",price:0}),
+    String(payload.sameRoomRequested===true),
+    String(payload.treatmentMinutes||"")
   ].map(sanitizeSheetValue_);
 
   sheet.appendRow(row);
@@ -334,6 +388,17 @@ function buildBookingMail_(payload) {
   };
   var text = templates[payload.lang] || templates.en;
   var subject = (text.subject + payload.date).replace(/[\r\n]+/g, " ").slice(0, 160);
+  var detailsCopy = {
+    ja:{addons:"オプション",nomination:"指名",room:"2名同室希望（未確定・部屋追加料金なし）",duration:"選択コースの施術時間"},
+    en:{addons:"Add-ons",nomination:"Nomination",room:"Same-room requested (pending confirmation; no room surcharge)",duration:"Selected treatment duration"},
+    zh:{addons:"附加项目",nomination:"指定技师",room:"双人同室需求（未确认・房间不加价）",duration:"所选课程施术时长"},
+    ko:{addons:"추가 옵션",nomination:"지명",room:"2인 같은 방 요청 (미확정 · 객실 추가 요금 없음)",duration:"선택 코스 관리 시간"}
+  }[payload.lang] || {addons:"Add-ons",nomination:"Nomination",room:"Same-room requested (pending)",duration:"Duration"};
+  var detailLines=[];
+  if ((payload.addons||[]).length) detailLines.push(detailsCopy.addons+": "+payload.addons.map(function(item){return item.label+" ["+item.id+"] "+item.minutes+" min / ¥"+item.price;}).join(", "));
+  if (payload.nomination && payload.nomination.id!=="none") detailLines.push(detailsCopy.nomination+": "+payload.nomination.label+" / ¥"+payload.nomination.price);
+  if (payload.sameRoomRequested) detailLines.push(detailsCopy.room);
+  if (payload.treatmentMinutes) detailLines.push(detailsCopy.duration+": "+payload.treatmentMinutes+" min");
   var body = [
     text.title,
     "",
@@ -346,6 +411,7 @@ function buildBookingMail_(payload) {
     text.email + ": " + payload.email,
     text.phone + ": " + (payload.phone || text.noPhone),
     text.note + ": " + (payload.note || text.noNote),
+    detailLines.join("\n"),
     "",
     text.closing
   ].join("\n");
@@ -375,3 +441,4 @@ function jsonResponse_(value) {
     .createTextOutput(JSON.stringify(value))
     .setMimeType(ContentService.MimeType.JSON);
 }
+

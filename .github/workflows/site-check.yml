@@ -34,3 +34,16 @@ jobs:
         run: node scripts/check-recruit-v2.mjs
       - name: Run Recruit Direct Apply V2 in headless Chromium
         run: node scripts/check-recruit-runtime.mjs
+
+      - name: Check booking payload and backend details
+        run: node scripts/check-booking-details.mjs
+      - name: Check real booking form in four languages
+        run: node scripts/check-booking-details-browser.mjs
+      - name: Save mobile screenshots for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-review
+          path: qa-screenshots/
+          if-no-files-found: ignore
+          retention-days: 7

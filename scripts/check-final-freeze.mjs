@@ -67,7 +67,7 @@ const sitemap = await read("sitemap.xml");
 const locs = [...sitemap.matchAll(/<loc>(https:\/\/shinyuuan\.jp\/[^<]*)<\/loc>/g)].map(match => match[1]);
 if (locs.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs, found ${locs.length}`);
 for (const [url, expectedDate] of Object.entries({
-  "https://shinyuuan.jp/menu.html": "2026-09-21",
+  "https://shinyuuan.jp/menu.html": "2026-09-26",
   "https://shinyuuan.jp/kamata-late-night.html": "2026-08-11",
   "https://shinyuuan.jp/recruit/contractor.html": "2026-08-18",
   "https://shinyuuan.jp/recruit/full-time.html": "2026-08-18",
@@ -83,3 +83,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log("Final freeze check passed: intent ownership, money-page links, late-night targeting, truthful JobPosting data, contextual application links, and sitemap lastmod are locked.");
+
