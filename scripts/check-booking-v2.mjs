@@ -27,6 +27,7 @@ for (const [text, label] of [
   ["origin_page", "origin page analytics"],
   ["booking_form_duplicate", "duplicate submission analytics separation"],
   ["roundUp", "elapsed-time-only same-day slot filtering"],
+  ["最終受付は23:30です", "23:30 final reception wording"],
   ["23:00以降に実際にご来店の場合のみ深夜料金800円", "arrival-based late-night fee wording"],
   ["originalTrackEvent(\"booking_form_duplicate\", eventParameters);\n      return;", "duplicate event early return"]
 ]) requireText("assets/booking-mode.js", booking, text, label);
@@ -42,7 +43,11 @@ for (const [text, label] of [
   ["filterableServices", "source-page course filtering"],
   ["channelHpb", "HotPepper booking-page channel"],
   ["booking-v2-other-channels", "collapsed secondary booking channels"],
-  ["preferred = (lang ===", "language-specific channel hiding"]
+  ["preferred = (lang ===", "language-specific channel hiding"],
+  ["currentDayEarlyTimes", "after-midnight booking slots"],
+  ["00:00 (next day)", "next-day midnight booking slot"],
+  ["00:30 (next day)", "next-day 00:30 booking slot"],
+  ["01:00 (next day)", "next-day 01:00 booking slot"]
 ]) forbidText("assets/booking-mode.js", booking, text, label);
 
 const secondary = await read("assets/secondary-pages.js");
