@@ -31,6 +31,7 @@ var STATUS_DERIVED_COLUMNS = {
 var BOOKING_STATUS_VALUES = ["requested", "confirmed", "cancelled", "arrived", "no_show"];
 var SAME_ROOM_STATUS_VALUES = ["not_requested", "pending", "confirmed", "unavailable", "alternative_agreed"];
 var STATUS_LOG_SOURCE_VALUES = ["web_booking", "sheet_operator", "system"];
+var STATUS_MODEL_START_ROW_PROPERTY = "BOOKING_STATUS_V5_START_ROW";
 var STATUS_LOG_HEADERS = [
   "log_id",
   "event_at_jst",
@@ -405,6 +406,7 @@ function appendBookingRow_(payload, config) {
   var spreadsheet = SpreadsheetApp.openById(config.sheetId);
   var sheet = getBookingSheet_(spreadsheet);
   assertBookingSheetReady_(sheet);
+  ensureStatusModelStartRow_(sheet);
 
   var receivedAt = Utilities.formatDate(new Date(), config.timeZone, "yyyy-MM-dd HH:mm:ss");
   var initialBookingStatus = "requested";
@@ -612,6 +614,114 @@ function notifyStatusEditError_(event, message) {
   } catch (ignored) {}
 }
 
+function ensureStatusModelStartRow_(sheet) {
+  var properties = PropertiesService.getScriptProperties();
+  var raw = properties.getProperty(STATUS_MODEL_START_ROW_PROPERTY);
+  var startRow = Number(raw);
+  if (!Number.isInteger(startRow) || startRow < 2) {
+    startRow = sheet.getLastRow() + 1;
+    properties.setProperty(STATUS_MODEL_START_ROW_PROPERTY, String(startRow));
+  }
+  return startRow;
+}
+
+function emptyHistoricalStatusState_() {
+  return {
+    booking_status: "",
+    same_room_status: "",
+    scheduled_at_jst: "",
+    reschedule_count: 0,
+    last_rescheduled_at_jst: "",
+    final_amount_yen: ""
+  };
+}
+
+function initialStatusStateFromBookingRow_(values, timeZone) {
+  return {
+    booking_status: "requested",
+    same_room_status: normalizeSameRoomKey_(values[22]) === "true" ? "pending" : "not_requested",
+    scheduled_at_jst: requestedScheduledAtJst_(String(values[5] || ""), String(values[6] || ""), timeZone),
+    reschedule_count: 0,
+    last_rescheduled_at_jst: "",
+    final_amount_yen: ""
+  };
+}
+
+function latestStatusStateFromLog_(spreadsheet, submissionId, timeZone) {
+  var logSheet = getStatusLogSheet_(spreadsheet);
+  var lastRow = logSheet.getLastRow();
+  if (lastRow < 2) return null;
+  var rows = logSheet.getRange(2, 1, lastRow - 1, STATUS_LOG_HEADERS.length).getValues();
+  var latest = null;
+  var lastRescheduledAt = "";
+  for (var index = rows.length - 1; index >= 0; index--) {
+    var row = rows[index];
+    if (String(row[2] || "").trim() !== submissionId) continue;
+    if (!latest) latest = row;
+    if (!lastRescheduledAt && String(row[3] || "").trim() === "rescheduled") {
+      lastRescheduledAt = normalizeLastRescheduledAtJst_(row[1], timeZone);
+    }
+    if (latest && lastRescheduledAt) break;
+  }
+  if (!latest) return null;
+  return {
+    booking_status: String(latest[7] || "").trim(),
+    same_room_status: String(latest[8] || "").trim(),
+    scheduled_at_jst: normalizeScheduledAtJst_(latest[9], timeZone),
+    reschedule_count: Number(latest[10] || 0),
+    last_rescheduled_at_jst: lastRescheduledAt,
+    final_amount_yen: latest[11] == null ? "" : latest[11]
+  };
+}
+
+function restoreStatusRowAfterRejectedBatch_(sheet, rowNumber, config, modelStartRow) {
+  if (rowNumber === 1) {
+    sheet.getRange(1, STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT)
+      .setValues([SHEET_HEADERS.slice(STATUS_COLUMN_START - 1, STATUS_COLUMN_START - 1 + STATUS_COLUMN_COUNT)]);
+    return;
+  }
+  var submissionId = String(sheet.getRange(rowNumber, 1).getValue() || "").trim();
+  var state = submissionId ? latestStatusStateFromLog_(sheet.getParent(), submissionId, config.timeZone) : null;
+  if (!state) {
+    if (submissionId && rowNumber >= modelStartRow) {
+      var bookingValues = sheet.getRange(rowNumber, 1, 1, 23).getValues()[0];
+      state = initialStatusStateFromBookingRow_(bookingValues, config.timeZone);
+    } else {
+      state = emptyHistoricalStatusState_();
+    }
+  }
+  sheet.getRange(rowNumber, STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT).setValues(statusStateToRow_(state));
+}
+
+function rejectBatchStatusEdit_(e) {
+  var range = e.range;
+  var sheet = range.getSheet();
+  var statusEndColumn = STATUS_COLUMN_START + STATUS_COLUMN_COUNT - 1;
+  if (range.getLastColumn() < STATUS_COLUMN_START || range.getColumn() > statusEndColumn) return;
+
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) {
+    notifyStatusEditError_(e, "批量编辑已拒绝，但恢复正在等待其他状态操作；请勿继续编辑并稍后重试");
+    throw new Error("Batch status edit restore lock timeout");
+  }
+  try {
+    var spreadsheet = sheet.getParent();
+    var config = getConfig_();
+    if (spreadsheet.getId() !== config.sheetId) throw new Error("Booking status trigger is attached to the wrong spreadsheet");
+    assertBookingSheetReady_(sheet);
+    getStatusLogSheet_(spreadsheet);
+    var modelStartRow = ensureStatusModelStartRow_(sheet);
+    var firstRow = range.getRow();
+    var lastRow = range.getLastRow();
+    for (var rowNumber = firstRow; rowNumber <= lastRow; rowNumber++) {
+      restoreStatusRowAfterRejectedBatch_(sheet, rowNumber, config, modelStartRow);
+    }
+    notifyStatusEditError_(e, "批量粘贴不受支持，X:AC 已恢复。请一次只编辑一个单元格");
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function installBookingStatusTrigger() {
   var config = getConfig_();
   var handler = "onBookingStatusEdit";
@@ -648,8 +758,11 @@ function onBookingStatusEdit(e) {
   var range = e.range;
   var sheet = range.getSheet();
   if (sheet.getName() !== BOOKING_SHEET_NAME) return;
+  if (range.getNumRows() !== 1 || range.getNumColumns() !== 1) {
+    rejectBatchStatusEdit_(e);
+    return;
+  }
   if (range.getRow() <= 1) return;
-  if (range.getNumRows() !== 1 || range.getNumColumns() !== 1) return;
 
   var column = range.getColumn();
   var fieldName = STATUS_EDITABLE_COLUMNS[column] || STATUS_DERIVED_COLUMNS[column];
