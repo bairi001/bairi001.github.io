@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import process from "node:process";
+import { Script } from "node:vm";
 
 const errors = [];
 const read = file => readFile(new URL(`../${file}`, import.meta.url), "utf8");
@@ -68,6 +69,11 @@ requireText("booking.html", bookingHtml, '<script src="assets/booking-mode.js"><
 requireText("booking.html", bookingHtml, "FORM_LIVE_TESTED = true", "live-tested web form lock");
 requireText("booking.html", bookingHtml, '<meta name="robots" content="noindex,follow">', "booking page remains noindex");
 for (const [text, label] of [
+  ["addons:webAddonsValue()", "structured add-ons in web payload"],
+  ["addonsLabel:webAddonsLabel()", "localized add-on labels in web payload"],
+  ["nomination:webNominationValue()", "structured nomination in web payload"],
+  ["nominationLabel:webNominationLabel()", "localized nomination label in web payload"],
+  ["addons:webAddonsValue(),\n    nomination:webNominationValue()", "add-ons and nomination in submission signature"],
   ["webOutcomeUnknown:", "multilingual unknown-outcome copy"],
   ["webSubmissionOutcomeUnknownSignature", "same-payload timeout lock"],
   ["booking_form_submit_unknown", "unknown-outcome analytics"],
@@ -75,6 +81,26 @@ for (const [text, label] of [
   ['"transport_or_response"', "transport failure unknown-outcome reason"],
   ['reason:"backend_rejected"', "explicit backend rejection analytics"]
 ]) requireText("booking.html", bookingHtml, text, label);
+
+const backend = await read("docs/google-apps-script/Code.gs");
+try {
+  new Script(backend, { filename: "docs/google-apps-script/Code.gs" });
+} catch (error) {
+  errors.push(`docs/google-apps-script/Code.gs: JavaScript syntax check failed: ${error.message}`);
+}
+for (const [text, label] of [
+  ['var SERVICE_VERSION = "3"', "booking backend schema version 3"],
+  ['"addons",\n  "addons_label",\n  "nomination",\n  "nomination_label"', "append-only booking sheet fields"],
+  ["addons: 240", "backend add-ons validation limit"],
+  ["addonsLabel: 700", "backend add-on label validation limit"],
+  ["nomination: 40", "backend nomination validation limit"],
+  ["nominationLabel: 160", "backend nomination label validation limit"],
+  ["normalizeBookingKey_(payload.addons)", "add-ons in duplicate fingerprint"],
+  ['normalizeBookingKey_(payload.nomination || "none")', "nomination in duplicate fingerprint"],
+  ["getRange(startRow, 1, lastRow - startRow + 1, 22)", "duplicate scan includes appended booking fields"],
+  ["payload.addonsLabel", "add-on label persisted and mailed"],
+  ["payload.nominationLabel", "nomination label persisted and mailed"]
+]) requireText("docs/google-apps-script/Code.gs", backend, text, label);
 
 if (errors.length) {
   console.error(`Booking Simple Recovery check failed:\n- ${errors.join("\n- ")}`);
