@@ -53,6 +53,8 @@ for (const [text, label] of [
   ['fail-closed', "operator-edit audit fail-closed strategy"],
   ['logRecord.sheet.deleteRow(logRecord.row)', "log rollback if main status write fails"],
   ['statusRange.setValues(statusStateToRow_(oldState))', "main status rollback"],
+  ['scheduled_at_jst: normalizeScheduledAtJst_(values[2], timeZone)', "Sheet Date normalization for scheduled time"],
+  ['status_updated_at_jst: normalizeStatusTimestampJst_(values[5], timeZone)', "Sheet Date normalization for status timestamp"],
   ['fieldName === "scheduled_at_jst"', "reschedule-count derivation trigger"],
   ['newState.reschedule_count += 1', "reschedule-count increment"],
   ['if (STATUS_DERIVED_COLUMNS[column])', "derived-field direct-edit guard"]
