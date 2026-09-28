@@ -99,10 +99,10 @@ for (const file of ["zh/index.html", "ko/index.html"]) {
 }
 
 const multilingualClarityChecks = {
-  "zh/index.html": ["支付方式：</strong>现金、信用卡、PayPay", "1月1日休息"],
-  "ko/index.html": ["결제 방법:</strong> 현금, 신용카드, PayPay", "1월 1일 휴무"],
-  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services"],
-  "en/late-night-massage-kamata.html": ["in-store salon in Kamata", "do not provide hotel or outcall services"]
+  "zh/index.html": ["支付方式：</strong>现金、信用卡、PayPay", "1月1日休息", "最晚可预约到店23:30"],
+  "ko/index.html": ["결제 방법:</strong> 현금, 신용카드, PayPay", "1월 1일 휴무", "마지막 접수 23:30"],
+  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Latest start 11:30 PM"],
+  "en/late-night-massage-kamata.html": ["in-store salon in Kamata", "do not provide hotel or outcall services", "Latest appointment start time is 11:30 PM"]
 };
 for (const [file, phrases] of Object.entries(multilingualClarityChecks)) {
   for (const phrase of phrases) {
@@ -111,15 +111,24 @@ for (const [file, phrases] of Object.entries(multilingualClarityChecks)) {
 }
 
 const lateNightChecks = {
+  "index.html": "最終受付23:30",
   "menu.html": "深夜料金（23:00以降にご来店の場合）",
   "kamata-late-night.html": "23:00以降にご来店の場合",
-  "en/index.html": "arrive at or after 11:00 PM",
-  "en/late-night-massage-kamata.html": "arrive at or after 11:00 PM",
-  "zh/index.html": "到店时间为23:00或之后",
-  "ko/index.html": "23:00 이후에 도착"
+  "en/index.html": "Latest appointment start 11:30 PM",
+  "en/late-night-massage-kamata.html": "Latest appointment start time is 11:30 PM",
+  "en/haneda-kamata-massage.html": "Latest start 11:30 PM",
+  "zh/index.html": "最晚可预约到店23:30",
+  "ko/index.html": "마지막 접수 23:30"
 };
 for (const [file, phrase] of Object.entries(lateNightChecks)) {
   if (!indexableHtml[file]?.includes(phrase)) fail(file, `late-night arrival rule missing: ${phrase}`);
+}
+
+if (indexableHtml["en/haneda-kamata-massage.html"]?.includes("before an early flight")) {
+  fail("en/haneda-kamata-massage.html", "stale early-flight wording remains");
+}
+if (indexableHtml["en/late-night-massage-kamata.html"]?.includes("Final availability depends on treatment length")) {
+  fail("en/late-night-massage-kamata.html", "stale variable final-reception wording remains");
 }
 
 const menu = indexableHtml["menu.html"];
@@ -207,17 +216,17 @@ for (const [file, html] of Object.entries(indexableHtml)) {
 if (sitemapUrls.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs after Japanese money-page expansion, found ${sitemapUrls.length}`);
 
 const expectedLastmod = {
-  "https://shinyuuan.jp/": "2026-09-21",
+  "https://shinyuuan.jp/": "2026-09-29",
   "https://shinyuuan.jp/ashitsubo-fukurahagi.html": "2026-08-11",
   "https://shinyuuan.jp/bodycare-kamata.html": "2026-08-11",
   "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-08-11",
   "https://shinyuuan.jp/shop.html": "2026-08-11",
   "https://shinyuuan.jp/faq.html": "2026-08-11",
-  "https://shinyuuan.jp/en/": "2026-08-11",
-  "https://shinyuuan.jp/zh/": "2026-09-21",
-  "https://shinyuuan.jp/ko/": "2026-09-21",
-  "https://shinyuuan.jp/en/late-night-massage-kamata.html": "2026-09-21",
-  "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-09-21"
+  "https://shinyuuan.jp/en/": "2026-09-29",
+  "https://shinyuuan.jp/zh/": "2026-09-29",
+  "https://shinyuuan.jp/ko/": "2026-09-29",
+  "https://shinyuuan.jp/en/late-night-massage-kamata.html": "2026-09-29",
+  "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-09-29"
 };
 for (const [url, expectedDate] of Object.entries(expectedLastmod)) {
   const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
