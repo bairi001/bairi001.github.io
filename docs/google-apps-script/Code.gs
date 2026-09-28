@@ -502,14 +502,26 @@ function appendCreatedStatusLogBestEffort_(booking, payload, config) {
   }
 }
 
-function statusStateFromRow_(values) {
+function normalizeStatusTimestampJst_(value, timeZone) {
+  if (value === "" || value == null) return "";
+  if (Object.prototype.toString.call(value) === "[object Date]" && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, timeZone, "yyyy-MM-dd HH:mm:ss");
+  }
+  var text = String(value).trim();
+  if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(text)) {
+    throw new Error("status_updated_at_jst is invalid");
+  }
+  return text;
+}
+
+function statusStateFromRow_(values, timeZone) {
   return {
     booking_status: String(values[0] == null ? "" : values[0]).trim(),
     same_room_status: String(values[1] == null ? "" : values[1]).trim(),
-    scheduled_at_jst: String(values[2] == null ? "" : values[2]).trim(),
+    scheduled_at_jst: normalizeScheduledAtJst_(values[2], timeZone),
     reschedule_count: Number(values[3] || 0),
     final_amount_yen: values[4] == null ? "" : values[4],
-    status_updated_at_jst: String(values[5] == null ? "" : values[5]).trim()
+    status_updated_at_jst: normalizeStatusTimestampJst_(values[5], timeZone)
   };
 }
 
@@ -647,22 +659,23 @@ function onBookingStatusEdit(e) {
   var logRecord = null;
   try {
     var spreadsheet = sheet.getParent();
+    var config = getConfig_();
+    if (spreadsheet.getId() !== config.sheetId) throw new Error("Booking status trigger is attached to the wrong spreadsheet");
     assertBookingSheetReady_(sheet);
     getStatusLogSheet_(spreadsheet); // fail-closed: 没有审计日志表就不接受人工状态编辑。
 
     statusRange = sheet.getRange(range.getRow(), STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT);
-    oldState = statusStateFromRow_(statusRange.getValues()[0]);
+    oldState = statusStateFromRow_(statusRange.getValues()[0], config.timeZone);
 
     // e.range 已经被用户改写；先重建编辑前状态并恢复，再写审计日志。
-    oldState[fieldName] = oldValue;
+    oldState[fieldName] = fieldName === "scheduled_at_jst"
+      ? normalizeScheduledAtJst_(oldValue, config.timeZone)
+      : oldValue;
     if (STATUS_DERIVED_COLUMNS[column]) {
       statusRange.setValues(statusStateToRow_(oldState));
       throw new Error(fieldName + " is derived and cannot be edited directly");
     }
     statusRange.setValues(statusStateToRow_(oldState));
-
-    var config = getConfig_();
-    if (spreadsheet.getId() !== config.sheetId) throw new Error("Booking status trigger is attached to the wrong spreadsheet");
 
     var normalizedNewValue = normalizeStatusEditValue_(fieldName, newRawValue, config.timeZone);
     var newState = {
