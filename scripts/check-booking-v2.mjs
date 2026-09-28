@@ -94,7 +94,7 @@ try {
   errors.push(`docs/google-apps-script/Code.gs: JavaScript syntax check failed: ${error.message}`);
 }
 for (const [text, label] of [
-  ['var SERVICE_VERSION = "4"', "booking backend schema version 3"],
+  ['var SERVICE_VERSION = "5"', "booking backend schema version 5"],
   ['"addons",\n  "addons_label",\n  "nomination",\n  "nomination_label",\n  "same_room_requested"', "append-only booking sheet fields including same-room request"],
   ["addons: 240", "backend add-ons validation limit"],
   ["addonsLabel: 700", "backend add-on label validation limit"],
