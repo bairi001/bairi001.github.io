@@ -74,6 +74,11 @@ for (const [text, label] of [
   ["nomination:webNominationValue()", "structured nomination in web payload"],
   ["nominationLabel:webNominationLabel()", "localized nomination label in web payload"],
   ["addons:webAddonsValue(),\n    nomination:webNominationValue()", "add-ons and nomination in submission signature"],
+  ["sameRoomRequested:sameRoomRequested()", "same-room request in submission signature and payload"],
+  ['id="sameRoomSection" hidden', "same-room request UI starts hidden"],
+  ['id="sameRoom"', "same-room request checkbox"],
+  ['params.get("room")==="pair"', "pair-room URL preselection"],
+  ['guests==="2"', "same-room request restricted to exactly two guests"],
   ["webOutcomeUnknown:", "multilingual unknown-outcome copy"],
   ["webSubmissionOutcomeUnknownSignature", "same-payload timeout lock"],
   ["booking_form_submit_unknown", "unknown-outcome analytics"],
@@ -89,17 +94,22 @@ try {
   errors.push(`docs/google-apps-script/Code.gs: JavaScript syntax check failed: ${error.message}`);
 }
 for (const [text, label] of [
-  ['var SERVICE_VERSION = "3"', "booking backend schema version 3"],
-  ['"addons",\n  "addons_label",\n  "nomination",\n  "nomination_label"', "append-only booking sheet fields"],
+  ['var SERVICE_VERSION = "4"', "booking backend schema version 3"],
+  ['"addons",\n  "addons_label",\n  "nomination",\n  "nomination_label",\n  "same_room_requested"', "append-only booking sheet fields including same-room request"],
   ["addons: 240", "backend add-ons validation limit"],
   ["addonsLabel: 700", "backend add-on label validation limit"],
   ["nomination: 40", "backend nomination validation limit"],
   ["nominationLabel: 160", "backend nomination label validation limit"],
   ["normalizeBookingKey_(payload.addons)", "add-ons in duplicate fingerprint"],
   ['normalizeBookingKey_(payload.nomination || "none")', "nomination in duplicate fingerprint"],
-  ["getRange(startRow, 1, lastRow - startRow + 1, 22)", "duplicate scan includes appended booking fields"],
+  ["normalizeSameRoomKey_(payload.sameRoomRequested)", "same-room request in duplicate fingerprint"],
+  ["getRange(startRow, 1, lastRow - startRow + 1, 23)", "duplicate scan includes same-room field"],
   ["payload.addonsLabel", "add-on label persisted and mailed"],
-  ["payload.nominationLabel", "nomination label persisted and mailed"]
+  ["payload.nominationLabel", "nomination label persisted and mailed"],
+  ['payload.sameRoomRequested ? "TRUE" : "FALSE"', "same-room request persisted in column W"],
+  ["text.sameRoom", "same-room request included in store notification mail"],
+  ['data.sameRoomRequested = raw.sameRoomRequested === true', "same-room request validated as a boolean"],
+  ['data.guests !== "2"', "same-room request rejected unless exactly two guests"]
 ]) requireText("docs/google-apps-script/Code.gs", backend, text, label);
 
 if (errors.length) {
