@@ -8,7 +8,7 @@
  */
 
 var SERVICE_NAME = "shinyuuan-booking";
-var SERVICE_VERSION = "2";
+var SERVICE_VERSION = "3";
 var MAX_PAYLOAD_BYTES = 20000;
 var MIN_FORM_AGE_MS = 2000;
 var MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
@@ -32,7 +32,11 @@ var SHEET_HEADERS = [
   "utm_campaign",
   "utm_content",
   "mail_status",
-  "processing_status"
+  "processing_status",
+  "addons",
+  "addons_label",
+  "nomination",
+  "nomination_label"
 ];
 
 function doGet(e) {
@@ -142,6 +146,10 @@ function validatePayload_(raw) {
     email: 160,
     phone: 40,
     note: 300,
+    addons: 240,
+    addonsLabel: 700,
+    nomination: 40,
+    nominationLabel: 160,
     lang: 8,
     utm_source: 120,
     utm_medium: 120,
@@ -187,6 +195,14 @@ function validatePayload_(raw) {
   if (!/^(?:ja|en|zh|ko)$/.test(data.lang)) {
     throw new Error("Language is invalid");
   }
+  if (data.addons && !/^(?:(?:calves|decollete|abdominal|callus|hand|head|facial|extension)(?:,(?:calves|decollete|abdominal|callus|hand|head|facial|extension))*)$/.test(data.addons)) {
+    throw new Error("Add-ons are invalid");
+  }
+  if (data.nomination && !/^(?:none|therapist|manager)$/.test(data.nomination)) {
+    throw new Error("Nomination is invalid");
+  }
+  if (!data.nomination) data.nomination = "none";
+  if (!data.nominationLabel) data.nominationLabel = data.nomination === "none" ? "none" : data.nomination;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(data.submissionId)) {
     throw new Error("Submission ID is invalid");
   }
@@ -244,6 +260,8 @@ function bookingFingerprint_(payload) {
     normalizeBookingKey_(payload.time),
     normalizeBookingKey_(payload.courseId),
     normalizeBookingKey_(payload.guests),
+    normalizeBookingKey_(payload.addons),
+    normalizeBookingKey_(payload.nomination || "none"),
     normalizeBookingKey_(payload.name)
   ].join("|");
   return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, source, Utilities.Charset.UTF_8).map(function(byte) {
@@ -258,7 +276,9 @@ function bookingRowMatches_(row, payload) {
     normalizeBookingKey_(row[6]) === normalizeBookingKey_(payload.time) &&
     normalizeBookingKey_(row[7]) === normalizeBookingKey_(payload.guests) &&
     normalizeBookingKey_(row[8]) === normalizeBookingKey_(payload.name) &&
-    normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email);
+    normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email) &&
+    normalizeBookingKey_(row[18]) === normalizeBookingKey_(payload.addons) &&
+    normalizeBookingKey_(row[20] || "none") === normalizeBookingKey_(payload.nomination || "none");
 }
 
 function isDuplicateBooking_(payload, config) {
@@ -268,7 +288,7 @@ function isDuplicateBooking_(payload, config) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
   var startRow = Math.max(2, lastRow - 99);
-  var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, 18).getValues();
+  var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, 22).getValues();
   var cutoff = Date.now() - DUPLICATE_WINDOW_SECONDS * 1000;
   for (var index = rows.length - 1; index >= 0; index--) {
     var receivedText = String(rows[index][1] || "").trim();
@@ -318,7 +338,11 @@ function appendBookingRow_(payload, config) {
     payload.utm_campaign,
     payload.utm_content,
     "pending",
-    "recorded"
+    "recorded",
+    payload.addons,
+    payload.addonsLabel,
+    payload.nomination,
+    payload.nominationLabel
   ].map(sanitizeSheetValue_);
 
   sheet.appendRow(row);
@@ -327,10 +351,10 @@ function appendBookingRow_(payload, config) {
 
 function buildBookingMail_(payload) {
   var templates = {
-    ja: {subject: "【身悠晏】ご予約リクエスト ", title: "身悠晏 ご予約リクエスト", language: "言語", course: "コース", date: "日付", time: "時間", guests: "人数", name: "お名前", email: "メール", phone: "電話", note: "備考", noPhone: "未入力", noNote: "なし", closing: "最終料金は店舗からの返信にてご確認ください。"},
-    en: {subject: "[Shin Yuu An] Booking Request ", title: "Shin Yuu An Booking Request", language: "Language", course: "Course", date: "Date", time: "Time", guests: "Guests", name: "Name", email: "Email", phone: "Phone", note: "Note", noPhone: "Not provided", noNote: "None", closing: "The final price will be confirmed in the salon's reply."},
-    zh: {subject: "【身悠晏】预约申请 ", title: "身悠晏 网页预约申请", language: "语言", course: "套餐", date: "日期", time: "时间", guests: "人数", name: "姓名", email: "邮箱", phone: "电话", note: "备注", noPhone: "未填写", noNote: "无", closing: "最终价格请由店铺回复确认。"},
-    ko: {subject: "[신유안] 예약 요청 ", title: "신유안 예약 요청", language: "언어", course: "코스", date: "날짜", time: "시간", guests: "인원", name: "이름", email: "이메일", phone: "전화번호", note: "메모", noPhone: "미입력", noNote: "없음", closing: "최종 요금은 매장의 답변에서 확인해 주세요."}
+    ja: {subject: "【身悠晏】ご予約リクエスト ", title: "身悠晏 ご予約リクエスト", language: "言語", course: "コース", date: "日付", time: "時間", guests: "人数", addons: "追加オプション", nomination: "指名", name: "お名前", email: "メール", phone: "電話", note: "備考", noPhone: "未入力", noNote: "なし", noAddons: "なし", noNomination: "指名なし", closing: "最終料金は店舗からの返信にてご確認ください。"},
+    en: {subject: "[Shin Yuu An] Booking Request ", title: "Shin Yuu An Booking Request", language: "Language", course: "Course", date: "Date", time: "Time", guests: "Guests", addons: "Add-ons", nomination: "Nomination", name: "Name", email: "Email", phone: "Phone", note: "Note", noPhone: "Not provided", noNote: "None", noAddons: "None", noNomination: "No nomination", closing: "The final price will be confirmed in the salon's reply."},
+    zh: {subject: "【身悠晏】预约申请 ", title: "身悠晏 网页预约申请", language: "语言", course: "套餐", date: "日期", time: "时间", guests: "人数", addons: "附加项目", nomination: "指定技师", name: "姓名", email: "邮箱", phone: "电话", note: "备注", noPhone: "未填写", noNote: "无", noAddons: "无", noNomination: "不指定技师", closing: "最终价格请由店铺回复确认。"},
+    ko: {subject: "[신유안] 예약 요청 ", title: "신유안 예약 요청", language: "언어", course: "코스", date: "날짜", time: "시간", guests: "인원", addons: "추가 옵션", nomination: "지명", name: "이름", email: "이메일", phone: "전화번호", note: "메모", noPhone: "미입력", noNote: "없음", noAddons: "없음", noNomination: "지명 없음", closing: "최종 요금은 매장의 답변에서 확인해 주세요."}
   };
   var text = templates[payload.lang] || templates.en;
   var subject = (text.subject + payload.date).replace(/[\r\n]+/g, " ").slice(0, 160);
@@ -342,6 +366,8 @@ function buildBookingMail_(payload) {
     text.date + ": " + payload.date,
     text.time + ": " + payload.time,
     text.guests + ": " + payload.guests,
+    text.addons + ": " + (payload.addonsLabel || text.noAddons),
+    text.nomination + ": " + (payload.nominationLabel || text.noNomination),
     text.name + ": " + payload.name,
     text.email + ": " + payload.email,
     text.phone + ": " + (payload.phone || text.noPhone),
