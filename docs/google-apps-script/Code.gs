@@ -22,13 +22,13 @@ var STATUS_EDITABLE_COLUMNS = {
   24: "booking_status",
   25: "same_room_status",
   26: "scheduled_at_jst",
-  28: "final_amount_yen"
+  29: "final_amount_yen"
 };
 var STATUS_DERIVED_COLUMNS = {
   27: "reschedule_count",
-  29: "status_updated_at_jst"
+  28: "last_rescheduled_at_jst"
 };
-var BOOKING_STATUS_VALUES = ["requested", "confirmed", "rescheduled", "cancelled", "arrived"];
+var BOOKING_STATUS_VALUES = ["requested", "confirmed", "cancelled", "arrived", "no_show"];
 var SAME_ROOM_STATUS_VALUES = ["not_requested", "pending", "confirmed", "unavailable", "alternative_agreed"];
 var STATUS_LOG_SOURCE_VALUES = ["web_booking", "sheet_operator", "system"];
 var STATUS_LOG_HEADERS = [
@@ -75,8 +75,8 @@ var SHEET_HEADERS = [
   "same_room_status",
   "scheduled_at_jst",
   "reschedule_count",
-  "final_amount_yen",
-  "status_updated_at_jst"
+  "last_rescheduled_at_jst",
+  "final_amount_yen"
 ];
 
 function doGet(e) {
@@ -409,6 +409,7 @@ function appendBookingRow_(payload, config) {
   var receivedAt = Utilities.formatDate(new Date(), config.timeZone, "yyyy-MM-dd HH:mm:ss");
   var initialBookingStatus = "requested";
   var initialSameRoomStatus = payload.sameRoomRequested ? "pending" : "not_requested";
+  var initialScheduledAtJst = requestedScheduledAtJst_(payload.date, payload.time, config.timeZone);
   var row = [
     payload.submissionId,
     receivedAt,
@@ -435,10 +436,10 @@ function appendBookingRow_(payload, config) {
     payload.sameRoomRequested ? "TRUE" : "FALSE",
     initialBookingStatus,
     initialSameRoomStatus,
-    "",
+    initialScheduledAtJst,
     0,
     "",
-    receivedAt
+    ""
   ].map(sanitizeSheetValue_);
 
   sheet.appendRow(row);
@@ -447,10 +448,10 @@ function appendBookingRow_(payload, config) {
     row: sheet.getLastRow(),
     bookingStatus: initialBookingStatus,
     sameRoomStatus: initialSameRoomStatus,
-    scheduledAtJst: "",
+    scheduledAtJst: initialScheduledAtJst,
     rescheduleCount: 0,
-    finalAmountYen: "",
-    statusUpdatedAtJst: receivedAt
+    lastRescheduledAtJst: "",
+    finalAmountYen: ""
   };
 }
 
@@ -502,14 +503,14 @@ function appendCreatedStatusLogBestEffort_(booking, payload, config) {
   }
 }
 
-function normalizeStatusTimestampJst_(value, timeZone) {
+function normalizeLastRescheduledAtJst_(value, timeZone) {
   if (value === "" || value == null) return "";
   if (Object.prototype.toString.call(value) === "[object Date]" && !isNaN(value.getTime())) {
     return Utilities.formatDate(value, timeZone, "yyyy-MM-dd HH:mm:ss");
   }
   var text = String(value).trim();
   if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(text)) {
-    throw new Error("status_updated_at_jst is invalid");
+    throw new Error("last_rescheduled_at_jst is invalid");
   }
   return text;
 }
@@ -520,8 +521,8 @@ function statusStateFromRow_(values, timeZone) {
     same_room_status: String(values[1] == null ? "" : values[1]).trim(),
     scheduled_at_jst: normalizeScheduledAtJst_(values[2], timeZone),
     reschedule_count: Number(values[3] || 0),
-    final_amount_yen: values[4] == null ? "" : values[4],
-    status_updated_at_jst: normalizeStatusTimestampJst_(values[5], timeZone)
+    last_rescheduled_at_jst: normalizeLastRescheduledAtJst_(values[4], timeZone),
+    final_amount_yen: values[5] == null ? "" : values[5]
   };
 }
 
@@ -531,13 +532,22 @@ function statusStateToRow_(state) {
     state.same_room_status,
     state.scheduled_at_jst,
     state.reschedule_count,
-    state.final_amount_yen,
-    state.status_updated_at_jst
+    state.last_rescheduled_at_jst,
+    state.final_amount_yen
   ]];
 }
 
 function containsValue_(values, value) {
   return values.indexOf(value) !== -1;
+}
+
+function requestedScheduledAtJst_(dateText, timeText, timeZone) {
+  var nextDay = / \(next day\)$/.test(String(timeText || ""));
+  var hhmm = String(timeText || "").replace(/ \(next day\)$/, "");
+  var parsed = new Date(String(dateText || "") + "T" + hhmm + ":00+09:00");
+  if (!Number.isFinite(parsed.getTime())) throw new Error("Requested scheduled time is invalid");
+  if (nextDay) parsed = new Date(parsed.getTime() + 24 * 60 * 60 * 1000);
+  return Utilities.formatDate(parsed, timeZone, "yyyy-MM-dd HH:mm");
 }
 
 function normalizeScheduledAtJst_(value, timeZone) {
@@ -670,7 +680,11 @@ function onBookingStatusEdit(e) {
     // e.range 已经被用户改写；先重建编辑前状态并恢复，再写审计日志。
     oldState[fieldName] = fieldName === "scheduled_at_jst"
       ? normalizeScheduledAtJst_(oldValue, config.timeZone)
-      : oldValue;
+      : fieldName === "last_rescheduled_at_jst"
+        ? normalizeLastRescheduledAtJst_(oldValue, config.timeZone)
+        : fieldName === "reschedule_count"
+          ? Number(oldValue || 0)
+          : oldValue;
     if (STATUS_DERIVED_COLUMNS[column]) {
       statusRange.setValues(statusStateToRow_(oldState));
       throw new Error(fieldName + " is derived and cannot be edited directly");
@@ -683,8 +697,8 @@ function onBookingStatusEdit(e) {
       same_room_status: oldState.same_room_status,
       scheduled_at_jst: oldState.scheduled_at_jst,
       reschedule_count: Number(oldState.reschedule_count || 0),
-      final_amount_yen: oldState.final_amount_yen,
-      status_updated_at_jst: oldState.status_updated_at_jst
+      last_rescheduled_at_jst: oldState.last_rescheduled_at_jst,
+      final_amount_yen: oldState.final_amount_yen
     };
     newState[fieldName] = normalizedNewValue;
 
@@ -695,8 +709,8 @@ function onBookingStatusEdit(e) {
       oldState.scheduled_at_jst !== normalizedNewValue
     ) {
       newState.reschedule_count += 1;
+      newState.last_rescheduled_at_jst = Utilities.formatDate(new Date(), config.timeZone, "yyyy-MM-dd HH:mm:ss");
     }
-    newState.status_updated_at_jst = Utilities.formatDate(new Date(), config.timeZone, "yyyy-MM-dd HH:mm:ss");
 
     var submissionId = String(sheet.getRange(range.getRow(), 1).getValue() || "").trim();
     if (!submissionId) throw new Error("submission_id is missing");
