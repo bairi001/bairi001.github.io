@@ -27,10 +27,11 @@ for (const [text, label] of [
   ['24: "booking_status"', "booking status editable field"],
   ['25: "same_room_status"', "same-room status editable field"],
   ['26: "scheduled_at_jst"', "scheduled time editable field"],
-  ['28: "final_amount_yen"', "final amount editable field"],
+  ['29: "final_amount_yen"', "final amount editable field"],
   ['27: "reschedule_count"', "reschedule count derived field"],
-  ['29: "status_updated_at_jst"', "status updated timestamp derived field"],
-  ['"booking_status",\n  "same_room_status",\n  "scheduled_at_jst",\n  "reschedule_count",\n  "final_amount_yen",\n  "status_updated_at_jst"', "X:AC v5 booking headers"],
+  ['28: "last_rescheduled_at_jst"', "last rescheduled timestamp derived field"],
+  ['var BOOKING_STATUS_VALUES = ["requested", "confirmed", "cancelled", "arrived", "no_show"]', "booking status lifecycle without rescheduled terminal state"],
+  ['"booking_status",\n  "same_room_status",\n  "scheduled_at_jst",\n  "reschedule_count",\n  "last_rescheduled_at_jst",\n  "final_amount_yen"', "X:AC v5 booking headers"],
   ['"log_id",\n  "event_at_jst",\n  "submission_id",\n  "event_type",\n  "field_name",\n  "old_value",\n  "new_value",\n  "booking_status",\n  "same_room_status",\n  "scheduled_at_jst",\n  "reschedule_count",\n  "final_amount_yen",\n  "source",\n  "note"', "append-only status log schema"],
   ['getSheetByName(BOOKING_SHEET_NAME)', "named booking sheet lookup"],
   ['getSheetByName(STATUS_LOG_SHEET_NAME)', "named log sheet lookup"],
@@ -54,16 +55,20 @@ for (const [text, label] of [
   ['logRecord.sheet.deleteRow(logRecord.row)', "log rollback if main status write fails"],
   ['statusRange.setValues(statusStateToRow_(oldState))', "main status rollback"],
   ['scheduled_at_jst: normalizeScheduledAtJst_(values[2], timeZone)', "Sheet Date normalization for scheduled time"],
-  ['status_updated_at_jst: normalizeStatusTimestampJst_(values[5], timeZone)', "Sheet Date normalization for status timestamp"],
+  ['last_rescheduled_at_jst: normalizeLastRescheduledAtJst_(values[4], timeZone)', "Sheet Date normalization for last reschedule timestamp"],
+  ['requestedScheduledAtJst_(payload.date, payload.time, config.timeZone)', "initial scheduled time derived from original requested date/time"],
   ['fieldName === "scheduled_at_jst"', "reschedule-count derivation trigger"],
   ['newState.reschedule_count += 1', "reschedule-count increment"],
+  ['newState.last_rescheduled_at_jst = Utilities.formatDate', "last reschedule timestamp derivation"],
   ['if (STATUS_DERIVED_COLUMNS[column])', "derived-field direct-edit guard"]
 ]) requireText(text, label);
 
 for (const [text, label] of [
   ['getSheets()[0]', "positional first-sheet lookup"],
   ['insertColumnsAfter(', "automatic production column expansion"],
-  ['insertSheet(STATUS_LOG_SHEET_NAME', "automatic production log-sheet creation"]
+  ['insertSheet(STATUS_LOG_SHEET_NAME', "automatic production log-sheet creation"],
+  ['status_updated_at_jst', "rejected status-updated column"],
+  ['"requested", "confirmed", "rescheduled", "cancelled", "arrived"', "rescheduled as a booking status"]
 ]) forbidText(text, label);
 
 // Exercise the trigger installer with a small Apps Script mock:
