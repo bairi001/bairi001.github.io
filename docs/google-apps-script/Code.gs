@@ -8,7 +8,7 @@
  */
 
 var SERVICE_NAME = "shinyuuan-booking";
-var SERVICE_VERSION = "3";
+var SERVICE_VERSION = "4";
 var MAX_PAYLOAD_BYTES = 20000;
 var MIN_FORM_AGE_MS = 2000;
 var MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
@@ -36,7 +36,8 @@ var SHEET_HEADERS = [
   "addons",
   "addons_label",
   "nomination",
-  "nomination_label"
+  "nomination_label",
+  "same_room_requested"
 ];
 
 function doGet(e) {
@@ -192,6 +193,10 @@ function validatePayload_(raw) {
   if (!/^(?:[1-3]|4\+)$/.test(data.guests)) {
     throw new Error("Guests is invalid");
   }
+  data.sameRoomRequested = raw.sameRoomRequested === true;
+  if (data.sameRoomRequested && data.guests !== "2") {
+    throw new Error("Same-room request requires exactly two guests");
+  }
   if (!/^(?:ja|en|zh|ko)$/.test(data.lang)) {
     throw new Error("Language is invalid");
   }
@@ -248,6 +253,11 @@ function normalizeBookingKey_(value) {
   return String(value == null ? "" : value).trim().toLowerCase().replace(/\s+/g, " ");
 }
 
+function normalizeSameRoomKey_(value) {
+  var normalized = normalizeBookingKey_(value);
+  return normalized === "true" || normalized === "yes" || normalized === "1" ? "true" : "false";
+}
+
 function isHandledMailStatus_(value) {
   var status = normalizeBookingKey_(value);
   return status === "sent" || status === "pending";
@@ -262,6 +272,7 @@ function bookingFingerprint_(payload) {
     normalizeBookingKey_(payload.guests),
     normalizeBookingKey_(payload.addons),
     normalizeBookingKey_(payload.nomination || "none"),
+    normalizeSameRoomKey_(payload.sameRoomRequested),
     normalizeBookingKey_(payload.name)
   ].join("|");
   return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, source, Utilities.Charset.UTF_8).map(function(byte) {
@@ -278,7 +289,8 @@ function bookingRowMatches_(row, payload) {
     normalizeBookingKey_(row[8]) === normalizeBookingKey_(payload.name) &&
     normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email) &&
     normalizeBookingKey_(row[18]) === normalizeBookingKey_(payload.addons) &&
-    normalizeBookingKey_(row[20] || "none") === normalizeBookingKey_(payload.nomination || "none");
+    normalizeBookingKey_(row[20] || "none") === normalizeBookingKey_(payload.nomination || "none") &&
+    normalizeSameRoomKey_(row[22]) === normalizeSameRoomKey_(payload.sameRoomRequested);
 }
 
 function isDuplicateBooking_(payload, config) {
@@ -288,7 +300,7 @@ function isDuplicateBooking_(payload, config) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
   var startRow = Math.max(2, lastRow - 99);
-  var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, 22).getValues();
+  var rows = sheet.getRange(startRow, 1, lastRow - startRow + 1, 23).getValues();
   var cutoff = Date.now() - DUPLICATE_WINDOW_SECONDS * 1000;
   for (var index = rows.length - 1; index >= 0; index--) {
     var receivedText = String(rows[index][1] || "").trim();
@@ -342,7 +354,8 @@ function appendBookingRow_(payload, config) {
     payload.addons,
     payload.addonsLabel,
     payload.nomination,
-    payload.nominationLabel
+    payload.nominationLabel,
+    payload.sameRoomRequested ? "TRUE" : "FALSE"
   ].map(sanitizeSheetValue_);
 
   sheet.appendRow(row);
@@ -351,10 +364,10 @@ function appendBookingRow_(payload, config) {
 
 function buildBookingMail_(payload) {
   var templates = {
-    ja: {subject: "【身悠晏】ご予約リクエスト ", title: "身悠晏 ご予約リクエスト", language: "言語", course: "コース", date: "日付", time: "時間", guests: "人数", addons: "追加オプション", nomination: "指名", name: "お名前", email: "メール", phone: "電話", note: "備考", noPhone: "未入力", noNote: "なし", noAddons: "なし", noNomination: "指名なし", closing: "最終料金は店舗からの返信にてご確認ください。"},
-    en: {subject: "[Shin Yuu An] Booking Request ", title: "Shin Yuu An Booking Request", language: "Language", course: "Course", date: "Date", time: "Time", guests: "Guests", addons: "Add-ons", nomination: "Nomination", name: "Name", email: "Email", phone: "Phone", note: "Note", noPhone: "Not provided", noNote: "None", noAddons: "None", noNomination: "No nomination", closing: "The final price will be confirmed in the salon's reply."},
-    zh: {subject: "【身悠晏】预约申请 ", title: "身悠晏 网页预约申请", language: "语言", course: "套餐", date: "日期", time: "时间", guests: "人数", addons: "附加项目", nomination: "指定技师", name: "姓名", email: "邮箱", phone: "电话", note: "备注", noPhone: "未填写", noNote: "无", noAddons: "无", noNomination: "不指定技师", closing: "最终价格请由店铺回复确认。"},
-    ko: {subject: "[신유안] 예약 요청 ", title: "신유안 예약 요청", language: "언어", course: "코스", date: "날짜", time: "시간", guests: "인원", addons: "추가 옵션", nomination: "지명", name: "이름", email: "이메일", phone: "전화번호", note: "메모", noPhone: "미입력", noNote: "없음", noAddons: "없음", noNomination: "지명 없음", closing: "최종 요금은 매장의 답변에서 확인해 주세요."}
+    ja: {subject: "【身悠晏】ご予約リクエスト ", title: "身悠晏 ご予約リクエスト", language: "言語", course: "コース", date: "日付", time: "時間", guests: "人数", sameRoom: "2名同室", sameRoomRequested: "希望あり（未確定）", noSameRoom: "希望なし", addons: "追加オプション", nomination: "指名", name: "お名前", email: "メール", phone: "電話", note: "備考", noPhone: "未入力", noNote: "なし", noAddons: "なし", noNomination: "指名なし", closing: "最終料金は店舗からの返信にてご確認ください。"},
+    en: {subject: "[Shin Yuu An] Booking Request ", title: "Shin Yuu An Booking Request", language: "Language", course: "Course", date: "Date", time: "Time", guests: "Guests", sameRoom: "Same room", sameRoomRequested: "Requested (pending confirmation)", noSameRoom: "Not requested", addons: "Add-ons", nomination: "Nomination", name: "Name", email: "Email", phone: "Phone", note: "Note", noPhone: "Not provided", noNote: "None", noAddons: "None", noNomination: "No nomination", closing: "The final price will be confirmed in the salon's reply."},
+    zh: {subject: "【身悠晏】预约申请 ", title: "身悠晏 网页预约申请", language: "语言", course: "套餐", date: "日期", time: "时间", guests: "人数", sameRoom: "双人同室", sameRoomRequested: "已提出需求（尚未确认）", noSameRoom: "未提出", addons: "附加项目", nomination: "指定技师", name: "姓名", email: "邮箱", phone: "电话", note: "备注", noPhone: "未填写", noNote: "无", noAddons: "无", noNomination: "不指定技师", closing: "最终价格请由店铺回复确认。"},
+    ko: {subject: "[신유안] 예약 요청 ", title: "신유안 예약 요청", language: "언어", course: "코스", date: "날짜", time: "시간", guests: "인원", sameRoom: "같은 방", sameRoomRequested: "요청됨 (아직 미확정)", noSameRoom: "요청 없음", addons: "추가 옵션", nomination: "지명", name: "이름", email: "이메일", phone: "전화번호", note: "메모", noPhone: "미입력", noNote: "없음", noAddons: "없음", noNomination: "지명 없음", closing: "최종 요금은 매장의 답변에서 확인해 주세요."}
   };
   var text = templates[payload.lang] || templates.en;
   var subject = (text.subject + payload.date).replace(/[\r\n]+/g, " ").slice(0, 160);
@@ -366,6 +379,7 @@ function buildBookingMail_(payload) {
     text.date + ": " + payload.date,
     text.time + ": " + payload.time,
     text.guests + ": " + payload.guests,
+    text.sameRoom + ": " + (payload.sameRoomRequested ? text.sameRoomRequested : text.noSameRoom),
     text.addons + ": " + (payload.addonsLabel || text.noAddons),
     text.nomination + ": " + (payload.nominationLabel || text.noNomination),
     text.name + ": " + payload.name,
