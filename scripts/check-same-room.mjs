@@ -32,8 +32,8 @@ const context = vm.createContext({
 });
 new vm.Script(backend, { filename: "Code.gs" }).runInContext(context);
 
-assert.equal(vm.runInContext("SERVICE_VERSION", context), "4");
-assert.equal(vm.runInContext("SHEET_HEADERS.length", context), 23);
+assert.equal(vm.runInContext("SERVICE_VERSION", context), "5");
+assert.equal(vm.runInContext("SHEET_HEADERS.length", context), 29);
 assert.equal(vm.runInContext("SHEET_HEADERS[22]", context), "same_room_requested");
 
 const base = {
@@ -54,7 +54,7 @@ const base = {
   lang: "en",
   utm_source: "github_actions",
   utm_medium: "internal_test",
-  utm_campaign: "same_room_v4",
+  utm_campaign: "same_room_v5",
   utm_content: "",
   submissionId: "123e4567-e89b-42d3-a456-426614174000",
   startedAt: new Date(Date.now() - 5000).toISOString()
@@ -79,7 +79,7 @@ assert.notEqual(
   "same-room choice changes duplicate fingerprint"
 );
 
-const row = Array(23).fill("");
+const row = Array(29).fill("");
 row[3] = valid.courseId;
 row[5] = valid.date;
 row[6] = valid.time;
@@ -98,4 +98,4 @@ assert.equal(vm.runInContext("bookingRowMatches_(row,b)", context), true, "legac
 const mail = vm.runInContext("buildBookingMail_(a)", context);
 assert.match(mail.body, /Same room: Requested \(pending confirmation\)/, "store email marks same-room request as pending, not confirmed");
 
-console.log("Same-room booking request passed: two-guest UI contract, URL preselection, v4 validation, duplicate identity, column W persistence contract and pending-confirmation email wording.");
+console.log("Same-room booking request passed: two-guest UI contract, URL preselection, v5 validation, duplicate identity, column W persistence contract and pending-confirmation email wording.");

@@ -8,12 +8,46 @@
  */
 
 var SERVICE_NAME = "shinyuuan-booking";
-var SERVICE_VERSION = "4";
+var SERVICE_VERSION = "5";
 var MAX_PAYLOAD_BYTES = 20000;
 var MIN_FORM_AGE_MS = 2000;
 var MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
 var SUBMISSION_CACHE_SECONDS = 21600;
 var DUPLICATE_WINDOW_SECONDS = 300;
+var BOOKING_SHEET_NAME = "工作表1";
+var STATUS_LOG_SHEET_NAME = "Booking_Status_Log";
+var STATUS_COLUMN_START = 24; // X
+var STATUS_COLUMN_COUNT = 6;  // X:AC
+var STATUS_EDITABLE_COLUMNS = {
+  24: "booking_status",
+  25: "same_room_status",
+  26: "scheduled_at_jst",
+  29: "final_amount_yen"
+};
+var STATUS_DERIVED_COLUMNS = {
+  27: "reschedule_count",
+  28: "last_rescheduled_at_jst"
+};
+var BOOKING_STATUS_VALUES = ["requested", "confirmed", "cancelled", "arrived", "no_show"];
+var SAME_ROOM_STATUS_VALUES = ["not_requested", "pending", "confirmed", "unavailable", "alternative_agreed"];
+var STATUS_LOG_SOURCE_VALUES = ["web_booking", "sheet_operator", "system"];
+var STATUS_MODEL_START_ROW_PROPERTY = "BOOKING_STATUS_V5_START_ROW";
+var STATUS_LOG_HEADERS = [
+  "log_id",
+  "event_at_jst",
+  "submission_id",
+  "event_type",
+  "field_name",
+  "old_value",
+  "new_value",
+  "booking_status",
+  "same_room_status",
+  "scheduled_at_jst",
+  "reschedule_count",
+  "final_amount_yen",
+  "source",
+  "note"
+];
 var SHEET_HEADERS = [
   "submission_id",
   "received_at_jst",
@@ -37,7 +71,13 @@ var SHEET_HEADERS = [
   "addons_label",
   "nomination",
   "nomination_label",
-  "same_room_requested"
+  "same_room_requested",
+  "booking_status",
+  "same_room_status",
+  "scheduled_at_jst",
+  "reschedule_count",
+  "last_rescheduled_at_jst",
+  "final_amount_yen"
 ];
 
 function doGet(e) {
@@ -93,6 +133,10 @@ function doPost(e) {
         mailStatus,
         mailStatus === "sent" ? "recorded_mail_sent" : "recorded_mail_failed"
       ]]);
+
+      // 客户预约主记录与邮件结果是主链路；created 日志失败不能让客户预约失败或重发。
+      appendCreatedStatusLogBestEffort_(booking, payload, config);
+
       if (mailStatus === "sent") {
         CacheService.getScriptCache().put(
           "submission:" + payload.submissionId,
@@ -234,9 +278,41 @@ function sanitizeSheetValue_(value) {
   return /^[=+\-@]/.test(text) ? "'" + text : text;
 }
 
+function getBookingSheet_(spreadsheet) {
+  var sheet = spreadsheet.getSheetByName(BOOKING_SHEET_NAME);
+  if (!sheet) throw new Error("Booking sheet is missing: " + BOOKING_SHEET_NAME);
+  return sheet;
+}
+
+function assertSheetHeaders_(sheet, expectedHeaders, label) {
+  if (sheet.getMaxColumns() < expectedHeaders.length) {
+    throw new Error(label + " requires at least " + expectedHeaders.length + " columns");
+  }
+  if (sheet.getLastRow() < 1) {
+    throw new Error(label + " header row is missing");
+  }
+  var actual = sheet.getRange(1, 1, 1, expectedHeaders.length).getValues()[0];
+  for (var index = 0; index < expectedHeaders.length; index++) {
+    if (String(actual[index] || "").trim() !== expectedHeaders[index]) {
+      throw new Error(label + " header mismatch at column " + (index + 1));
+    }
+  }
+}
+
+function assertBookingSheetReady_(sheet) {
+  assertSheetHeaders_(sheet, SHEET_HEADERS, "Booking sheet");
+}
+
+function getStatusLogSheet_(spreadsheet) {
+  var sheet = spreadsheet.getSheetByName(STATUS_LOG_SHEET_NAME);
+  if (!sheet) throw new Error("Status log sheet is missing: " + STATUS_LOG_SHEET_NAME);
+  assertSheetHeaders_(sheet, STATUS_LOG_HEADERS, "Booking status log");
+  return sheet;
+}
+
 function isDuplicateSubmission_(submissionId, sheetId) {
   if (CacheService.getScriptCache().get("submission:" + submissionId) === "1") return true;
-  var sheet = SpreadsheetApp.openById(sheetId).getSheets()[0];
+  var sheet = getBookingSheet_(SpreadsheetApp.openById(sheetId));
   if (sheet.getLastRow() < 2) return false;
   var matches = sheet
     .getRange(2, 1, sheet.getLastRow() - 1, 1)
@@ -296,7 +372,7 @@ function bookingRowMatches_(row, payload) {
 function isDuplicateBooking_(payload, config) {
   var cacheKey = "booking:" + bookingFingerprint_(payload);
   if (CacheService.getScriptCache().get(cacheKey) === "1") return true;
-  var sheet = SpreadsheetApp.openById(config.sheetId).getSheets()[0];
+  var sheet = getBookingSheet_(SpreadsheetApp.openById(config.sheetId));
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
   var startRow = Math.max(2, lastRow - 99);
@@ -328,10 +404,14 @@ function checkRateLimit_(maxPerHour) {
 
 function appendBookingRow_(payload, config) {
   var spreadsheet = SpreadsheetApp.openById(config.sheetId);
-  var sheet = spreadsheet.getSheets()[0];
-  if (sheet.getLastRow() === 0) sheet.appendRow(SHEET_HEADERS);
+  var sheet = getBookingSheet_(spreadsheet);
+  assertBookingSheetReady_(sheet);
+  ensureStatusModelStartRow_(sheet);
 
   var receivedAt = Utilities.formatDate(new Date(), config.timeZone, "yyyy-MM-dd HH:mm:ss");
+  var initialBookingStatus = "requested";
+  var initialSameRoomStatus = payload.sameRoomRequested ? "pending" : "not_requested";
+  var initialScheduledAtJst = requestedScheduledAtJst_(payload.date, payload.time, config.timeZone);
   var row = [
     payload.submissionId,
     receivedAt,
@@ -355,11 +435,441 @@ function appendBookingRow_(payload, config) {
     payload.addonsLabel,
     payload.nomination,
     payload.nominationLabel,
-    payload.sameRoomRequested ? "TRUE" : "FALSE"
+    payload.sameRoomRequested ? "TRUE" : "FALSE",
+    initialBookingStatus,
+    initialSameRoomStatus,
+    initialScheduledAtJst,
+    0,
+    "",
+    ""
   ].map(sanitizeSheetValue_);
 
   sheet.appendRow(row);
+  return {
+    sheet: sheet,
+    row: sheet.getLastRow(),
+    bookingStatus: initialBookingStatus,
+    sameRoomStatus: initialSameRoomStatus,
+    scheduledAtJst: initialScheduledAtJst,
+    rescheduleCount: 0,
+    lastRescheduledAtJst: "",
+    finalAmountYen: ""
+  };
+}
+
+function appendStatusLog_(spreadsheet, entry, timeZone) {
+  if (!containsValue_(STATUS_LOG_SOURCE_VALUES, entry.source)) {
+    throw new Error("Status log source is invalid");
+  }
+  var sheet = getStatusLogSheet_(spreadsheet);
+  var eventAt = Utilities.formatDate(new Date(), timeZone || "Asia/Tokyo", "yyyy-MM-dd HH:mm:ss");
+  var row = [
+    Utilities.getUuid(),
+    eventAt,
+    entry.submissionId,
+    entry.eventType,
+    entry.fieldName,
+    entry.oldValue,
+    entry.newValue,
+    entry.bookingStatus,
+    entry.sameRoomStatus,
+    entry.scheduledAtJst,
+    entry.rescheduleCount,
+    entry.finalAmountYen,
+    entry.source,
+    entry.note
+  ].map(sanitizeSheetValue_);
+  sheet.appendRow(row);
   return { sheet: sheet, row: sheet.getLastRow() };
+}
+
+function appendCreatedStatusLogBestEffort_(booking, payload, config) {
+  try {
+    appendStatusLog_(booking.sheet.getParent(), {
+      submissionId: payload.submissionId,
+      eventType: "created",
+      fieldName: "",
+      oldValue: "",
+      newValue: "requested",
+      bookingStatus: booking.bookingStatus,
+      sameRoomStatus: booking.sameRoomStatus,
+      scheduledAtJst: booking.scheduledAtJst,
+      rescheduleCount: booking.rescheduleCount,
+      finalAmountYen: booking.finalAmountYen,
+      source: "web_booking",
+      note: ""
+    }, config.timeZone);
+  } catch (error) {
+    // fail-open for created log: 客户预约主记录/邮件成功后，日志故障不能让前端报错或触发重试。
+    console.error("Booking created status log failed: " + String(error && error.message || "unknown"));
+  }
+}
+
+function normalizeLastRescheduledAtJst_(value, timeZone) {
+  if (value === "" || value == null) return "";
+  if (Object.prototype.toString.call(value) === "[object Date]" && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, timeZone, "yyyy-MM-dd HH:mm:ss");
+  }
+  var text = String(value).trim();
+  if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(text)) {
+    throw new Error("last_rescheduled_at_jst is invalid");
+  }
+  return text;
+}
+
+function statusStateFromRow_(values, timeZone) {
+  return {
+    booking_status: String(values[0] == null ? "" : values[0]).trim(),
+    same_room_status: String(values[1] == null ? "" : values[1]).trim(),
+    scheduled_at_jst: normalizeScheduledAtJst_(values[2], timeZone),
+    reschedule_count: Number(values[3] || 0),
+    last_rescheduled_at_jst: normalizeLastRescheduledAtJst_(values[4], timeZone),
+    final_amount_yen: values[5] == null ? "" : values[5]
+  };
+}
+
+function statusStateToRow_(state) {
+  return [[
+    state.booking_status,
+    state.same_room_status,
+    state.scheduled_at_jst,
+    state.reschedule_count,
+    state.last_rescheduled_at_jst,
+    state.final_amount_yen
+  ]];
+}
+
+function containsValue_(values, value) {
+  return values.indexOf(value) !== -1;
+}
+
+function requestedScheduledAtJst_(dateText, timeText, timeZone) {
+  var nextDay = / \(next day\)$/.test(String(timeText || ""));
+  var hhmm = String(timeText || "").replace(/ \(next day\)$/, "");
+  var parsed = new Date(String(dateText || "") + "T" + hhmm + ":00+09:00");
+  if (!Number.isFinite(parsed.getTime())) throw new Error("Requested scheduled time is invalid");
+  if (nextDay) parsed = new Date(parsed.getTime() + 24 * 60 * 60 * 1000);
+  return Utilities.formatDate(parsed, timeZone, "yyyy-MM-dd HH:mm");
+}
+
+function normalizeScheduledAtJst_(value, timeZone) {
+  if (value === "" || value == null) return "";
+  if (Object.prototype.toString.call(value) === "[object Date]" && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, timeZone, "yyyy-MM-dd HH:mm");
+  }
+  var text = String(value).trim();
+  if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(text)) {
+    throw new Error("scheduled_at_jst must be YYYY-MM-DD HH:MM");
+  }
+  var parsed = new Date(text.replace(" ", "T") + ":00+09:00");
+  if (!Number.isFinite(parsed.getTime()) || Utilities.formatDate(parsed, timeZone, "yyyy-MM-dd HH:mm") !== text) {
+    throw new Error("scheduled_at_jst is invalid");
+  }
+  return text;
+}
+
+function normalizeFinalAmountYen_(value) {
+  if (value === "" || value == null) return "";
+  var text = String(value).replace(/,/g, "").trim();
+  if (!/^\d+$/.test(text)) throw new Error("final_amount_yen must be a non-negative integer");
+  var amount = Number(text);
+  if (!Number.isSafeInteger(amount) || amount < 0 || amount > 1000000) {
+    throw new Error("final_amount_yen is out of range");
+  }
+  return amount;
+}
+
+function normalizeStatusEditValue_(fieldName, value, timeZone) {
+  if (fieldName === "booking_status") {
+    var bookingStatus = String(value == null ? "" : value).trim();
+    if (!containsValue_(BOOKING_STATUS_VALUES, bookingStatus)) throw new Error("booking_status is invalid");
+    return bookingStatus;
+  }
+  if (fieldName === "same_room_status") {
+    var sameRoomStatus = String(value == null ? "" : value).trim();
+    if (!containsValue_(SAME_ROOM_STATUS_VALUES, sameRoomStatus)) throw new Error("same_room_status is invalid");
+    return sameRoomStatus;
+  }
+  if (fieldName === "scheduled_at_jst") {
+    return normalizeScheduledAtJst_(value, timeZone);
+  }
+  if (fieldName === "final_amount_yen") {
+    return normalizeFinalAmountYen_(value);
+  }
+  throw new Error("Unsupported status field");
+}
+
+function statusEventType_(fieldName, oldValue, newValue) {
+  if (fieldName === "scheduled_at_jst") {
+    return oldValue && newValue && oldValue !== newValue ? "rescheduled" : "scheduled_at_changed";
+  }
+  return fieldName + "_changed";
+}
+
+function notifyStatusEditError_(event, message) {
+  try {
+    if (event && event.source && typeof event.source.toast === "function") {
+      event.source.toast("状态更新未保存：" + message, "预约状态", 8);
+    }
+  } catch (ignored) {}
+}
+
+function ensureStatusModelStartRow_(sheet) {
+  var properties = PropertiesService.getScriptProperties();
+  var raw = properties.getProperty(STATUS_MODEL_START_ROW_PROPERTY);
+  var startRow = Number(raw);
+  if (!Number.isInteger(startRow) || startRow < 2) {
+    startRow = sheet.getLastRow() + 1;
+    properties.setProperty(STATUS_MODEL_START_ROW_PROPERTY, String(startRow));
+  }
+  return startRow;
+}
+
+function emptyHistoricalStatusState_() {
+  return {
+    booking_status: "",
+    same_room_status: "",
+    scheduled_at_jst: "",
+    reschedule_count: 0,
+    last_rescheduled_at_jst: "",
+    final_amount_yen: ""
+  };
+}
+
+function initialStatusStateFromBookingRow_(values, timeZone) {
+  return {
+    booking_status: "requested",
+    same_room_status: normalizeSameRoomKey_(values[22]) === "true" ? "pending" : "not_requested",
+    scheduled_at_jst: requestedScheduledAtJst_(String(values[5] || ""), String(values[6] || ""), timeZone),
+    reschedule_count: 0,
+    last_rescheduled_at_jst: "",
+    final_amount_yen: ""
+  };
+}
+
+function latestStatusStateFromLog_(spreadsheet, submissionId, timeZone) {
+  var logSheet = getStatusLogSheet_(spreadsheet);
+  var lastRow = logSheet.getLastRow();
+  if (lastRow < 2) return null;
+  var rows = logSheet.getRange(2, 1, lastRow - 1, STATUS_LOG_HEADERS.length).getValues();
+  var latest = null;
+  var lastRescheduledAt = "";
+  for (var index = rows.length - 1; index >= 0; index--) {
+    var row = rows[index];
+    if (String(row[2] || "").trim() !== submissionId) continue;
+    if (!latest) latest = row;
+    if (!lastRescheduledAt && String(row[3] || "").trim() === "rescheduled") {
+      lastRescheduledAt = normalizeLastRescheduledAtJst_(row[1], timeZone);
+    }
+    if (latest && lastRescheduledAt) break;
+  }
+  if (!latest) return null;
+  return {
+    booking_status: String(latest[7] || "").trim(),
+    same_room_status: String(latest[8] || "").trim(),
+    scheduled_at_jst: normalizeScheduledAtJst_(latest[9], timeZone),
+    reschedule_count: Number(latest[10] || 0),
+    last_rescheduled_at_jst: lastRescheduledAt,
+    final_amount_yen: latest[11] == null ? "" : latest[11]
+  };
+}
+
+function restoreStatusRowAfterRejectedBatch_(sheet, rowNumber, config, modelStartRow) {
+  if (rowNumber === 1) {
+    sheet.getRange(1, STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT)
+      .setValues([SHEET_HEADERS.slice(STATUS_COLUMN_START - 1, STATUS_COLUMN_START - 1 + STATUS_COLUMN_COUNT)]);
+    return;
+  }
+  var submissionId = String(sheet.getRange(rowNumber, 1).getValue() || "").trim();
+  var state = submissionId ? latestStatusStateFromLog_(sheet.getParent(), submissionId, config.timeZone) : null;
+  if (!state) {
+    if (submissionId && rowNumber >= modelStartRow) {
+      var bookingValues = sheet.getRange(rowNumber, 1, 1, 23).getValues()[0];
+      state = initialStatusStateFromBookingRow_(bookingValues, config.timeZone);
+    } else {
+      state = emptyHistoricalStatusState_();
+    }
+  }
+  sheet.getRange(rowNumber, STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT).setValues(statusStateToRow_(state));
+}
+
+function rejectBatchStatusEdit_(e) {
+  var range = e.range;
+  var sheet = range.getSheet();
+  var statusEndColumn = STATUS_COLUMN_START + STATUS_COLUMN_COUNT - 1;
+  if (range.getLastColumn() < STATUS_COLUMN_START || range.getColumn() > statusEndColumn) return;
+
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) {
+    notifyStatusEditError_(e, "批量编辑已拒绝，但恢复正在等待其他状态操作；请勿继续编辑并稍后重试");
+    throw new Error("Batch status edit restore lock timeout");
+  }
+  try {
+    var spreadsheet = sheet.getParent();
+    var config = getConfig_();
+    if (spreadsheet.getId() !== config.sheetId) throw new Error("Booking status trigger is attached to the wrong spreadsheet");
+    if (range.getRow() === 1) {
+      sheet.getRange(1, STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT)
+        .setValues([SHEET_HEADERS.slice(STATUS_COLUMN_START - 1, STATUS_COLUMN_START - 1 + STATUS_COLUMN_COUNT)]);
+    }
+    assertBookingSheetReady_(sheet);
+    getStatusLogSheet_(spreadsheet);
+    var modelStartRow = ensureStatusModelStartRow_(sheet);
+    var firstRow = range.getRow();
+    var lastRow = range.getLastRow();
+    for (var rowNumber = firstRow; rowNumber <= lastRow; rowNumber++) {
+      restoreStatusRowAfterRejectedBatch_(sheet, rowNumber, config, modelStartRow);
+    }
+    notifyStatusEditError_(e, "批量粘贴不受支持，X:AC 已恢复。请一次只编辑一个单元格");
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function installBookingStatusTrigger() {
+  var config = getConfig_();
+  var handler = "onBookingStatusEdit";
+  var triggers = ScriptApp.getProjectTriggers();
+  var kept = null;
+
+  triggers.forEach(function (trigger) {
+    if (trigger.getHandlerFunction() !== handler) return;
+    var sameSource = false;
+    try {
+      sameSource = trigger.getTriggerSource() === ScriptApp.TriggerSource.SPREADSHEETS &&
+        trigger.getTriggerSourceId() === config.sheetId &&
+        trigger.getEventType() === ScriptApp.EventType.ON_EDIT;
+    } catch (ignored) {}
+
+    if (!kept && sameSource) {
+      kept = trigger;
+    } else {
+      ScriptApp.deleteTrigger(trigger);
+    }
+  });
+
+  if (!kept) {
+    kept = ScriptApp.newTrigger(handler)
+      .forSpreadsheet(config.sheetId)
+      .onEdit()
+      .create();
+  }
+  return kept.getUniqueId ? kept.getUniqueId() : "installed";
+}
+
+function onBookingStatusEdit(e) {
+  if (!e || !e.range) return;
+  var range = e.range;
+  var sheet = range.getSheet();
+  if (sheet.getName() !== BOOKING_SHEET_NAME) return;
+  if (range.getNumRows() !== 1 || range.getNumColumns() !== 1) {
+    rejectBatchStatusEdit_(e);
+    return;
+  }
+  if (range.getRow() <= 1) return;
+
+  var column = range.getColumn();
+  var fieldName = STATUS_EDITABLE_COLUMNS[column] || STATUS_DERIVED_COLUMNS[column];
+  if (!fieldName) return;
+
+  var oldValue = typeof e.oldValue === "undefined" ? "" : e.oldValue;
+  var newRawValue = range.getValue();
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) {
+    try { range.setValue(oldValue); } catch (ignored) {}
+    notifyStatusEditError_(e, "其他状态更新正在处理中，请稍后重试");
+    throw new Error("Booking status edit lock timeout");
+  }
+
+  var statusRange;
+  var oldState;
+  var logRecord = null;
+  try {
+    var spreadsheet = sheet.getParent();
+    var config = getConfig_();
+    if (spreadsheet.getId() !== config.sheetId) throw new Error("Booking status trigger is attached to the wrong spreadsheet");
+    assertBookingSheetReady_(sheet);
+    getStatusLogSheet_(spreadsheet); // fail-closed: 没有审计日志表就不接受人工状态编辑。
+
+    statusRange = sheet.getRange(range.getRow(), STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT);
+    oldState = statusStateFromRow_(statusRange.getValues()[0], config.timeZone);
+
+    // e.range 已经被用户改写；先重建编辑前状态并恢复，再写审计日志。
+    oldState[fieldName] = fieldName === "scheduled_at_jst"
+      ? normalizeScheduledAtJst_(oldValue, config.timeZone)
+      : fieldName === "last_rescheduled_at_jst"
+        ? normalizeLastRescheduledAtJst_(oldValue, config.timeZone)
+        : fieldName === "reschedule_count"
+          ? Number(oldValue || 0)
+          : oldValue;
+    if (STATUS_DERIVED_COLUMNS[column]) {
+      statusRange.setValues(statusStateToRow_(oldState));
+      throw new Error(fieldName + " is derived and cannot be edited directly");
+    }
+    statusRange.setValues(statusStateToRow_(oldState));
+
+    var normalizedNewValue = normalizeStatusEditValue_(fieldName, newRawValue, config.timeZone);
+    var newState = {
+      booking_status: oldState.booking_status,
+      same_room_status: oldState.same_room_status,
+      scheduled_at_jst: oldState.scheduled_at_jst,
+      reschedule_count: Number(oldState.reschedule_count || 0),
+      last_rescheduled_at_jst: oldState.last_rescheduled_at_jst,
+      final_amount_yen: oldState.final_amount_yen
+    };
+    newState[fieldName] = normalizedNewValue;
+
+    if (
+      fieldName === "scheduled_at_jst" &&
+      oldState.scheduled_at_jst &&
+      normalizedNewValue &&
+      oldState.scheduled_at_jst !== normalizedNewValue
+    ) {
+      newState.reschedule_count += 1;
+      newState.last_rescheduled_at_jst = Utilities.formatDate(new Date(), config.timeZone, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    var submissionId = String(sheet.getRange(range.getRow(), 1).getValue() || "").trim();
+    if (!submissionId) throw new Error("submission_id is missing");
+
+    logRecord = appendStatusLog_(spreadsheet, {
+      submissionId: submissionId,
+      eventType: statusEventType_(fieldName, String(oldState[fieldName] || ""), String(normalizedNewValue == null ? "" : normalizedNewValue)),
+      fieldName: fieldName,
+      oldValue: String(oldState[fieldName] == null ? "" : oldState[fieldName]),
+      newValue: String(normalizedNewValue == null ? "" : normalizedNewValue),
+      bookingStatus: newState.booking_status,
+      sameRoomStatus: newState.same_room_status,
+      scheduledAtJst: newState.scheduled_at_jst,
+      rescheduleCount: newState.reschedule_count,
+      finalAmountYen: newState.final_amount_yen,
+      source: "sheet_operator",
+      note: ""
+    }, config.timeZone);
+
+    try {
+      statusRange.setValues(statusStateToRow_(newState));
+    } catch (writeError) {
+      try { logRecord.sheet.deleteRow(logRecord.row); } catch (cleanupError) {
+        console.error("Booking status log rollback failed");
+      }
+      statusRange.setValues(statusStateToRow_(oldState));
+      throw writeError;
+    }
+  } catch (error) {
+    if (statusRange && oldState) {
+      try { statusRange.setValues(statusStateToRow_(oldState)); } catch (restoreError) {
+        console.error("Booking status rollback failed");
+      }
+    } else {
+      try { range.setValue(oldValue); } catch (ignored) {}
+    }
+    console.error("Booking status edit rejected: " + String(error && error.message || "unknown"));
+    notifyStatusEditError_(e, String(error && error.message || "unknown"));
+    throw error;
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function buildBookingMail_(payload) {
