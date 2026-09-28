@@ -42,6 +42,10 @@ for (const [text, label] of [
   ['.onEdit()', "installable edit trigger"],
   ['function onBookingStatusEdit(e)', "booking status edit handler"],
   ['range.getNumRows() !== 1 || range.getNumColumns() !== 1', "single-cell edit guard"],
+  ['rejectBatchStatusEdit_(e)', "batch status edit rejection path"],
+  ['function restoreStatusRowAfterRejectedBatch_', "batch edit restoration"],
+  ['function latestStatusStateFromLog_', "audit-log state restoration"],
+  ['var STATUS_MODEL_START_ROW_PROPERTY = "BOOKING_STATUS_V5_START_ROW"', "v5 model start-row guard"],
   ['var lock = LockService.getScriptLock()', "status edit lock"],
   ['if (!lock.tryLock(10000))', "status edit lock timeout"],
   ['source: "web_booking"', "created-event source"],
@@ -68,7 +72,8 @@ for (const [text, label] of [
   ['insertColumnsAfter(', "automatic production column expansion"],
   ['insertSheet(STATUS_LOG_SHEET_NAME', "automatic production log-sheet creation"],
   ['status_updated_at_jst', "rejected status-updated column"],
-  ['"requested", "confirmed", "rescheduled", "cancelled", "arrived"', "rescheduled as a booking status"]
+  ['"requested", "confirmed", "rescheduled", "cancelled", "arrived"', "rescheduled as a booking status"],
+  ['if (range.getNumRows() !== 1 || range.getNumColumns() !== 1) return;', "silent acceptance of batch status edits"]
 ]) forbidText(text, label);
 
 // Exercise the trigger installer with a small Apps Script mock:
