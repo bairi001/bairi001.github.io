@@ -722,6 +722,23 @@ function submissionId(){
   return "";
 }
 
+function webAddonsValue(){
+  return selectedAddons().map(item=>item.key).join(",");
+}
+
+function webAddonsLabel(){
+  return selectedAddons().map(item=>`${item[lang]} (+${item.min} min / ${money(item.price)})`).join("; ");
+}
+
+function webNominationValue(){
+  return selectedNomination().key;
+}
+
+function webNominationLabel(){
+  const item=selectedNomination();
+  return `${item[lang]}${item.price?` (${money(item.price)})`:""}`;
+}
+
 function webSubmissionSignatureValue(){
   const course=selectedCourse();
   return JSON.stringify({
@@ -729,6 +746,8 @@ function webSubmissionSignatureValue(){
     date:$("date").value,
     time:timeLabel(),
     guests:String(guests),
+    addons:webAddonsValue(),
+    nomination:webNominationValue(),
     name:$("name").value.trim(),
     email:$("email").value.trim().toLowerCase(),
     phone:$("phone").value.trim(),
@@ -758,6 +777,10 @@ function webPayload(){
     email:$("email").value.trim().slice(0,160),
     phone:$("phone").value.trim().slice(0,40),
     note:$("note").value.trim().slice(0,300),
+    addons:webAddonsValue().slice(0,240),
+    addonsLabel:webAddonsLabel().slice(0,700),
+    nomination:webNominationValue().slice(0,40),
+    nominationLabel:webNominationLabel().slice(0,160),
     lang,
     utm_source:(FIRST_UTM.utm_source||"").slice(0,120),
     utm_medium:(FIRST_UTM.utm_medium||"").slice(0,120),
