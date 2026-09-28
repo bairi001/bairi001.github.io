@@ -314,6 +314,11 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
           <p class="hint" data-i18n="groupHint">For two or more guests, we will confirm the available staff and start times in our reply.</p>
         </fieldset>
 
+        <div class="form-section" id="sameRoomSection" hidden>
+          <label class="addon-item"><input type="checkbox" id="sameRoom" name="sameRoom"><span data-i18n="sameRoomLabel">Request same-room treatment for two</span></label>
+          <p class="hint" data-i18n="sameRoomHint">If you would like treatment in the same room for two guests, please request it when booking. We will check whether the room, two therapists and your selected treatments can be arranged for the requested time. Same-room use is confirmed only in our reply.</p>
+        </div>
+
         <details class="form-section" id="extrasSection">
           <summary class="extras-toggle"><span data-i18n="extras">Add-ons and nomination (optional)</span></summary>
           <div class="extras-grid" id="addonsGrid"></div>
@@ -525,6 +530,15 @@ Object.assign(I18N.ko,{
   accessTitle:"매장 찾아오는 길",accessAddress:"〒144-0052 도쿄도 오타구 가마타 5-12-3 기타지마 빌딩 4층",accessDirections:"JR 가마타역 동쪽 출구에서 도보 약 1분입니다. 빌딩에 들어간 뒤 안쪽으로 이동하여 입구 내부의 엘리베이터를 타고 4층으로 오세요.",openMap:"Google 지도에서 보기 →",accessPhotoAlt:"기타지마 빌딩 입구와 엘리베이터 안내"
 });
 
+Object.assign(I18N.en,{sameRoomLabel:"Request same-room treatment for two",sameRoomHint:"If you would like treatment in the same room for two guests, please request it when booking. We will check whether the room, two therapists and your selected treatments can be arranged for the requested time. Same-room use is confirmed only in our reply.",sameRoomPending:"Requested · pending confirmation"});
+Object.assign(I18N.ja,{sameRoomLabel:"2名同室を希望",sameRoomHint:"2名同室をご希望の場合は、ご予約時にお知らせください。ご希望のコース・日時に合わせて、お部屋・2名分のスタッフ・開始時間を確認し、当店の返信で可否をお知らせします。予約申請時点では同室は確定しません。",sameRoomPending:"希望あり・未確定"});
+Object.assign(I18N.zh,{sameRoomLabel:"申请双人同室",sameRoomHint:"如希望两位客人在同一空间接受护理，请在预约时提出申请。店铺会根据所选课程、时间、房间和两位工作人员的安排进行确认。提交申请不代表双人同室已经确认，以店铺回复为准。",sameRoomPending:"已提出需求・尚未确认"});
+Object.assign(I18N.ko,{sameRoomLabel:"2인 같은 공간 요청",sameRoomHint:"두 분이 같은 공간에서 관리를 원하시는 경우 예약 시 요청해 주세요. 선택하신 코스와 시간에 맞춰 공간, 두 명의 테라피스트 및 시작 가능 여부를 확인한 뒤 답변으로 안내합니다. 신청만으로 같은 공간 이용이 확정되지는 않습니다.",sameRoomPending:"요청됨 · 아직 미확정"});
+I18N.en.msgLabels.sameRoom="Same room";
+I18N.ja.msgLabels.sameRoom="2名同室";
+I18N.zh.msgLabels.sameRoom="双人同室";
+I18N.ko.msgLabels.sameRoom="같은 방";
+
 let lang=window.__SYA_INITIAL_LANG||"en";
 let guests="1";
 const WEB_FORM_ENABLED=FORM_BACKEND==="google-apps-script"&&Boolean(FORM_ENDPOINT)&&FORM_PRIVACY_READY===true&&FORM_LIVE_TESTED===true;
@@ -540,6 +554,26 @@ const allCourses=()=>COURSE_GROUPS.flatMap(group=>group.items);
 const selectedCourse=()=>allCourses().find(item=>item.key===$("course").value);
 const selectedAddons=()=>ADDONS.filter(item=>document.querySelector(`[data-addon="${item.key}"]`)?.checked);
 const selectedNomination=()=>NOMINATIONS.find(item=>document.querySelector('input[name="nomination"]:checked')?.value===item.key)||NOMINATIONS[0];
+const sameRoomRequested=()=>guests==="2"&&Boolean($("sameRoom")?.checked);
+
+function setGuests(next){
+  guests=["1","2","3","4+"].includes(String(next))?String(next):"1";
+  document.querySelectorAll("[data-guests]").forEach(item=>{
+    const active=item.dataset.guests===guests;
+    item.classList.toggle("active",active);
+    item.setAttribute("aria-checked",String(active));
+  });
+  const section=$("sameRoomSection");
+  const checkbox=$("sameRoom");
+  if(section)section.hidden=guests!=="2";
+  if(checkbox&&guests!=="2")checkbox.checked=false;
+}
+
+function applyPairRequestFromUrl(){
+  const params=new URLSearchParams(location.search);
+  if(params.get("guests")==="2")setGuests("2");
+  if(params.get("room")==="pair"&&guests==="2"&&$("sameRoom"))$("sameRoom").checked=true;
+}
 
 function resolveLanguage(){
   const normalize=value=>{
@@ -685,7 +719,9 @@ function messageText(){
   const labels=I18N[lang].msgLabels;
   const addons=selectedAddons();
   const nomination=selectedNomination();
-  const lines=[I18N[lang].msgTitle,"",`■ ${labels.course}: ${course[lang]} (${money(course.price)})`,`■ ${labels.date}: ${formatDate($("date").value)}`,`■ ${labels.time}: ${timeLabel()}`,`■ ${labels.guests}: ${guests}`,`■ ${labels.name}: ${$("name").value.trim()}`];
+  const lines=[I18N[lang].msgTitle,"",`■ ${labels.course}: ${course[lang]} (${money(course.price)})`,`■ ${labels.date}: ${formatDate($("date").value)}`,`■ ${labels.time}: ${timeLabel()}`,`■ ${labels.guests}: ${guests}`];
+  if(sameRoomRequested())lines.push(`■ ${labels.sameRoom}: ${I18N[lang].sameRoomPending}`);
+  lines.push(`■ ${labels.name}: ${$("name").value.trim()}`);
   if(addons.length)lines.push(`■ ${labels.addons}: ${addons.map(item=>`${item[lang]} (${money(item.price)})`).join(", ")}`);
   if(nomination.key!=="none")lines.push(`■ ${labels.nomination}: ${nomination[lang]} (${money(nomination.price)})`);
   if($("note").value.trim())lines.push(`■ ${labels.note}: ${$("note").value.trim()}`);
@@ -746,6 +782,7 @@ function webSubmissionSignatureValue(){
     date:$("date").value,
     time:timeLabel(),
     guests:String(guests),
+    sameRoomRequested:sameRoomRequested(),
     addons:webAddonsValue(),
     nomination:webNominationValue(),
     name:$("name").value.trim(),
@@ -773,6 +810,7 @@ function webPayload(){
     date:$("date").value,
     time:timeLabel().slice(0,40),
     guests:String(guests).slice(0,4),
+    sameRoomRequested:sameRoomRequested(),
     name:$("name").value.trim().slice(0,60),
     email:$("email").value.trim().slice(0,160),
     phone:$("phone").value.trim().slice(0,40),
@@ -880,7 +918,7 @@ document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener
   applyLanguage(button.dataset.lang,{persist:true});
   trackEvent("language_switch",{from_language:previous,to_language:lang,source:"booking"});
 }));
-$("guestButtons").addEventListener("click",event=>{const button=event.target.closest("[data-guests]");if(!button)return;guests=button.dataset.guests;document.querySelectorAll("[data-guests]").forEach(item=>{const active=item===button;item.classList.toggle("active",active);item.setAttribute("aria-checked",String(active))});updatePreview()});
+$("guestButtons").addEventListener("click",event=>{const button=event.target.closest("[data-guests]");if(!button)return;setGuests(button.dataset.guests);updatePreview()});
 $("bookingForm").addEventListener("input",updatePreview);
 $("bookingForm").addEventListener("change",updatePreview);
 $("bookingForm").addEventListener("input",()=>trackEvent("booking_form_start",{language:lang,channel:"whatsapp"}),{once:true});
@@ -901,6 +939,8 @@ setTokyoDate();
 buildTimes();
 buildExtras();
 applyLanguage(resolveLanguage());
+applyPairRequestFromUrl();
+updatePreview();
 </script>
 <script src="assets/booking-mode.js"></script>
 </body>

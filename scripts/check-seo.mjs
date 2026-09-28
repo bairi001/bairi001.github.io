@@ -176,6 +176,33 @@ const spaceWordingLocks = {
 for (const [file, phrases] of Object.entries(spaceWordingLocks)) requireFragments(file, indexableHtml[file], phrases, "private-space wording");
 for (const phrase of ["個室仕様の施術スペース","Private treatment spaces","独立护理空间","독립형 관리 공간"]) if (!bookingMode.includes(phrase)) fail("assets/booking-mode.js", `booking runtime space wording missing: ${phrase}`);
 
+const sameRoomLocks = {
+  "index.html": ["2名同室をご希望の場合は", "ご希望のコース・日時に合わせて", "予約申請時点では同室は確定しません"],
+  "en/index.html": ["If you would like treatment in the same room for two guests", "your selected treatments", "Same-room use is confirmed only in our reply"],
+  "zh/index.html": ["如希望两位客人在同一空间接受护理", "根据所选课程、时间、房间和两位工作人员", "以店铺回复为准"],
+  "ko/index.html": ["두 분이 같은 공간에서 관리를 원하시는 경우", "선택하신 코스와 시간에 맞춰", "신청만으로 같은 공간 이용이 확정되지는 않습니다"],
+  "faq.html": ["2名で同じ部屋で施術を受けられますか？", "ご希望のコース・日時に合わせて", "予約申請時点では同室は確定しません"],
+  "shop.html": ["2名同室リクエスト可", "ご希望のコース・日時に合わせて", "予約申請時点では同室は確定しません"]
+};
+for (const [file, phrases] of Object.entries(sameRoomLocks)) {
+  const source = indexableHtml[file] || await read(file);
+  requireFragments(file, source, phrases, "same-room request wording");
+}
+
+// Universal course coverage and room-fee claims require explicit business confirmation before publication.
+const unsafeSameRoomClaims = [
+  "全コース対象", "お部屋の追加料金なし", "すべてのコースで2名同室", "すべてのコースでリクエストできます",
+  "Available for all courses", "All courses can be requested", "no room surcharge",
+  "全部课程均可申请", "全部课程均可提出双人同室需求", "房间不额外收费",
+  "모든 코스에서 요청 가능", "모든 코스에서 요청할 수 있습니다", "객실 추가 요금은 없습니다", "객실 추가 요금 없음"
+];
+for (const file of ["booking.html", "index.html", "en/index.html", "zh/index.html", "ko/index.html", "faq.html", "shop.html"]) {
+  const source = indexableHtml[file] || await read(file);
+  for (const claim of unsafeSameRoomClaims) {
+    if (source.includes(claim)) fail(file, `unverified same-room promise remains: ${claim}`);
+  }
+}
+
 const routing = await read("assets/language-routing.js");
 if (/https?:\/\/wa\.me\//i.test(routing)) fail("assets/language-routing.js", "homepage WhatsApp CTA must route through booking.html, not directly to wa.me");
 if (/configureHomeMobileCta|replaceChildren\s*\(/.test(routing)) fail("assets/language-routing.js", "mobile conversion CTA must be static HTML, not rebuilt at runtime");
