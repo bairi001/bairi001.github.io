@@ -176,6 +176,19 @@ const spaceWordingLocks = {
 for (const [file, phrases] of Object.entries(spaceWordingLocks)) requireFragments(file, indexableHtml[file], phrases, "private-space wording");
 for (const phrase of ["個室仕様の施術スペース","Private treatment spaces","独立护理空间","독립형 관리 공간"]) if (!bookingMode.includes(phrase)) fail("assets/booking-mode.js", `booking runtime space wording missing: ${phrase}`);
 
+const sameRoomLocks = {
+  "index.html": ["2名同室もリクエスト可能です", "お部屋の追加料金なし", "2名分のスタッフ"],
+  "en/index.html": ["Can two guests request the same room?", "no room surcharge", "two therapists"],
+  "zh/index.html": ["双人同室需求", "房间不额外收费", "两位工作人员"],
+  "ko/index.html": ["2인 같은 방", "객실 추가 요금은 없습니다", "두 명의 테라피스트"],
+  "faq.html": ["2名で同じ部屋で施術を受けられますか？", "予約申請時点では確約されず"],
+  "shop.html": ["2名同室リクエスト可", "予約申請時点では同室は未確定"]
+};
+for (const [file, phrases] of Object.entries(sameRoomLocks)) {
+  const source = indexableHtml[file] || await read(file);
+  requireFragments(file, source, phrases, "same-room request wording");
+}
+
 const routing = await read("assets/language-routing.js");
 if (/https?:\/\/wa\.me\//i.test(routing)) fail("assets/language-routing.js", "homepage WhatsApp CTA must route through booking.html, not directly to wa.me");
 if (/configureHomeMobileCta|replaceChildren\s*\(/.test(routing)) fail("assets/language-routing.js", "mobile conversion CTA must be static HTML, not rebuilt at runtime");
