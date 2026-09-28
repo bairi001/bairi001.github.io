@@ -30,6 +30,7 @@ var STATUS_DERIVED_COLUMNS = {
 };
 var BOOKING_STATUS_VALUES = ["requested", "confirmed", "rescheduled", "cancelled", "arrived"];
 var SAME_ROOM_STATUS_VALUES = ["not_requested", "pending", "confirmed", "unavailable", "alternative_agreed"];
+var STATUS_LOG_SOURCE_VALUES = ["web_booking", "sheet_operator", "system"];
 var STATUS_LOG_HEADERS = [
   "log_id",
   "event_at_jst",
@@ -454,6 +455,9 @@ function appendBookingRow_(payload, config) {
 }
 
 function appendStatusLog_(spreadsheet, entry, timeZone) {
+  if (!containsValue_(STATUS_LOG_SOURCE_VALUES, entry.source)) {
+    throw new Error("Status log source is invalid");
+  }
   var sheet = getStatusLogSheet_(spreadsheet);
   var eventAt = Utilities.formatDate(new Date(), timeZone || "Asia/Tokyo", "yyyy-MM-dd HH:mm:ss");
   var row = [
