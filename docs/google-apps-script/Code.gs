@@ -708,6 +708,10 @@ function rejectBatchStatusEdit_(e) {
     var spreadsheet = sheet.getParent();
     var config = getConfig_();
     if (spreadsheet.getId() !== config.sheetId) throw new Error("Booking status trigger is attached to the wrong spreadsheet");
+    if (range.getRow() === 1) {
+      sheet.getRange(1, STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT)
+        .setValues([SHEET_HEADERS.slice(STATUS_COLUMN_START - 1, STATUS_COLUMN_START - 1 + STATUS_COLUMN_COUNT)]);
+    }
     assertBookingSheetReady_(sheet);
     getStatusLogSheet_(spreadsheet);
     var modelStartRow = ensureStatusModelStartRow_(sheet);
