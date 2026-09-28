@@ -189,6 +189,7 @@ for (const [file, phrases] of Object.entries(sameRoomLocks)) {
   requireFragments(file, source, phrases, "same-room request wording");
 }
 
+// Universal course coverage and room-fee claims require explicit business confirmation before publication.
 const unsafeSameRoomClaims = [
   "全コース対象", "お部屋の追加料金なし", "すべてのコースで2名同室", "すべてのコースでリクエストできます",
   "Available for all courses", "All courses can be requested", "no room surcharge",
