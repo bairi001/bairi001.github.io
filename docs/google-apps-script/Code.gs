@@ -791,21 +791,30 @@ function onBookingStatusEdit(e) {
     assertBookingSheetReady_(sheet);
     getStatusLogSheet_(spreadsheet); // fail-closed: 没有审计日志表就不接受人工状态编辑。
 
-    statusRange = sheet.getRange(range.getRow(), STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT);
-    oldState = statusStateFromRow_(statusRange.getValues()[0], config.timeZone);
+    var submissionId = String(sheet.getRange(range.getRow(), 1).getValue() || "").trim();
+    if (!submissionId) throw new Error("submission_id is missing");
 
-    // e.range 已经被用户改写；先重建编辑前状态并恢复，再写审计日志。
-    oldState[fieldName] = fieldName === "scheduled_at_jst"
-      ? normalizeScheduledAtJst_(oldValue, config.timeZone)
-      : fieldName === "last_rescheduled_at_jst"
-        ? normalizeLastRescheduledAtJst_(oldValue, config.timeZone)
-        : fieldName === "reschedule_count"
-          ? Number(oldValue || 0)
-          : oldValue;
+    statusRange = sheet.getRange(range.getRow(), STATUS_COLUMN_START, 1, STATUS_COLUMN_COUNT);
+
+    // Do not reconstruct the previous state from e.oldValue. Google Sheets may emit
+    // locale-formatted date/time strings there (for example 9/29/2026 22:00:00),
+    // which are not stable enough for audit or rollback. The append-only audit log
+    // is the canonical previous state for v5 rows.
+    oldState = latestStatusStateFromLog_(spreadsheet, submissionId, config.timeZone);
+    if (!oldState) {
+      var modelStartRow = ensureStatusModelStartRow_(sheet);
+      oldState = range.getRow() >= modelStartRow
+        ? initialStatusStateFromBookingRow_(sheet.getRange(range.getRow(), 1, 1, 23).getValues()[0], config.timeZone)
+        : emptyHistoricalStatusState_();
+    }
+
     if (STATUS_DERIVED_COLUMNS[column]) {
       statusRange.setValues(statusStateToRow_(oldState));
       throw new Error(fieldName + " is derived and cannot be edited directly");
     }
+
+    // The cell has already been changed by the user. Restore the canonical previous
+    // state before validating/logging the requested change so any failure is fail-closed.
     statusRange.setValues(statusStateToRow_(oldState));
 
     var normalizedNewValue = normalizeStatusEditValue_(fieldName, newRawValue, config.timeZone);
@@ -828,9 +837,6 @@ function onBookingStatusEdit(e) {
       newState.reschedule_count += 1;
       newState.last_rescheduled_at_jst = Utilities.formatDate(new Date(), config.timeZone, "yyyy-MM-dd HH:mm:ss");
     }
-
-    var submissionId = String(sheet.getRange(range.getRow(), 1).getValue() || "").trim();
-    if (!submissionId) throw new Error("submission_id is missing");
 
     logRecord = appendStatusLog_(spreadsheet, {
       submissionId: submissionId,

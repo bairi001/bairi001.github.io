@@ -45,6 +45,8 @@ for (const [text, label] of [
   ['rejectBatchStatusEdit_(e)', "batch status edit rejection path"],
   ['function restoreStatusRowAfterRejectedBatch_', "batch edit restoration"],
   ['function latestStatusStateFromLog_', "audit-log state restoration"],
+  ['oldState = latestStatusStateFromLog_(spreadsheet, submissionId, config.timeZone);', "single-cell edits restore canonical previous state from audit log"],
+  ['initialStatusStateFromBookingRow_(sheet.getRange(range.getRow(), 1, 1, 23).getValues()[0], config.timeZone)', "created-log failure fallback uses original booking row"],
   ['var STATUS_MODEL_START_ROW_PROPERTY = "BOOKING_STATUS_V5_START_ROW"', "v5 model start-row guard"],
   ['var lock = LockService.getScriptLock()', "status edit lock"],
   ['if (!lock.tryLock(10000))', "status edit lock timeout"],
@@ -73,7 +75,8 @@ for (const [text, label] of [
   ['insertSheet(STATUS_LOG_SHEET_NAME', "automatic production log-sheet creation"],
   ['status_updated_at_jst', "rejected status-updated column"],
   ['"requested", "confirmed", "rescheduled", "cancelled", "arrived"', "rescheduled as a booking status"],
-  ['if (range.getNumRows() !== 1 || range.getNumColumns() !== 1) return;', "silent acceptance of batch status edits"]
+  ['if (range.getNumRows() !== 1 || range.getNumColumns() !== 1) return;', "silent acceptance of batch status edits"],
+  ['normalizeScheduledAtJst_(oldValue, config.timeZone)', "locale-sensitive scheduled_at oldValue reconstruction"]
 ]) forbidText(text, label);
 
 // Exercise the trigger installer with a small Apps Script mock:
