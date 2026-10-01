@@ -70,6 +70,15 @@ for (const file of allFiles.filter(file => file.endsWith(".js") || file.endsWith
 }
 
 const css = await readFile(path.join(root, "assets", "style.css"), "utf8");
+const shopHtml = await readFile(path.join(root, "shop.html"), "utf8");
+const shopMobileBlock = shopHtml.match(/@media\(max-width:600px\)\{[\s\S]*?\}\s*<\/style>/i)?.[0] || "";
+if (!/\.shop-info-table tr\{[^}]*grid-template-columns:1fr!important/i.test(shopMobileBlock)) {
+  report(path.join(root, "shop.html"), "mobile shop info table must override the global !important two-column grid");
+}
+if (!/\.shop-info-table td\{[^}]*overflow-wrap:anywhere/i.test(shopMobileBlock)) {
+  report(path.join(root, "shop.html"), "mobile shop info values must allow long text to wrap");
+}
+
 let depth = 0;
 for (const character of css.replace(/\/\*[\s\S]*?\*\//g, "")) {
   if (character === "{") depth += 1;
