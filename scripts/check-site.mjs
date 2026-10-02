@@ -79,6 +79,29 @@ if (!/\.shop-info-table td\{[^}]*overflow-wrap:anywhere/i.test(shopMobileBlock))
   report(path.join(root, "shop.html"), "mobile shop info values must allow long text to wrap");
 }
 
+const aromaHtml = await readFile(path.join(root, "aroma-oil-kamata.html"), "utf8");
+const footHtml = await readFile(path.join(root, "ashitsubo-fukurahagi.html"), "utf8");
+const menuHtml = await readFile(path.join(root, "menu.html"), "utf8");
+const secondaryPagesJs = await readFile(path.join(root, "assets", "secondary-pages.js"), "utf8");
+
+for (const [fileName, html] of [["aroma-oil-kamata.html", aromaHtml], ["ashitsubo-fukurahagi.html", footHtml]]) {
+  if (!/class="value-actions"[^>]*>[\s\S]{0,500}?href="\/booking\.html\?lang=ja"/i.test(html)) {
+    report(path.join(root, fileName), "value module must have a nearby Japanese booking CTA");
+  }
+  if (!/id="course-prices"/i.test(html) || !/href="#course-prices"/i.test(html)) {
+    report(path.join(root, fileName), "value module must link to the local course-prices section");
+  }
+}
+if (!/cta",\s*isHero\s*\?\s*"service_hero"\s*:\s*\(isNavigation\s*\?\s*"service_nav"\s*:\s*"service_page"\)/i.test(secondaryPagesJs)) {
+  report(path.join(root, "assets", "secondary-pages.js"), "service-page booking attribution fallback changed unexpectedly");
+}
+if (!/\.foot-value-grid\{[^}]*align-items:start/i.test(footHtml)) {
+  report(path.join(root, "ashitsubo-fukurahagi.html"), "desktop foot value cards must not stretch to equal height");
+}
+if (!/menu-price-nowrap[^}]*white-space:nowrap/i.test(menuHtml) || !/class="menu-price-nowrap">20分 \+2,000円/i.test(menuHtml)) {
+  report(path.join(root, "menu.html"), "hot-stone desktop price units must stay intact");
+}
+
 let depth = 0;
 for (const character of css.replace(/\/\*[\s\S]*?\*\//g, "")) {
   if (character === "{") depth += 1;
