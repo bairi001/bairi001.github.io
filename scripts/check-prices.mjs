@@ -5,7 +5,7 @@ const root = new URL("../", import.meta.url);
 const prices = JSON.parse(await readFile(new URL("data/prices.json", root), "utf8"));
 const files = Object.fromEntries(
   await Promise.all(
-    ["menu.html", "aroma-oil-kamata.html", "ashitsubo-fukurahagi.html", "en/index.html", "booking.html", "zh/index.html", "ko/index.html"].map(async file => [
+    ["menu.html", "aroma-oil-kamata.html", "ashitsubo-fukurahagi.html", "en/index.html", "en/foot-massage-kamata.html", "booking.html", "zh/index.html", "ko/index.html"].map(async file => [
       file,
       await readFile(new URL(file, root), "utf8")
     ])
@@ -114,6 +114,8 @@ expect("en/index.html", "English herbal oil option missing", /Herbal Oil \+¥500
 expect("en/index.html", "English Hot Stone timing/price missing", /Hot Stone \+10 min ¥1000 \/ \+20 min ¥2000/i);
 expect("en/index.html", "English foot bath timing missing", /foot bath of about 3–5 minutes[\s\S]{0,120}?not counted in your treatment time/i);
 expect("en/index.html", "English shared free-value note missing", /Treatment wear is provided free of charge[\s\S]{0,180}?Hot or cold tea/i);
+expect("en/foot-massage-kamata.html", "English foot guide free foot bath timing missing", /Free foot bath · about 3–5 min[\s\S]{0,260}?not counted in your treatment time/i);
+expect("en/foot-massage-kamata.html", "English foot guide herbal cream option missing", /Herbal Foot Cream \+¥500/i);
 
 expect("zh/index.html", "Chinese 6-scent inclusion missing", /6种香味免费选择[\s\S]{0,240}?玫瑰天竺葵[\s\S]{0,240}?佛手柑/i);
 expect("zh/index.html", "Chinese herbal oil option missing", /汉方油 \+¥500/i);
@@ -126,6 +128,9 @@ expect("ko/index.html", "Korean herbal oil option missing", /한방 오일 변�
 expect("ko/index.html", "Korean Hot Stone timing/price missing", /핫스톤 \+10분 ¥1000 \/ \+20분 ¥2000/i);
 expect("ko/index.html", "Korean free foot bath timing missing", /무료 족욕 약 3–5분[\s\S]{0,120}?관리 시간에 포함되지 않습니다/i);
 expect("ko/index.html", "Korean Body Care 30 scope missing", /30분은 상반신 또는 하반신 중 하나를 선택[\s\S]{0,90}?전신은 60분 이상/i);
+if (/Pressure Point Body Massage/.test(files["booking.html"])) errors.push("booking.html: legacy Pressure Point Body Massage label must not remain in customer-facing booking copy");
+if (/Pressure Point Body Massage/.test(files["zh/index.html"])) errors.push("zh/index.html: legacy Pressure Point Body Massage label must not remain");
+if (/Pressure Point Body Massage/.test(files["ko/index.html"])) errors.push("ko/index.html: legacy Pressure Point Body Massage label must not remain");
 
 if (errors.length) {
   console.error(`Price consistency check failed:\n- ${errors.join("\n- ")}`);
