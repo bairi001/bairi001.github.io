@@ -24,10 +24,13 @@
 .scent-list{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 26px}.scent-list span{display:inline-flex;align-items:center;min-height:34px;padding:6px 11px;border:1px solid rgba(123,162,63,.48);border-radius:999px;background:rgba(246,248,244,.94);color:#1A2E33;font-size:.79rem;font-weight:700}
 .aroma-upgrade-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);gap:18px}
 .aroma-upgrade-card{overflow:hidden;border:1px solid rgba(23,126,137,.22);border-radius:12px;background:rgba(255,255,255,.46)}
-.aroma-upgrade-card img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}.aroma-upgrade-card.herbal img{object-fit:contain;background:#fff}
+.aroma-upgrade-card img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}.aroma-upgrade-card.herbal img{aspect-ratio:16/8.6;object-fit:contain;background:#fff}
 .aroma-upgrade-copy{padding:18px 20px 20px}.aroma-upgrade-label{display:block;margin-bottom:5px;color:#177E89;font-size:.68rem;font-weight:800;letter-spacing:.14em}.aroma-upgrade-copy h3{margin:0;color:#1A2E33;font-size:1.08rem}.aroma-upgrade-price{margin:7px 0 5px!important;color:#1A2E33!important;font-size:1.04rem!important;font-weight:800}.aroma-upgrade-copy p:last-child{margin:0;color:rgba(26,46,51,.72);font-size:.84rem;line-height:1.75}
 .aroma-included-note{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:18px;padding:13px 15px;border-left:3px solid #7BA23F;background:rgba(23,126,137,.045);color:rgba(26,46,51,.78);font-size:.8rem;line-height:1.65}.aroma-included-note strong{color:#1A2E33}.aroma-included-note span{position:relative;padding-left:12px}.aroma-included-note span::before{content:"";position:absolute;left:0;top:.68em;width:4px;height:4px;border-radius:50%;background:#177E89}
-@media(max-width:760px){.aroma-upgrade-grid{grid-template-columns:1fr}.aroma-value{padding:26px 0 32px}.aroma-upgrade-copy{padding:16px}.aroma-included-note{display:block}.aroma-included-note span{display:block;margin-top:5px}}
+.aroma-tax-note{margin:8px 0 0;color:rgba(26,46,51,.62);font-size:.74rem}
+.value-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.value-actions .btn-primary,.value-actions .btn-secondary{min-height:44px}
+.intent-section p a{color:#177E89;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;font-weight:700}
+@media(max-width:760px){.aroma-upgrade-grid{grid-template-columns:1fr}.aroma-value{padding:26px 0 32px}.aroma-upgrade-copy{padding:16px}.aroma-included-note{display:block}.aroma-included-note span{display:block;margin-top:5px}.value-actions{display:grid;grid-template-columns:1fr}.value-actions a{width:100%}}
 </style>
 </head>
 <body class="secondary-page">
@@ -54,10 +57,12 @@
       <div class="aroma-upgrade-copy"><span class="aroma-upgrade-label">OPTION</span><h3>漢方オイルへ変更</h3><p class="aroma-upgrade-price">+500円</p><p>アロマ・オイルコースは、すべての時間で漢方オイルへ変更できます。ご来店後にお選びいただけます。</p></div>
     </article>
   </div>
-  <div class="aroma-included-note"><strong>コース料金に含まれます</strong><span>オイルコースでは温かい蒸しタオル（ホットタオル）を取り入れています</span><span>表示価格は税込</span></div>
+  <div class="aroma-included-note"><strong>コース料金に含まれます</strong><span>オイルコースでは温かい蒸しタオル（ホットタオル）を取り入れています</span></div>
+  <p class="aroma-tax-note">※表示価格は税込です。</p>
+  <div class="value-actions"><a class="btn-primary" href="/booking.html?lang=ja">この内容で予約を相談する</a><a class="btn-secondary" href="#course-prices">基本コース料金を見る</a></div>
 </section>
 <section class="intent-section"><h2>蒲田で「オイルマッサージ」「アロママッサージ」を探している方へ</h2><p>検索でオイルマッサージやアロママッサージをお探しの方にも内容が分かりやすいよう、当店では実際のメニュー名「アロマリンパ・オイル」としてご案内しています。香りとオイルを使ったリラクゼーションメニューです。</p></section>
-<section class="intent-section"><h2>時間の選び方</h2><p><strong>30分 2,980円</strong>：短時間のオイルケア。<br><strong>60分 4,980円</strong>：初めての方にも選びやすい基本コース。<br><strong>90分 7,800円</strong>：ゆったり受けたい日に。<br><strong>120分 9,980円</strong>：時間をかけて全身を休めたい方に。</p></section>
+<section class="intent-section" id="course-prices"><h2>時間の選び方</h2><p><strong>30分 2,980円</strong>：短時間のオイルケア。<br><strong>60分 4,980円</strong>：初めての方にも選びやすい基本コース。<br><strong>90分 7,800円</strong>：ゆったり受けたい日に。<br><strong>120分 9,980円</strong>：時間をかけて全身を休めたい方に。</p></section>
 <section class="intent-section"><h2>利用しやすい店内環境</h2><ul><li>三方を壁で仕切った個室仕様の施術スペース</li><li>施術用のお着替えをご用意</li><li>男性のお客様もご利用いただけます</li><li>力加減のご希望を確認しながら進めます</li></ul></section>
 <section class="intent-section"><h2>足裏・整体との組み合わせ</h2><p>足の疲れが中心なら<a href="/ashitsubo-fukurahagi.html">足裏マッサージ・足つぼの案内</a>、服を着たまま全身を受けたい方は<a href="/bodycare-kamata.html">もみほぐし・整体ボディケアの案内</a>をご覧ください。遅い時間は<a href="/kamata-late-night.html">深夜利用ガイド</a>もご確認いただけます。</p></section>
 <section class="intent-section"><h2>身悠晏へのアクセス</h2><p>東京都大田区蒲田5-12-3 北島ビル4F。JR蒲田駅東口から徒歩1分。ファミリーマート隣の北島ビルに入り、奥のエレベーターで4Fへお越しください。</p><div class="intent-actions"><a class="btn-secondary" href="https://www.google.com/maps/search/?api=1&amp;query=身悠晏+蒲田" target="_blank" rel="noopener">Google Maps</a><a class="btn-secondary" href="/shop.html">写真付き道順</a></div></section>
