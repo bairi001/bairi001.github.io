@@ -38,7 +38,7 @@ assert.equal(vm.runInContext("SHEET_HEADERS[22]", context), "same_room_requested
 
 const base = {
   courseId: "body60",
-  courseLabel: "Pressure Point Body Massage 60 min",
+  courseLabel: "Body Care 60 min",
   date: "2026-10-01",
   time: "13:00",
   guests: "2",
