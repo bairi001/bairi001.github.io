@@ -5,7 +5,7 @@ const root = new URL("../", import.meta.url);
 const prices = JSON.parse(await readFile(new URL("data/prices.json", root), "utf8"));
 const files = Object.fromEntries(
   await Promise.all(
-    ["menu.html", "en/index.html", "booking.html", "zh/index.html", "ko/index.html"].map(async file => [
+    ["menu.html", "aroma-oil-kamata.html", "ashitsubo-fukurahagi.html", "en/index.html", "booking.html", "zh/index.html", "ko/index.html"].map(async file => [
       file,
       await readFile(new URL(file, root), "utf8")
     ])
@@ -47,6 +47,23 @@ expect("menu.html", "香薰＋足裏90分价格不一致", /アロマオイル60
 expect("menu.html", "整体＋足裏90分价格不一致", /整体60分 \+ 足裏30分[\s\S]{0,100}?90分 6800円/i);
 expect("menu.html", "深夜费不一致", new RegExp(`深夜料金（23:00以降にご来店の場合）[\\s\\S]{0,80}?${prices.lateNightFee.price}円`));
 
+// CRO value disclosures: keep free inclusions separate from paid options and preserve added time.
+expect("menu.html", "Aroma 6-scent inclusion missing", /料金に含む[\s\S]{0,180}?6種の香りから選べるアロマオイル/i);
+expect("menu.html", "Herbal oil option price mismatch", /漢方オイルへ変更[\s\S]{0,60}?\+500円/i);
+expect("menu.html", "Hot stone 10-minute option mismatch", /ホットストーン[\s\S]{0,100}?10分 \+1000円/i);
+expect("menu.html", "Hot stone 20-minute option mismatch", /ホットストーン[\s\S]{0,140}?20分 \+2000円/i);
+expect("menu.html", "Hot stone added-time disclosure missing", /ホットストーン[\s\S]{0,260}?施術時間に10分または20分を追加/i);
+expect("menu.html", "Free foot bath timing disclosure missing", /足湯 約3〜5分・無料[\s\S]{0,180}?コース時間に含まれず/i);
+expect("menu.html", "Foot herbal cream option price mismatch", /和漢フットクリームへ変更 \+500円/i);
+
+expect("aroma-oil-kamata.html", "Aroma scent inclusion missing", /6種の香りから選べるアロマオイル/i);
+expect("aroma-oil-kamata.html", "Aroma herbal oil price mismatch", /漢方オイルへ変更[\s\S]{0,80}?\+500円/i);
+expect("aroma-oil-kamata.html", "Aroma hot stone 10-minute price mismatch", /ホットストーン[\s\S]{0,120}?10分 \+1000円/i);
+expect("aroma-oil-kamata.html", "Aroma hot stone 20-minute price mismatch", /ホットストーン[\s\S]{0,160}?20分 \+2000円/i);
+expect("aroma-oil-kamata.html", "Aroma hot towel inclusion missing", /蒸しタオル（ホットタオル）/i);
+expect("ashitsubo-fukurahagi.html", "Foot bath free timing missing", /足湯[\s\S]{0,120}?約3〜5分[\s\S]{0,100}?無料/i);
+expect("ashitsubo-fukurahagi.html", "Foot herbal cream price mismatch", /和漢フットクリームへ変更[\s\S]{0,80}?\+500円/i);
+
 // English page intentionally does not list every course.
 expect("en/index.html", "Foot reflexology 45 min price mismatch", htmlPattern("Foot reflexology — 45 min", "foot45"));
 expect("en/index.html", "Foot reflexology 60 min price mismatch", htmlPattern("Foot reflexology — 60 min", "foot60"));
@@ -63,6 +80,10 @@ for (const item of prices.items) {
 }
 if (/isLate\(\)/.test(files["booking.html"])) errors.push("booking.html: selected booking time must not trigger the late-night fee");
 expect("booking.html", "Arrival-based late-night rule missing", /予約時刻ではなく実際のご来店時刻が基準です/);
+expect("booking.html", "Japanese in-store option guidance missing", /香りはご来店時にお選びいただけます。有料の追加ケアは、空き状況・料金・所要時間を確認のうえご案内します。/);
+expect("booking.html", "English in-store option guidance missing", /Choose your aroma scent when you arrive\. Paid add-on care is offered after we confirm availability, price and additional time\./);
+expect("booking.html", "Chinese in-store option guidance missing", /香味可在到店后选择。付费追加护理会在确认当天空档、价格及所需时间后为您说明。/);
+expect("booking.html", "Korean in-store option guidance missing", /아로마 향은 방문 후 고르실 수 있습니다\. 유료 추가 케어는 당일 가능 여부, 요금, 추가 소요 시간을 확인한 뒤 안내드립니다\./);
 
 const localizedLabels = {
   "zh/index.html": {
@@ -89,4 +110,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("Price consistency check passed for menu, English, booking, Chinese, and Korean pages.");
+console.log("Price consistency check passed for menu, service CRO disclosures, booking, English, Chinese, and Korean pages.");
