@@ -92,6 +92,15 @@ const shopMobileBlock = shopHtml.match(/@media\(max-width:600px\)\{[\s\S]*?\}\s*
 if (!/\.shop-info-table tr\{[^}]*grid-template-columns:1fr!important/i.test(shopMobileBlock)) {
   report(path.join(root, "shop.html"), "mobile shop info table must override the global !important two-column grid");
 }
+if (!/id="keikyu-kamata"/i.test(shopHtml) || !/京急蒲田駅からの道順（徒歩約9分）/.test(shopHtml)) {
+  report(path.join(root, "shop.html"), "Keikyu Kamata walking guidance is missing");
+}
+if (!/京急蒲田駅の西口/.test(shopHtml) || !/京急蒲田商店街あすと/.test(shopHtml)) {
+  report(path.join(root, "shop.html"), "Keikyu Kamata route must preserve the verified west-exit and Asuto guidance");
+}
+if (!/google\.com\/maps\/dir\/\?api=1[^"]*origin=%E4%BA%AC%E6%80%A5%E8%92%B2%E7%94%B0%E9%A7%85[^"]*travelmode=walking/i.test(shopHtml)) {
+  report(path.join(root, "shop.html"), "Keikyu Kamata walking Google Maps fallback is missing");
+}
 if (!/\.shop-info-table td\{[^}]*overflow-wrap:anywhere/i.test(shopMobileBlock)) {
   report(path.join(root, "shop.html"), "mobile shop info values must allow long text to wrap");
 }
