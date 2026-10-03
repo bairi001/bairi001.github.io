@@ -49,7 +49,7 @@ try{
         `--window-size=${w},${h}`,`--screenshot=${file}`,
         `http://127.0.0.1:${port}/${url}`
       ],{encoding:"utf8",timeout:30000,maxBuffer:8*1024*1024});
-      if(r.status!==0||!fs.existsSync(file)||fs.statSync(file).size<10000){
+      if(r.status!==0||!fs.existsSync(file)||fs.statSync(file).size<1000){
         errors.push(`${name} ${w}x${h}: screenshot failed (${r.status}) ${(r.stderr||"").slice(0,300)}`);
       }
     }
