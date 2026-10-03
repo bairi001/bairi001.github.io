@@ -94,6 +94,29 @@ const aromaHtml = await readFile(path.join(root, "aroma-oil-kamata.html"), "utf8
 const footHtml = await readFile(path.join(root, "ashitsubo-fukurahagi.html"), "utf8");
 const menuHtml = await readFile(path.join(root, "menu.html"), "utf8");
 const secondaryPagesJs = await readFile(path.join(root, "assets", "secondary-pages.js"), "utf8");
+const bodycareHtml = await readFile(path.join(root, "bodycare-kamata.html"), "utf8");
+const lateNightHtml = await readFile(path.join(root, "kamata-late-night.html"), "utf8");
+
+for (const [fileName, html] of [
+  ["aroma-oil-kamata.html", aromaHtml],
+  ["ashitsubo-fukurahagi.html", footHtml],
+  ["bodycare-kamata.html", bodycareHtml]
+]) {
+  if (/Googleで|検索で|「蒲田 [^」]+」を中心に/.test(html)) {
+    report(path.join(root, fileName), "service copy must remain people-first, not search-engine-facing");
+  }
+}
+for (const [fileName, html, anchorId] of [
+  ["bodycare-kamata.html", bodycareHtml, "course-prices"],
+  ["kamata-late-night.html", lateNightHtml, "late-course-prices"]
+]) {
+  if (!new RegExp(`href="#${anchorId}"`, "i").test(html) || !new RegExp(`id="${anchorId}"`, "i").test(html)) {
+    report(path.join(root, fileName), "hero price CTA must stay on-page");
+  }
+  if (!/class="quick-course-grid"/i.test(html) || !/course=[a-zA-Z0-9]+/i.test(html)) {
+    report(path.join(root, fileName), "quick course selection must preserve course intent");
+  }
+}
 
 for (const [fileName, html] of [["aroma-oil-kamata.html", aromaHtml], ["ashitsubo-fukurahagi.html", footHtml]]) {
   if (!/class="value-actions"[^>]*>[\s\S]{0,500}?href="\/booking\.html\?lang=ja"/i.test(html)) {
