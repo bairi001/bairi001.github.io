@@ -70,6 +70,17 @@ for (const file of allFiles.filter(file => file.endsWith(".js") || file.endsWith
 }
 
 const css = await readFile(path.join(root, "assets", "style.css"), "utf8");
+const homeHtml = await readFile(path.join(root, "index.html"), "utf8");
+for (const [course, service] of [["body60","body"],["foot60","foot"],["aroma60","aroma"],["aromaFoot90","set"]]) {
+  const pattern = new RegExp(`href="\\/booking\\.html\\?lang=ja&amp;course=${course}&amp;service=${service}&amp;origin=home&amp;cta=recommended_course"`, "i");
+  if (!pattern.test(homeHtml)) report(path.join(root, "index.html"), `recommended course CTA must preserve ${course} intent`);
+}
+for (const cta of ["nav","mobile_nav","hero_other","footer_methods","footer_nav","fixed_web"]) {
+  if (!new RegExp(`origin=home&amp;cta=${cta}`, "i").test(homeHtml)) {
+    report(path.join(root, "index.html"), `homepage booking attribution missing for ${cta}`);
+  }
+}
+
 const shopHtml = await readFile(path.join(root, "shop.html"), "utf8");
 const shopMobileBlock = shopHtml.match(/@media\(max-width:600px\)\{[\s\S]*?\}\s*<\/style>/i)?.[0] || "";
 if (!/\.shop-info-table tr\{[^}]*grid-template-columns:1fr!important/i.test(shopMobileBlock)) {
