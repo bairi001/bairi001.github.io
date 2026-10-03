@@ -80,6 +80,12 @@ for (const cta of ["nav","mobile_nav","hero_other","footer_methods","footer_nav"
     report(path.join(root, "index.html"), `homepage booking attribution missing for ${cta}`);
   }
 }
+if (/蒲田でよく検索されるお悩み/.test(homeHtml)) {
+  report(path.join(root, "index.html"), "homepage needs copy must stay people-first, not search-engine-facing");
+}
+if (!/お疲れの場所や利用シーンから、詳しい案内を選べます。/.test(homeHtml)) {
+  report(path.join(root, "index.html"), "homepage needs copy lost its user-facing guidance");
+}
 
 const shopHtml = await readFile(path.join(root, "shop.html"), "utf8");
 const shopMobileBlock = shopHtml.match(/@media\(max-width:600px\)\{[\s\S]*?\}\s*<\/style>/i)?.[0] || "";
