@@ -101,6 +101,16 @@ if (!/京急蒲田駅の西口/.test(shopHtml) || !/京急蒲田商店街あす�
 if (!/google\.com\/maps\/dir\/\?api=1[^"]*origin=%E4%BA%AC%E6%80%A5%E8%92%B2%E7%94%B0%E9%A7%85[^"]*travelmode=walking/i.test(shopHtml)) {
   report(path.join(root, "shop.html"), "Keikyu Kamata walking Google Maps fallback is missing");
 }
+if (/counter\(list-item\)/i.test(shopHtml)) {
+  report(path.join(root, "shop.html"), "shop-local access step styling must not override the shared access counter with list-item");
+}
+if (!/\.access-steps li::before\{content:counter\(access\)/i.test(shopHtml)) {
+  report(path.join(root, "shop.html"), "shop-local access step marker must use the shared access counter");
+}
+const sharedStyle = await readFile(path.join(root, "assets", "style.css"), "utf8");
+if (!/\.access-steps\{[^}]*counter-reset:access/i.test(sharedStyle) || !/\.access-steps li\{[^}]*counter-increment:access/i.test(sharedStyle)) {
+  report(path.join(root, "assets", "style.css"), "shared access step counter contract is missing");
+}
 if (!/\.shop-info-table td\{[^}]*overflow-wrap:anywhere/i.test(shopMobileBlock)) {
   report(path.join(root, "shop.html"), "mobile shop info values must allow long text to wrap");
 }
