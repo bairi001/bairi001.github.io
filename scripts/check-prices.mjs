@@ -88,6 +88,10 @@ expect("booking.html", "English Body Care group name missing", /groups:\{popular
 expect("booking.html", "Body Care 30 ID/price/duration or label mismatch", /key:"body30",min:30,price:2400,en:"Body Care 30 min \(upper or lower body\)",zh:"身体放松30分钟（上半身／下半身二选一）",ko:"바디 릴랙세이션 30분 \(상반신\/하반신 중 선택\)",ja:"整体ボディケア30分（半身）"/);
 expect("booking.html", "Body Care 60 label mismatch", /key:"body60",min:60,price:3980,en:"Body Care 60 min"/);
 expect("booking.html", "Body Care 90 label mismatch", /key:"body90",min:90,price:6800,en:"Body Care 90 min"/);
+expect("booking.html", "Trial set Body Care label mismatch", /key:"trial60",min:60,price:4800,en:"Trial Course — Body Care 30 \+ Foot 30 \(60 min\)"/);
+expect("booking.html", "Recovery set Body Care label mismatch", /key:"recovery70",min:70,price:5500,en:"Recovery Course — Body Care 30 \+ Foot 30 \+ Head 10 \(70 min\)"/);
+expect("booking.html", "Legs set Body Care label mismatch", /key:"legs80",min:80,price:6280,en:"Swollen Legs & Stiff Shoulders — Body Care 40 \+ Foot 40 \(80 min\)"/);
+expect("booking.html", "Premium set Body Care label mismatch", /key:"satisfaction90",min:90,price:6800,en:"Premium Satisfaction — Body Care 60 \+ Foot 30 \(90 min\)"/);
 
 const localizedLabels = {
   "zh/index.html": {
