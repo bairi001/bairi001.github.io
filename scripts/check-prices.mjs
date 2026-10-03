@@ -69,6 +69,13 @@ expect("aroma-oil-kamata.html", "Aroma hot towel inclusion missing", /蒸しタ�
 expect("ashitsubo-fukurahagi.html", "Foot bath free timing missing", /足湯[\s\S]{0,120}?約3〜5分[\s\S]{0,100}?無料/i);
 expect("ashitsubo-fukurahagi.html", "Foot herbal cream price mismatch", /和漢フットクリームへ変更[\s\S]{0,80}?\+500円/i);
 
+for (const [course, price] of [["foot30","2800"],["foot45","3980"],["foot60","4980"]]) {
+  expect("ashitsubo-fukurahagi.html", `Foot ${course} direct-book mismatch`, new RegExp(`${price}円[\\s\\S]{0,260}?course=${course}&amp;service=foot`, "i"));
+}
+for (const [course, price] of [["aroma30","2980"],["aroma60","4980"],["aroma90","7800"],["aroma120","9980"]]) {
+  expect("aroma-oil-kamata.html", `Aroma ${course} direct-book mismatch`, new RegExp(`${price}円[\\s\\S]{0,260}?course=${course}&amp;service=aroma`, "i"));
+}
+
 expect("bodycare-kamata.html", "Body Care 30 direct-book price mismatch", /course=body30[\s\S]{0,180}?2400円|30分[\s\S]{0,180}?2400円[\s\S]{0,240}?course=body30/i);
 expect("bodycare-kamata.html", "Body Care 60 direct-book price mismatch", /60分[\s\S]{0,180}?3980円[\s\S]{0,240}?course=body60/i);
 expect("bodycare-kamata.html", "Body Care 90 direct-book price mismatch", /90分[\s\S]{0,180}?6800円[\s\S]{0,240}?course=body90/i);
