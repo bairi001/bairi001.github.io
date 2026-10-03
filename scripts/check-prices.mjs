@@ -56,6 +56,11 @@ expect("menu.html", "Hot stone added-time disclosure missing", /ホットスト�
 expect("menu.html", "Free foot bath timing disclosure missing", /足湯 約3〜5分・無料[\s\S]{0,180}?コース時間に含まれず/i);
 expect("menu.html", "Foot herbal cream option price mismatch", /和漢フットクリームへ変更 \+500円/i);
 
+expect("menu.html", "Set quick-book link mismatch", /course=trial60&amp;service=set&amp;origin=menu&amp;cta=course_quick[^>]*>おためし60分 4800円を予約/i);
+expect("menu.html", "Foot quick-book link mismatch", /course=foot45&amp;service=foot&amp;origin=menu&amp;cta=course_quick[^>]*>45分 3980円を予約/i);
+expect("menu.html", "Body quick-book link mismatch", /course=body60&amp;service=body&amp;origin=menu&amp;cta=course_quick[^>]*>60分 3980円を予約/i);
+expect("menu.html", "Aroma quick-book link mismatch", /course=aroma60&amp;service=aroma&amp;origin=menu&amp;cta=course_quick[^>]*>60分 4980円を予約/i);
+
 expect("aroma-oil-kamata.html", "Aroma scent inclusion missing", /6種の香りから選べるアロマオイル/i);
 expect("aroma-oil-kamata.html", "Aroma herbal oil price mismatch", /漢方オイルへ変更[\s\S]{0,80}?\+500円/i);
 expect("aroma-oil-kamata.html", "Aroma hot stone 10-minute price mismatch", /ホットストーン[\s\S]{0,120}?10分 \+1000円/i);
