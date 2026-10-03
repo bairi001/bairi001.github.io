@@ -71,7 +71,7 @@ expect("en/index.html", "Body Care 60 min price mismatch", htmlPattern("Body Car
 expect("en/index.html", "Aroma 60 min price mismatch", htmlPattern("Aroma oil massage — 60 min", "aroma60"));
 expect("en/index.html", "Aroma 90 min price mismatch", htmlPattern("Aroma oil massage — 90 min", "aroma90"));
 expect("en/index.html", "Aroma + foot price mismatch", htmlPattern("Aroma oil 60 min + Foot 30 min（90 min）", "aromaFoot90"));
-expect("en/index.html", "Seitai + foot price mismatch", htmlPattern("Seitai 60 min + Foot 30 min（90 min）", "bodyFoot90"));
+expect("en/index.html", "Body Care + foot price mismatch", htmlPattern("Body Care 60 min + Foot 30 min（90 min）", "bodyFoot90"));
 expect("en/index.html", "Late-night fee mismatch", new RegExp(`late-night fee of ¥${prices.lateNightFee.price}`, "i"));
 
 for (const item of prices.items) {
