@@ -318,7 +318,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
 
         <div class="form-section" id="sameRoomSection" hidden>
           <label class="addon-item"><input type="checkbox" id="sameRoom" name="sameRoom"><span data-i18n="sameRoomLabel">Request same-room treatment for two</span></label>
-          <p class="hint" data-i18n="sameRoomHint">If you would like treatment in the same room for two guests, please request it when booking. We will check whether the room, two therapists and your selected treatments can be arranged for the requested time. Same-room use is confirmed only in our reply.</p>
+          <p class="hint" data-i18n="sameRoomHint">There is no extra room fee for a same-room request. Same-room treatment can be requested for any course, and the two guests may choose different courses. If you choose different courses, please enter the second guest's course in the Note field. We will check the room, two therapists and start time for your requested courses and time. Same-room use is confirmed only in our reply.</p>
         </div>
 
         <details class="form-section" id="extrasSection">
@@ -411,7 +411,7 @@ const COURSE_GROUPS=[
     {key:"aromaFoot120",min:120,price:10500,en:"Aroma Oil 90 + Foot 30 (120 min)",zh:"精油90＋足底30（120分钟）",ko:"아로마 오일90＋발30 (120분)",ja:"アロマ90＋足裏30（120分）"}
   ]},
   {key:"body",items:[
-    {key:"body30",min:30,price:2400,en:"Body Care 30 min (upper or lower body)",zh:"身体放松30分钟（上半身／下半身二选一）",ko:"바디 릴랙세이션 30분 (상반신/하반신 중 선택)",ja:"整体ボディケア30分（半身）"},
+    {key:"body30",min:30,price:2400,en:"Body Care 30 min (upper or lower body)",zh:"身体放松30分钟（上半身／下半身二选一）",ko:"바디 릴랙세이션 30분 (상반신/하반신 중 선택)",ja:"整体ボディケア30分（上半身／下半身どちらか）"},
     {key:"body60",min:60,price:3980,en:"Body Care 60 min",zh:"身体放松60分钟",ko:"바디 릴랙세이션 60분",ja:"整体ボディケア60分"},
     {key:"body90",min:90,price:6800,en:"Body Care 90 min",zh:"身体放松90分钟",ko:"바디 릴랙세이션 90분",ja:"整体ボディケア90分"}
   ]},
@@ -532,10 +532,10 @@ Object.assign(I18N.ko,{
   accessTitle:"매장 찾아오는 길",accessAddress:"〒144-0052 도쿄도 오타구 가마타 5-12-3 기타지마 빌딩 4층",accessDirections:"JR 가마타역 동쪽 출구에서 도보 약 1분입니다. 빌딩에 들어간 뒤 안쪽으로 이동하여 입구 내부의 엘리베이터를 타고 4층으로 오세요.",openMap:"Google 지도에서 보기 →",accessPhotoAlt:"기타지마 빌딩 입구와 엘리베이터 안내"
 });
 
-Object.assign(I18N.en,{sameRoomLabel:"Request same-room treatment for two",sameRoomHint:"If you would like treatment in the same room for two guests, please request it when booking. We will check whether the room, two therapists and your selected treatments can be arranged for the requested time. Same-room use is confirmed only in our reply.",sameRoomPending:"Requested · pending confirmation"});
-Object.assign(I18N.ja,{sameRoomLabel:"2名同室を希望",sameRoomHint:"2名同室をご希望の場合は、ご予約時にお知らせください。ご希望のコース・日時に合わせて、お部屋・2名分のスタッフ・開始時間を確認し、当店の返信で可否をお知らせします。予約申請時点では同室は確定しません。",sameRoomPending:"希望あり・未確定"});
-Object.assign(I18N.zh,{sameRoomLabel:"申请双人同室",sameRoomHint:"如希望两位客人在同一空间接受护理，请在预约时提出申请。店铺会根据所选课程、时间、房间和两位工作人员的安排进行确认。提交申请不代表双人同室已经确认，以店铺回复为准。",sameRoomPending:"已提出需求・尚未确认"});
-Object.assign(I18N.ko,{sameRoomLabel:"2인 같은 공간 요청",sameRoomHint:"두 분이 같은 공간에서 관리를 원하시는 경우 예약 시 요청해 주세요. 선택하신 코스와 시간에 맞춰 공간, 두 명의 테라피스트 및 시작 가능 여부를 확인한 뒤 답변으로 안내합니다. 신청만으로 같은 공간 이용이 확정되지는 않습니다.",sameRoomPending:"요청됨 · 아직 미확정"});
+Object.assign(I18N.en,{sameRoomLabel:"Request same-room treatment for two",sameRoomHint:"There is no extra room fee for a same-room request. Same-room treatment can be requested for any course, and the two guests may choose different courses. If you choose different courses, please enter the second guest's course in the Note field. We will check the room, two therapists and start time for your requested courses and time. Same-room use is confirmed only in our reply.",sameRoomPending:"Requested · pending confirmation"});
+Object.assign(I18N.ja,{sameRoomLabel:"2名同室を希望",sameRoomHint:"2名同室に追加料金はかかりません。すべてのコースで同室をリクエストでき、お二人で異なるコースも選べます。異なるコースをご希望の場合は、備考欄に2人目のコースをご記入ください。ご希望のコース・日時に合わせて、お部屋・2名分のスタッフ・開始時間を確認し、当店の返信で可否をお知らせします。予約申請時点では同室は確定しません。",sameRoomPending:"希望あり・未確定"});
+Object.assign(I18N.zh,{sameRoomLabel:"申请双人同室",sameRoomHint:"双人同室不收取额外房间费用。所有课程均可提出同室申请，两位客人也可以选择不同课程；如选择不同课程，请在备注栏填写第2位客人的课程。店铺会根据所选课程、时间、房间和两位工作人员的安排进行确认。提交申请不代表双人同室已经确认，以店铺回复为准。",sameRoomPending:"已提出需求・尚未确认"});
+Object.assign(I18N.ko,{sameRoomLabel:"2인 같은 공간 요청",sameRoomHint:"같은 공간 이용에 별도 객실 추가 요금은 없습니다. 모든 코스에서 같은 공간을 요청할 수 있고, 두 분이 서로 다른 코스를 선택할 수도 있습니다. 다른 코스를 원하시면 비고란에 두 번째 고객님의 코스를 적어 주세요. 선택하신 코스와 시간에 맞춰 공간, 두 명의 테라피스트 및 시작 가능 여부를 확인한 뒤 답변으로 안내합니다. 신청만으로 같은 공간 이용이 확정되지는 않습니다.",sameRoomPending:"요청됨 · 아직 미확정"});
 Object.assign(I18N.en,{arrivalChoiceNote:"Choose your aroma scent when you arrive. Paid add-on care is offered after we confirm availability, price and additional time."});
 Object.assign(I18N.ja,{arrivalChoiceNote:"香りはご来店時にお選びいただけます。有料の追加ケアは、空き状況・料金・所要時間を確認のうえご案内します。"});
 Object.assign(I18N.zh,{arrivalChoiceNote:"香味可在到店后选择。付费追加护理会在确认当天空档、价格及所需时间后为您说明。"});
