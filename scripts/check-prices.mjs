@@ -110,7 +110,7 @@ expect("booking.html", "English in-store option guidance missing", /Choose your 
 expect("booking.html", "Chinese in-store option guidance missing", /香味可在到店后选择。付费追加护理会在确认当天空档、价格及所需时间后为您说明。/);
 expect("booking.html", "Korean in-store option guidance missing", /아로마 향은 방문 후 고르실 수 있습니다\. 유료 추가 케어는 당일 가능 여부, 요금, 추가 소요 시간을 확인한 뒤 안내드립니다\./);
 expect("booking.html", "English Body Care group name missing", /groups:\{popular:"Popular Set Courses",body:"Body Care",foot:"Foot Reflexology",aroma:"Aroma Oil Treatment"\}/);
-expect("booking.html", "Body Care 30 ID/price/duration or label mismatch", /key:"body30",min:30,price:2400,en:"Body Care 30 min \(upper or lower body\)",zh:"身体放松30分钟（上半身／下半身二选一）",ko:"바디 릴랙세이션 30분 \(상반신\/하반신 중 선택\)",ja:"整体ボディケア30分（半身）"/);
+expect("booking.html", "Body Care 30 ID/price/duration or label mismatch", /key:"body30",min:30,price:2400,en:"Body Care 30 min \(upper or lower body\)",zh:"身体放松30分钟（上半身／下半身二选一）",ko:"바디 릴랙세이션 30분 \(상반신\/하반신 중 선택\)",ja:"整体ボディケア30分（上半身／下半身どちらか）"/);
 expect("booking.html", "Body Care 60 label mismatch", /key:"body60",min:60,price:3980,en:"Body Care 60 min"/);
 expect("booking.html", "Body Care 90 label mismatch", /key:"body90",min:90,price:6800,en:"Body Care 90 min"/);
 expect("booking.html", "Trial set Body Care label mismatch", /key:"trial60",min:60,price:4800,en:"Trial Course — Body Care 30 \+ Foot 30 \(60 min\)"/);
