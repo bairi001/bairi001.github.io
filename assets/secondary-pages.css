@@ -16,6 +16,12 @@
 .secondary-page .site-footer{margin-top:0}
 .secondary-page .footer-bottom{gap:16px;flex-wrap:wrap}
 .secondary-page .secondary-language-pill{display:none}
+.secondary-page .course-book-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+.secondary-page .course-book-card{padding:14px 15px;border:1px solid rgba(23,126,137,.18);border-radius:10px;background:rgba(255,255,255,.52)}
+.secondary-page .course-book-card strong{display:block;color:var(--heading);font-size:.94rem}
+.secondary-page .course-book-card span{display:block;margin:3px 0 8px;color:var(--muted);font-size:.78rem;line-height:1.65}
+.secondary-page .course-book-link{display:inline-flex;align-items:center;min-height:34px;color:var(--accent2);font-size:.78rem;font-weight:800;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.secondary-page .course-book-link:hover{color:var(--accent)}
 @media(max-width:900px){
   .secondary-page .secondary-main-nav{display:none}
   .secondary-page .hamburger{display:block}
@@ -27,6 +33,7 @@
   .secondary-page .intent-hero h1,.secondary-page .jd h1{font-size:clamp(1.65rem,8vw,2.25rem)!important}
   .secondary-page .intent-actions,.secondary-page .jd-actions{align-items:stretch}
   .secondary-page .intent-actions a,.secondary-page .jd-actions a{width:100%}
+  .secondary-page .course-book-grid{grid-template-columns:1fr}
 }
 @media(max-width:520px){
   .secondary-page .container{width:min(100% - 32px,var(--max-w))}
