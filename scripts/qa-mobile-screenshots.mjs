@@ -69,6 +69,7 @@ class CDP{
 const cases=[
  ["home-top","index.html",null],
  ["home-needs","index.html","#search-needs-title"],
+ ["home-recommended","index.html","#recommended"],
  ["menu-top","menu.html",null],
  ["menu-set","menu.html","#set"],
  ["menu-foot","menu.html","#foot"],
