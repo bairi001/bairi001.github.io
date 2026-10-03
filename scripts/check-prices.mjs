@@ -5,7 +5,7 @@ const root = new URL("../", import.meta.url);
 const prices = JSON.parse(await readFile(new URL("data/prices.json", root), "utf8"));
 const files = Object.fromEntries(
   await Promise.all(
-    ["menu.html", "aroma-oil-kamata.html", "ashitsubo-fukurahagi.html", "en/index.html", "en/foot-massage-kamata.html", "booking.html", "zh/index.html", "ko/index.html"].map(async file => [
+    ["menu.html", "aroma-oil-kamata.html", "ashitsubo-fukurahagi.html", "bodycare-kamata.html", "kamata-late-night.html", "en/index.html", "en/foot-massage-kamata.html", "booking.html", "zh/index.html", "ko/index.html"].map(async file => [
       file,
       await readFile(new URL(file, root), "utf8")
     ])
@@ -63,6 +63,17 @@ expect("aroma-oil-kamata.html", "Aroma hot stone 20-minute price mismatch", /ホ
 expect("aroma-oil-kamata.html", "Aroma hot towel inclusion missing", /蒸しタオル（ホットタオル）/i);
 expect("ashitsubo-fukurahagi.html", "Foot bath free timing missing", /足湯[\s\S]{0,120}?約3〜5分[\s\S]{0,100}?無料/i);
 expect("ashitsubo-fukurahagi.html", "Foot herbal cream price mismatch", /和漢フットクリームへ変更[\s\S]{0,80}?\+500円/i);
+
+expect("bodycare-kamata.html", "Body Care 30 direct-book price mismatch", /course=body30[\s\S]{0,180}?2400円|30分[\s\S]{0,180}?2400円[\s\S]{0,240}?course=body30/i);
+expect("bodycare-kamata.html", "Body Care 60 direct-book price mismatch", /60分[\s\S]{0,180}?3980円[\s\S]{0,240}?course=body60/i);
+expect("bodycare-kamata.html", "Body Care 90 direct-book price mismatch", /90分[\s\S]{0,180}?6800円[\s\S]{0,240}?course=body90/i);
+expect("bodycare-kamata.html", "Body Care 30 scope missing", /30分[\s\S]{0,220}?上半身または下半身/i);
+
+expect("kamata-late-night.html", "Late-night Body Care 60 price mismatch", /整体ボディケア 60分[\s\S]{0,140}?3980円[\s\S]{0,240}?course=body60/i);
+expect("kamata-late-night.html", "Late-night Foot 45 price mismatch", /足裏 45分[\s\S]{0,140}?3980円[\s\S]{0,240}?course=foot45/i);
+expect("kamata-late-night.html", "Late-night Aroma 60 price mismatch", /アロマ 60分[\s\S]{0,140}?4980円[\s\S]{0,240}?course=aroma60/i);
+expect("kamata-late-night.html", "Late-night final reception missing", /最終受付23:30/i);
+expect("kamata-late-night.html", "Late-night fee mismatch", /23:00以降[\s\S]{0,120}?800円/i);
 
 // English page intentionally does not list every course.
 expect("en/index.html", "Foot reflexology 45 min price mismatch", htmlPattern("Foot reflexology — 45 min", "foot45"));
