@@ -74,7 +74,8 @@ try {
     requireText(html, 'data-first-time="11:00"', "opening-time slot remains available before opening");
     requireText(html, 'data-story-image="/assets/img/head-scalp-care.webp"', "booking page does not visually rewrite itself from referrer context");
     requireText(html, 'data-alternative="false"', "second-choice scheduling block removed");
-    requireText(html, 'data-payload-note="Second input|origin: aroma-oil-kamata / cta: service_hero"', "web payload origin attribution");
+    requireText(html, 'data-payload-note="Second input|origin: aroma-oil-kamata / cta: service_hero / service: aroma"', "web payload human-readable attribution");
+    requireText(html, 'data-payload-utm-content="sy_o=aroma-oil-kamata;sy_c=service_hero;sy_s=aroma"', "web payload machine-readable attribution");
     requireText(html, "booking_form_start:web", "deduplicated web form start");
     requireText(html, "booking_form_duplicate:", "duplicate submission event");
     const startCount = (html.match(/booking_form_start:web/g) || []).length;

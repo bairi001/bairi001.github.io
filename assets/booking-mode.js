@@ -183,10 +183,14 @@
     originalTrackEvent(name, eventParameters);
   };
 
+  const webAttributionToken = () =>
+    `sy_o=${bookingContext.originPage};sy_c=${bookingContext.originCta};sy_s=${bookingContext.service}`.slice(0, 120);
+
   webPayload = function() {
     const payload = originalWebPayload();
-    const attribution = `origin: ${bookingContext.originPage} / cta: ${bookingContext.originCta}`;
+    const attribution = `origin: ${bookingContext.originPage} / cta: ${bookingContext.originCta} / service: ${bookingContext.service}`;
     payload.note = [payload.note, attribution].filter(Boolean).join("\n").slice(0, 300);
+    payload.utm_content = [webAttributionToken(), payload.utm_content].filter(Boolean).join("|").slice(0, 120);
     return payload;
   };
 

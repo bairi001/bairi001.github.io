@@ -117,7 +117,9 @@ document.documentElement.dataset.alternative = String(Boolean($("bookingAlternat
 document.documentElement.dataset.visibleChannels = String(document.querySelectorAll("#channelActions > .channel-button").length);
 document.documentElement.dataset.channelList = [...document.querySelectorAll("#channelActions > .channel-button")].map(link => link.dataset.channel).join("|");
 document.documentElement.dataset.channelHrefs = [...document.querySelectorAll("#channelActions > .channel-button")].map(link => `${link.dataset.channel}:${link.getAttribute("href")}`).join("|");
-document.documentElement.dataset.payloadNote = String(webPayload().note || "").replace(/\n/g, "|");
+const runtimePayload = webPayload();
+document.documentElement.dataset.payloadNote = String(runtimePayload.note || "").replace(/\n/g, "|");
+document.documentElement.dataset.payloadUtmContent = String(runtimePayload.utm_content || "");
 document.documentElement.dataset.events = window.__events.map(event => `${event.name}:${event.parameters.channel || ""}`).join("|");
 </script>
 </body>
