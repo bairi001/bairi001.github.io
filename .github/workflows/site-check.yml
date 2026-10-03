@@ -38,3 +38,12 @@ jobs:
         run: node scripts/check-recruit-v2.mjs
       - name: Run Recruit Direct Apply V2 in headless Chromium
         run: node scripts/check-recruit-runtime.mjs
+
+      - name: Capture mobile QA screenshots
+        run: node scripts/qa-mobile-screenshots.mjs
+      - name: Upload mobile QA screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-qa-63-70
+          path: qa-mobile/*.png
+          if-no-files-found: error
