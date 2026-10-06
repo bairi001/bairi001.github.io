@@ -101,7 +101,7 @@ for (const file of ["zh/index.html", "ko/index.html"]) {
 const multilingualClarityChecks = {
   "zh/index.html": ["支付方式：</strong>现金、信用卡、PayPay", "1月1日休息"],
   "ko/index.html": ["결제 방법:</strong> 현금, 신용카드, PayPay", "1월 1일 휴무"],
-  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Latest start 11:30 PM", "If you have about 30 minutes", "For a morning flight, visit the evening before", "select 2 guests", "mode=whatsapp"],
+  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Latest start 11:30 PM", "If you have about 30 minutes", "For a morning flight, visit the evening before", "select 2 guests", "mode=whatsapp", "about a 9-minute walk away", "Keikyu Kamata Asuto shopping street", "Walking route from Keikyu Kamata"],
   "en/late-night-massage-kamata.html": ["in-store salon in Kamata", "do not provide hotel or outcall services", "Latest appointment start time is 11:30 PM"]
 };
 for (const [file, phrases] of Object.entries(multilingualClarityChecks)) {
@@ -262,7 +262,7 @@ const expectedLastmod = {
   "https://shinyuuan.jp/zh/": "2026-09-29",
   "https://shinyuuan.jp/ko/": "2026-09-29",
   "https://shinyuuan.jp/en/late-night-massage-kamata.html": "2026-09-29",
-  "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-09-29"
+  "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-10-06"
 };
 for (const [url, expectedDate] of Object.entries(expectedLastmod)) {
   const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
