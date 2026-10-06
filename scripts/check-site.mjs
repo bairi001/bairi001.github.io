@@ -204,7 +204,7 @@ for (const [fileName, html, anchorId] of [
 }
 
 for (const [fileName, html] of [["aroma-oil-kamata.html", aromaHtml], ["ashitsubo-fukurahagi.html", footHtml]]) {
-  if (!/class="value-actions"[^>]*>[\s\S]{0,500}?href="\/booking\.html\?lang=ja"/i.test(html)) {
+  if (!/class="value-actions"[^>]*>[\s\S]{0,500}?href="\/booking\.html\?lang=ja(?:&amp;[^"]*)?"/i.test(html)) {
     report(path.join(root, fileName), "value module must have a nearby Japanese booking CTA");
   }
   if (!/id="course-prices"/i.test(html) || !/href="#course-prices"/i.test(html)) {
