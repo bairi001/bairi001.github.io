@@ -19,11 +19,13 @@
     "/headspa-kamata.html": "head",
     "/kamata-late-night.html": "late",
     "/en/foot-massage-kamata.html": "foot",
-    "/en/late-night-massage-kamata.html": "late"
+    "/en/late-night-massage-kamata.html": "late",
+    "/en/haneda-kamata-massage.html": "general"
   };
   const serviceContext = bookingContextByPath[location.pathname];
+  const pageOrigin = location.pathname.replace(/^\//, "").replace(/\.html$/, "") || "service-page";
   if (serviceContext) {
-    const origin = location.pathname.replace(/^\//, "").replace(/\.html$/, "") || "service-page";
+    const origin = pageOrigin;
     document.querySelectorAll('a[href*="/booking.html"]').forEach(link => {
       try {
         const url = new URL(link.href, location.origin);
@@ -39,6 +41,18 @@
       } catch (_) {}
     });
   }
+
+  document.querySelectorAll(".mobile-fixed-cta [data-channel]").forEach(link => {
+    link.addEventListener("click", () => {
+      if (typeof gtag !== "function") return;
+      gtag("event", "mobile_conversion_click", {
+        channel: link.dataset.channel || "unknown",
+        origin_page: pageOrigin,
+        service_context: serviceContext || "general",
+        source: "secondary_fixed"
+      });
+    });
+  });
 
   if (!button || !nav) return;
   const closeNav = () => {
