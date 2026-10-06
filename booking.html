@@ -887,6 +887,7 @@ async function submitWebForm(){
   $("submitStatus").textContent=I18N[lang].webSubmitting;
   updatePreview();
   trackEvent("booking_form_start",{language:lang,channel:"web"});
+  trackEvent("booking_form_submit_attempt",{language:lang,channel:"web",submission_id:payload.submissionId});
   const abortController=new AbortController();
   const timeout=setTimeout(()=>abortController.abort(),12000);
   try{
@@ -901,17 +902,21 @@ async function submitWebForm(){
     const result=await response.json();
     if(result?.ok!==true){
       showWebRecoveryStatus(whatsappUrl(),"webError");
-      trackEvent("booking_form_submit_error",{language:lang,channel:"web",reason:"backend_rejected"});
+      trackEvent("booking_form_submit_error",{language:lang,channel:"web",reason:"backend_rejected",submission_id:payload.submissionId});
       return;
     }
     webSubmissionSucceeded=true;
     $("submitStatus").textContent=I18N[lang].webSentLocked;
-    trackEvent("booking_form_submit_success",{language:lang,channel:"web",duplicate:Boolean(result?.duplicate)});
+    const duplicate=Boolean(result?.duplicate);
+    trackEvent("booking_form_submit_success",{language:lang,channel:"web",duplicate,submission_id:payload.submissionId});
+    if(!duplicate){
+      trackEvent("generate_lead",{language:lang,channel:"web",lead_source:"website_booking_request",submission_id:payload.submissionId});
+    }
   }catch(error){
     const reason=error?.name==="AbortError"?"timeout":"transport_or_response";
     webSubmissionOutcomeUnknownSignature=webSubmissionSignature||webSubmissionSignatureValue();
     showWebRecoveryStatus(whatsappUrl(),"webOutcomeUnknown");
-    trackEvent("booking_form_submit_unknown",{language:lang,channel:"web",reason});
+    trackEvent("booking_form_submit_unknown",{language:lang,channel:"web",reason,submission_id:payload.submissionId});
   }finally{
     clearTimeout(timeout);
     webSubmissionInFlight=false;
