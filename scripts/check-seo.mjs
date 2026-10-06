@@ -251,12 +251,12 @@ for (const [file, html] of Object.entries(indexableHtml)) {
 if (sitemapUrls.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs after Japanese money-page expansion, found ${sitemapUrls.length}`);
 
 const expectedLastmod = {
-  "https://shinyuuan.jp/": "2026-09-29",
+  "https://shinyuuan.jp/": "2026-10-06",
   "https://shinyuuan.jp/ashitsubo-fukurahagi.html": "2026-10-03",
   "https://shinyuuan.jp/bodycare-kamata.html": "2026-10-03",
   "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-10-03",
   "https://shinyuuan.jp/kamata-late-night.html": "2026-10-03",
-  "https://shinyuuan.jp/shop.html": "2026-10-04",
+  "https://shinyuuan.jp/shop.html": "2026-10-06",
   "https://shinyuuan.jp/faq.html": "2026-08-11",
   "https://shinyuuan.jp/en/": "2026-09-29",
   "https://shinyuuan.jp/zh/": "2026-09-29",
