@@ -110,6 +110,23 @@ for (const rel of ["zh/index.html","ko/index.html"]) {
   }
 }
 
+for (const rel of ["shop.html","faq.html","en/index.html","privacy.html"]) {
+  const html = await readFile(path.join(root, rel), "utf8");
+  const mainCount = (html.match(/<main\b/gi) || []).length;
+  const closeCount = (html.match(/<\/main>/gi) || []).length;
+  if (mainCount !== 1 || closeCount !== 1) {
+    report(path.join(root, rel), "page must contain exactly one main landmark");
+  }
+}
+{
+  const faqHtml = await readFile(path.join(root, "faq.html"), "utf8");
+  for (const heading of ["ご予約について","ご来店・お支払いについて","施術について"]) {
+    if (!new RegExp(`<h2[^>]*>\\s*${heading}\\s*<\\/h2>`).test(faqHtml)) {
+      report(path.join(root, "faq.html"), `FAQ group must remain an h2: ${heading}`);
+    }
+  }
+}
+
 const css = await readFile(path.join(root, "assets", "style.css"), "utf8");
 const homeHtml = await readFile(path.join(root, "index.html"), "utf8");
 for (const [course, service] of [["body60","body"],["foot60","foot"],["aroma60","aroma"],["aromaFoot90","set"]]) {
