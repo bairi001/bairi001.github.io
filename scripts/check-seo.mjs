@@ -262,8 +262,10 @@ const expectedLastmod = {
   "https://shinyuuan.jp/en/": "2026-09-29",
   "https://shinyuuan.jp/zh/": "2026-09-29",
   "https://shinyuuan.jp/ko/": "2026-09-29",
-  "https://shinyuuan.jp/en/late-night-massage-kamata.html": "2026-09-29",
-  "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-10-06"
+  "https://shinyuuan.jp/en/late-night-massage-kamata.html": "2026-10-07",
+  "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-10-07",
+  "https://shinyuuan.jp/en/foot-massage-kamata.html": "2026-10-07",
+  "https://shinyuuan.jp/headspa-kamata.html": "2026-10-07"
 };
 for (const [url, expectedDate] of Object.entries(expectedLastmod)) {
   const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
