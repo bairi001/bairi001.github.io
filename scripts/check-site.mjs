@@ -69,6 +69,19 @@ for (const file of allFiles.filter(file => file.endsWith(".js") || file.endsWith
   catch (error) { report(file, `JavaScript syntax error: ${error.message}`); }
 }
 
+const bookingHtml = await readFile(path.join(root, "booking.html"), "utf8");
+for (const marker of [
+  'booking_form_submit_attempt',
+  'submission_id:payload.submissionId',
+  'trackEvent("generate_lead"',
+  'lead_source:"website_booking_request"'
+]) {
+  if (!bookingHtml.includes(marker)) report(path.join(root, "booking.html"), `booking analytics diagnostic missing: ${marker}`);
+}
+if (!/if\(!duplicate\)\{[\s\S]{0,260}?trackEvent\("generate_lead"/.test(bookingHtml)) {
+  report(path.join(root, "booking.html"), "generate_lead must only fire for non-duplicate successful submissions");
+}
+
 const css = await readFile(path.join(root, "assets", "style.css"), "utf8");
 const homeHtml = await readFile(path.join(root, "index.html"), "utf8");
 for (const [course, service] of [["body60","body"],["foot60","foot"],["aroma60","aroma"],["aromaFoot90","set"]]) {
