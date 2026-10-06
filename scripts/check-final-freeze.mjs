@@ -18,7 +18,7 @@ for (const [href, anchor] of [
 }
 
 const body = await read("bodycare-kamata.html");
-requireText("bodycare-kamata.html", body, "<title>蒲田のもみほぐし・整体ボディケア｜駅東口徒歩1分｜身悠晏</title>", "focused bodycare title");
+requireText("bodycare-kamata.html", body, "<title>蒲田のもみほぐし・整体ボディケア｜60分3,980円｜身悠晏</title>", "focused bodycare title");
 requireText("bodycare-kamata.html", body, "<h1>蒲田でもみほぐし・整体ボディケアをお探しの方へ</h1>", "focused bodycare H1");
 requireText("bodycare-kamata.html", body, "蒲田でもみほぐし・整体ボディケア", "focused 蒲田 body-care intent");
 if (/<title>[^<]*マッサージをお探しの方へ[^<]*<\/title>/i.test(body)) {
@@ -67,8 +67,8 @@ const sitemap = await read("sitemap.xml");
 const locs = [...sitemap.matchAll(/<loc>(https:\/\/shinyuuan\.jp\/[^<]*)<\/loc>/g)].map(match => match[1]);
 if (locs.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs, found ${locs.length}`);
 for (const [url, expectedDate] of Object.entries({
-  "https://shinyuuan.jp/menu.html": "2026-10-03",
-  "https://shinyuuan.jp/kamata-late-night.html": "2026-10-03",
+  "https://shinyuuan.jp/menu.html": "2026-10-07",
+  "https://shinyuuan.jp/kamata-late-night.html": "2026-10-07",
   "https://shinyuuan.jp/recruit/contractor.html": "2026-08-18",
   "https://shinyuuan.jp/recruit/full-time.html": "2026-08-18",
   "https://shinyuuan.jp/recruit/part-time.html": "2026-08-18"
