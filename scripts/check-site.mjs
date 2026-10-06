@@ -82,6 +82,34 @@ if (!/if\(!duplicate\)\{[\s\S]{0,260}?trackEvent\("generate_lead"/.test(bookingH
   report(path.join(root, "booking.html"), "generate_lead must only fire for non-duplicate successful submissions");
 }
 
+const exactPlaceId = "ChIJkxCPDhmLGGARywOZywf8Bfw";
+for (const rel of [
+  "index.html",
+  "shop.html",
+  "en/index.html",
+  "zh/index.html",
+  "ko/index.html",
+  "booking.html",
+  "bodycare-kamata.html",
+  "ashitsubo-fukurahagi.html",
+  "aroma-oil-kamata.html",
+  "kamata-late-night.html"
+]) {
+  const html = await readFile(path.join(root, rel), "utf8");
+  if (/google\.com\/maps\/search\/\?api=1/.test(html) && !html.includes(`query_place_id=${exactPlaceId}`)) {
+    report(path.join(root, rel), "Google Maps place link must resolve to the exact Shin Yuu An Place ID");
+  }
+}
+for (const rel of ["zh/index.html","ko/index.html"]) {
+  const html = await readFile(path.join(root, rel), "utf8");
+  if (!/"@type":"HealthAndBeautyBusiness"/.test(html) || !html.includes('"@id":"https://shinyuuan.jp/#business"')) {
+    report(path.join(root, rel), "localized homepage must keep the shared LocalBusiness entity");
+  }
+  if (!html.includes(`"hasMap":"https://www.google.com/maps/search/?api=1&query=Shin+Yuu+An+Kamata&query_place_id=${exactPlaceId}"`)) {
+    report(path.join(root, rel), "localized LocalBusiness hasMap must use the exact Place ID");
+  }
+}
+
 const css = await readFile(path.join(root, "assets", "style.css"), "utf8");
 const homeHtml = await readFile(path.join(root, "index.html"), "utf8");
 for (const [course, service] of [["body60","body"],["foot60","foot"],["aroma60","aroma"],["aromaFoot90","set"]]) {
