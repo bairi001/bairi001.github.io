@@ -147,6 +147,45 @@ for (const marker of homeMoneyLinks) {
   if (!homeHtml.includes(marker)) report(path.join(root, "index.html"), `money-page internal link lost: ${marker}`);
 }
 
+const mobileCtaContracts = [
+  ["bodycare-kamata.html", "ja", "bodycare-kamata", "body"],
+  ["ashitsubo-fukurahagi.html", "ja", "ashitsubo-fukurahagi", "foot"],
+  ["aroma-oil-kamata.html", "ja", "aroma-oil-kamata", "aroma"],
+  ["kamata-late-night.html", "ja", "kamata-late-night", "late"],
+  ["headspa-kamata.html", "ja", "headspa-kamata", "head"],
+  ["en/foot-massage-kamata.html", "en", "en/foot-massage-kamata", "foot"],
+  ["en/late-night-massage-kamata.html", "en", "en/late-night-massage-kamata", "late"],
+  ["en/haneda-kamata-massage.html", "en", "en/haneda-kamata-massage", "general"]
+];
+for (const [fileName, language, origin, service] of mobileCtaContracts) {
+  const html = await readFile(path.join(root, fileName), "utf8");
+  if (!/class="mobile-fixed-cta"/.test(html)) report(path.join(root, fileName), "mobile fixed booking CTA is missing");
+  if (!new RegExp(`origin=${origin.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\const aromaHtml = await readFile(path.join(root, "aroma-oil-kamata.html"), "utf8");")}(?:&amp;|&)`).test(html)) {
+    report(path.join(root, fileName), `mobile booking attribution origin missing: ${origin}`);
+  }
+  if (!new RegExp(`service=${service}(?:&amp;|&)`).test(html)) {
+    report(path.join(root, fileName), `mobile booking service context missing: ${service}`);
+  }
+  if (language === "ja") {
+    for (const marker of ['data-channel="hpb"', 'data-channel="web"', 'data-channel="line"']) {
+      if (!html.includes(marker)) report(path.join(root, fileName), `Japanese mobile channel missing: ${marker}`);
+    }
+  } else {
+    for (const marker of ['data-channel="web"', 'data-channel="whatsapp"', 'data-channel="phone"']) {
+      if (!html.includes(marker)) report(path.join(root, fileName), `English mobile channel missing: ${marker}`);
+    }
+  }
+}
+
+const secondaryMobileJs = await readFile(path.join(root, "assets", "secondary-pages.js"), "utf8");
+for (const marker of [
+  '"/en/haneda-kamata-massage.html": "general"',
+  '"mobile_conversion_click"',
+  'source: "secondary_fixed"'
+]) {
+  if (!secondaryMobileJs.includes(marker)) report(path.join(root, "assets", "secondary-pages.js"), `secondary mobile tracking missing: ${marker}`);
+}
+
 const aromaHtml = await readFile(path.join(root, "aroma-oil-kamata.html"), "utf8");
 const footHtml = await readFile(path.join(root, "ashitsubo-fukurahagi.html"), "utf8");
 const menuHtml = await readFile(path.join(root, "menu.html"), "utf8");
