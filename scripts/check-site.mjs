@@ -160,10 +160,10 @@ const mobileCtaContracts = [
 for (const [fileName, language, origin, service] of mobileCtaContracts) {
   const html = await readFile(path.join(root, fileName), "utf8");
   if (!/class="mobile-fixed-cta"/.test(html)) report(path.join(root, fileName), "mobile fixed booking CTA is missing");
-  if (!new RegExp(`origin=${origin.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\const aromaHtml = await readFile(path.join(root, "aroma-oil-kamata.html"), "utf8");")}(?:&amp;|&)`).test(html)) {
+  if (!html.includes(`origin=${origin}&amp;`) && !html.includes(`origin=${origin}&`)) {
     report(path.join(root, fileName), `mobile booking attribution origin missing: ${origin}`);
   }
-  if (!new RegExp(`service=${service}(?:&amp;|&)`).test(html)) {
+  if (!html.includes(`service=${service}&amp;`) && !html.includes(`service=${service}&`)) {
     report(path.join(root, fileName), `mobile booking service context missing: ${service}`);
   }
   if (language === "ja") {
