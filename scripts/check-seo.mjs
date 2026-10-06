@@ -237,9 +237,9 @@ if (indexableHtml["shop.html"].includes("完整な")) fail("shop.html", "mixed-l
 
 const jpExposureLocks = {
   "index.html": ["蒲田のマッサージ・リラクゼーション", "マッサージ・", "個室仕様の施術スペース", "男性のお客様も歓迎"],
-  "ashitsubo-fukurahagi.html": ["足裏マッサージ", "足つぼ", "ふくらはぎマッサージ", "足裏リフレクソロジー"],
-  "bodycare-kamata.html": ["蒲田でもみほぐし・整体ボディケア", "整体ボディケア", "個室仕様", "エレベーター"],
-  "aroma-oil-kamata.html": ["オイルマッサージ", "アロマリンパ", "アロママッサージ", "個室仕様", "エレベーター"]
+  "ashitsubo-fukurahagi.html": ["足裏マッサージ", "足つぼ", "ふくらはぎマッサージ", "足裏リフレクソロジー", "45分3,980円", "無料の足湯"],
+  "bodycare-kamata.html": ["蒲田でもみほぐし・整体ボディケア", "整体ボディケア", "個室仕様", "エレベーター", "60分3,980円", "施術着は無料"],
+  "aroma-oil-kamata.html": ["オイルマッサージ", "アロマリンパ", "アロママッサージ", "個室仕様", "エレベーター", "60分4,980円", "6種の香り"]
 };
 for (const [file, phrases] of Object.entries(jpExposureLocks)) requireFragments(file, indexableHtml[file], phrases, "Japanese money-keyword coverage");
 
@@ -251,11 +251,12 @@ for (const [file, html] of Object.entries(indexableHtml)) {
 if (sitemapUrls.length !== 19) fail("sitemap.xml", `expected 19 indexable URLs after Japanese money-page expansion, found ${sitemapUrls.length}`);
 
 const expectedLastmod = {
-  "https://shinyuuan.jp/": "2026-10-06",
-  "https://shinyuuan.jp/ashitsubo-fukurahagi.html": "2026-10-03",
-  "https://shinyuuan.jp/bodycare-kamata.html": "2026-10-03",
-  "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-10-03",
-  "https://shinyuuan.jp/kamata-late-night.html": "2026-10-03",
+  "https://shinyuuan.jp/": "2026-10-07",
+  "https://shinyuuan.jp/menu.html": "2026-10-07",
+  "https://shinyuuan.jp/ashitsubo-fukurahagi.html": "2026-10-07",
+  "https://shinyuuan.jp/bodycare-kamata.html": "2026-10-07",
+  "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-10-07",
+  "https://shinyuuan.jp/kamata-late-night.html": "2026-10-07",
   "https://shinyuuan.jp/shop.html": "2026-10-06",
   "https://shinyuuan.jp/faq.html": "2026-08-11",
   "https://shinyuuan.jp/en/": "2026-09-29",
