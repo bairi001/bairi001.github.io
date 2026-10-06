@@ -1,6 +1,6 @@
 # 身悠晏 Analytics 周报与预约归因口径
 
-更新基线：2026-10-04 JST
+更新基线：2026-10-07 JST
 
 ## 1. 数据源优先级
 
@@ -18,6 +18,8 @@
 - `GA4_Acquisition` 只用于已定义来源切片和 Landing Page 分析。
 - 真实 Web 申请：网页预约台账中排除明确测试记录后，按 distinct `submission_id` 计数。
 - `booking_form_submit_success` 是 GA4 事件，不等于真实台账申请数；发生差异时以台账为业务真值并排查埋点。
+- 从 2026-10-07 起，Web 提交增加 `booking_form_submit_attempt`，并在 attempt / success / error / unknown 上附带随机 `submission_id` 事件参数，用于诊断客户端埋点与真实台账差异；不把 `submission_id` 注册为高基数常规报表维度。
+- 非重复成功提交同时发送 Google Analytics 推荐事件 `generate_lead`，`lead_source=website_booking_request`。该事件是诊断/营销事件，不替代真实预约台账。
 
 ## 3. 渠道切片
 
@@ -98,7 +100,9 @@
 - GSC Clicks / Impressions / CTR / Average Position
 - booking_channel_click
 - booking_form_start
+- booking_form_submit_attempt
 - booking_form_submit_success
+- generate_lead
 - 真实 Web submissions
 - requested / confirmed / arrived / cancelled / no_show
 - recorded revenue
