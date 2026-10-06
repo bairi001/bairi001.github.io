@@ -92,13 +92,13 @@ const shopMobileBlock = shopHtml.match(/@media\(max-width:600px\)\{[\s\S]*?\}\s*
 if (!/\.shop-info-table tr\{[^}]*grid-template-columns:1fr!important/i.test(shopMobileBlock)) {
   report(path.join(root, "shop.html"), "mobile shop info table must override the global !important two-column grid");
 }
-if (!/id="keikyu-kamata"/i.test(shopHtml) || !/京急蒲田駅からの道順（徒歩約9分）/.test(shopHtml)) {
+if (!/id="keikyu-kamata"/i.test(shopHtml) || !/京急蒲田駅からの道順（徒歩約10分）/.test(shopHtml)) {
   report(path.join(root, "shop.html"), "Keikyu Kamata walking guidance is missing");
 }
-if (!/<title>蒲田駅東口徒歩1分・京急蒲田駅徒歩約9分｜アクセス・店舗情報｜身悠晏<\/title>/.test(shopHtml)) {
+if (!/<title>蒲田駅東口徒歩1分・京急蒲田駅徒歩約10分｜アクセス・店舗情報｜身悠晏<\/title>/.test(shopHtml)) {
   report(path.join(root, "shop.html"), "Keikyu Kamata access signal is missing from the shop title");
 }
-if (!/<meta\s+name="description"\s+content="[^"]*京急蒲田駅から徒歩約9分[^"]*"/i.test(shopHtml)) {
+if (!/<meta\s+name="description"\s+content="[^"]*京急蒲田駅から徒歩約10分[^"]*"/i.test(shopHtml)) {
   report(path.join(root, "shop.html"), "Keikyu Kamata access signal is missing from the shop meta description");
 }
 if (!/href="shop\.html#keikyu-kamata"[^>]*>京急蒲田駅からのアクセスを見る<\/a>/.test(homeHtml)) {
