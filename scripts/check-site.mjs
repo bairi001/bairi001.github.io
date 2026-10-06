@@ -82,6 +82,14 @@ if (!/if\(!duplicate\)\{[\s\S]{0,260}?trackEvent\("generate_lead"/.test(bookingH
   report(path.join(root, "booking.html"), "generate_lead must only fire for non-duplicate successful submissions");
 }
 
+const officialKlookUrl = "https://www.klook.com/activity/186761-tokyo-kamata-massage-shiatsu-oil-foot-massage-by-shin-yuu-an/";
+for (const rel of ["index.html","shop.html","en/index.html","zh/index.html","ko/index.html"]) {
+  const html = await readFile(path.join(root, rel), "utf8");
+  if (!html.includes(`"sameAs":[`) || !html.includes(officialKlookUrl)) {
+    report(path.join(root, rel), "LocalBusiness sameAs must keep the verified Klook storefront");
+  }
+}
+
 const exactPlaceId = "ChIJkxCPDhmLGGARywOZywf8Bfw";
 for (const rel of [
   "index.html",
