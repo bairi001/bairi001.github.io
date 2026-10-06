@@ -137,12 +137,50 @@ if (!/\.shop-info-table td\{[^}]*overflow-wrap:anywhere/i.test(shopMobileBlock))
   report(path.join(root, "shop.html"), "mobile shop info values must allow long text to wrap");
 }
 
+const homeMoneyLinks = [
+  "足裏45分 3,980円・詳しく見る",
+  "整体60分 3,980円・詳しく見る",
+  "アロマ60分 4,980円・詳しく見る",
+  "深夜2時まで・利用案内を見る"
+];
+for (const marker of homeMoneyLinks) {
+  if (!homeHtml.includes(marker)) report(path.join(root, "index.html"), `money-page internal link lost: ${marker}`);
+}
+
 const aromaHtml = await readFile(path.join(root, "aroma-oil-kamata.html"), "utf8");
 const footHtml = await readFile(path.join(root, "ashitsubo-fukurahagi.html"), "utf8");
 const menuHtml = await readFile(path.join(root, "menu.html"), "utf8");
 const secondaryPagesJs = await readFile(path.join(root, "assets", "secondary-pages.js"), "utf8");
 const bodycareHtml = await readFile(path.join(root, "bodycare-kamata.html"), "utf8");
 const lateNightHtml = await readFile(path.join(root, "kamata-late-night.html"), "utf8");
+
+if (!/<title>蒲田のもみほぐし・整体ボディケア｜60分3,980円｜身悠晏<\/title>/.test(bodycareHtml)
+    || !/course=body60[^"]*origin=bodycare-kamata[^"]*cta=service_hero/.test(bodycareHtml)) {
+  report(path.join(root, "bodycare-kamata.html"), "Body Care final commercial-intent contract is missing");
+}
+if (!/<title>蒲田の足裏マッサージ・足つぼ｜45分3,980円・駅1分｜身悠晏<\/title>/.test(footHtml)
+    || !/course=foot45[^"]*origin=ashitsubo-fukurahagi[^"]*cta=service_hero/.test(footHtml)) {
+  report(path.join(root, "ashitsubo-fukurahagi.html"), "Foot final commercial-intent contract is missing");
+}
+if (!/<title>蒲田のオイルマッサージ・アロマリンパ｜駅東口徒歩1分｜身悠晏<\/title>/.test(aromaHtml)
+    || !/course=aroma60[^"]*origin=aroma-oil-kamata[^"]*cta=service_hero/.test(aromaHtml)) {
+  report(path.join(root, "aroma-oil-kamata.html"), "Aroma successful title or direct booking contract changed");
+}
+if (!/<title>蒲田の深夜マッサージ・リラクゼーション｜翌2時まで｜身悠晏<\/title>/.test(lateNightHtml)
+    || !/今から予約リクエスト/.test(lateNightHtml)
+    || !/当店からの返信をもって予約確定/.test(lateNightHtml)) {
+  report(path.join(root, "kamata-late-night.html"), "Late-night successful SEO asset or request-confirmation contract changed");
+}
+for (const marker of [
+  "代表コースから予約",
+  "整体60分で予約",
+  "足裏45分で予約",
+  "アロマ60分で予約",
+  "cta=top_course"
+]) {
+  if (!menuHtml.includes(marker)) report(path.join(root, "menu.html"), `menu top-course shortcut missing: ${marker}`);
+}
+
 
 for (const [fileName, html] of [
   ["aroma-oil-kamata.html", aromaHtml],
@@ -166,7 +204,7 @@ for (const [fileName, html, anchorId] of [
 }
 
 for (const [fileName, html] of [["aroma-oil-kamata.html", aromaHtml], ["ashitsubo-fukurahagi.html", footHtml]]) {
-  if (!/class="value-actions"[^>]*>[\s\S]{0,500}?href="\/booking\.html\?lang=ja"/i.test(html)) {
+  if (!/class="value-actions"[^>]*>[\s\S]{0,500}?href="\/booking\.html\?lang=ja(?:&amp;[^"]*)?"/i.test(html)) {
     report(path.join(root, fileName), "value module must have a nearby Japanese booking CTA");
   }
   if (!/id="course-prices"/i.test(html) || !/href="#course-prices"/i.test(html)) {
