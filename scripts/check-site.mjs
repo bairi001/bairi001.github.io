@@ -95,6 +95,15 @@ if (!/\.shop-info-table tr\{[^}]*grid-template-columns:1fr!important/i.test(shop
 if (!/id="keikyu-kamata"/i.test(shopHtml) || !/京急蒲田駅からの道順（徒歩約9分）/.test(shopHtml)) {
   report(path.join(root, "shop.html"), "Keikyu Kamata walking guidance is missing");
 }
+if (!/<title>蒲田駅東口徒歩1分・京急蒲田駅徒歩約9分｜アクセス・店舗情報｜身悠晏<\/title>/.test(shopHtml)) {
+  report(path.join(root, "shop.html"), "Keikyu Kamata access signal is missing from the shop title");
+}
+if (!/<meta\s+name="description"\s+content="[^"]*京急蒲田駅から徒歩約9分[^"]*"/i.test(shopHtml)) {
+  report(path.join(root, "shop.html"), "Keikyu Kamata access signal is missing from the shop meta description");
+}
+if (!/href="shop\.html#keikyu-kamata"[^>]*>京急蒲田駅からのアクセスを見る<\/a>/.test(homeHtml)) {
+  report(path.join(root, "index.html"), "homepage must keep a crawlable internal link to Keikyu Kamata access");
+}
 if (!/京急蒲田駅の西口/.test(shopHtml) || !/京急蒲田商店街あすと/.test(shopHtml)) {
   report(path.join(root, "shop.html"), "Keikyu Kamata route must preserve the verified west-exit and Asuto guidance");
 }
