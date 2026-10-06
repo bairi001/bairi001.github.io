@@ -93,7 +93,8 @@ for (const rel of [
   "bodycare-kamata.html",
   "ashitsubo-fukurahagi.html",
   "aroma-oil-kamata.html",
-  "kamata-late-night.html"
+  "kamata-late-night.html",
+  "en/haneda-kamata-massage.html"
 ]) {
   const html = await readFile(path.join(root, rel), "utf8");
   if (/google\.com\/maps\/search\/\?api=1/.test(html) && !html.includes(`query_place_id=${exactPlaceId}`)) {
@@ -220,6 +221,17 @@ for (const [fileName, language, origin, service] of mobileCtaContracts) {
       if (!html.includes(marker)) report(path.join(root, fileName), `English mobile channel missing: ${marker}`);
     }
   }
+}
+
+const hanedaHtml = await readFile(path.join(root, "en/haneda-kamata-massage.html"), "utf8");
+if (!hanedaHtml.includes('src="/assets/img/booking-treatment-waterwood-4k.webp"') ||
+    !hanedaHtml.includes('fetchpriority="high"') ||
+    hanedaHtml.includes('<img src="/assets/img/shop-access.jpg" alt="Kitajima Building access for Shin Yuu An in Kamata" fetchpriority="high">')) {
+  report(path.join(root, "en/haneda-kamata-massage.html"), "Haneda hero must keep the lightweight WebP treatment image");
+}
+if (!hanedaHtml.includes(`query_place_id=${exactPlaceId}`) ||
+    !hanedaHtml.includes(`destination_place_id=${exactPlaceId}`)) {
+  report(path.join(root, "en/haneda-kamata-massage.html"), "Haneda Maps links must resolve to the exact Shin Yuu An Place ID");
 }
 
 const secondaryMobileJs = await readFile(path.join(root, "assets", "secondary-pages.js"), "utf8");
