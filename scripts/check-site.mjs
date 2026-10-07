@@ -150,6 +150,23 @@ for (const rel of ["shop.html","faq.html","en/index.html","privacy.html"]) {
       report(path.join(root, "faq.html"), `FAQ group must remain an h2: ${heading}`);
     }
   }
+  for (const marker of [
+    "足湯は施術時間に含まれますか？",
+    "整体30分で全身を受けられますか？",
+    "無料サービスと有料オプションを教えてください。",
+    "ホテルへの出張・派遣はありますか？",
+    "当日キャンセルまたは無断キャンセルは、コース料金の最大50％",
+    "ご連絡なく10分以上遅れた場合"
+  ]) {
+    if (!faqHtml.includes(marker)) report(path.join(root, "faq.html"), `FAQ business-truth marker missing: ${marker}`);
+  }
+}
+
+for (const rel of ["zh/index.html","ko/index.html"]) {
+  const html = await readFile(path.join(root, rel), "utf8");
+  for (const marker of ['"opens":"00:00"', '"closes":"00:00"', '"validFrom":"2027-01-01"', '"validThrough":"2027-01-01"']) {
+    if (!html.includes(marker)) report(path.join(root, rel), `January 1 closure schema missing: ${marker}`);
+  }
 }
 
 const css = await readFile(path.join(root, "assets", "style.css"), "utf8");
