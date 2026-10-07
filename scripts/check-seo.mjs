@@ -237,9 +237,9 @@ if (indexableHtml["shop.html"].includes("完整な")) fail("shop.html", "mixed-l
 
 const jpExposureLocks = {
   "index.html": ["蒲田のマッサージ・リラクゼーション", "マッサージ・", "個室仕様の施術スペース", "男性のお客様も歓迎"],
-  "ashitsubo-fukurahagi.html": ["足裏マッサージ", "足つぼ", "ふくらはぎマッサージ", "足裏リフレクソロジー", "45分3,980円", "無料の足湯"],
-  "bodycare-kamata.html": ["蒲田でもみほぐし・整体ボディケア", "整体ボディケア", "個室仕様", "エレベーター", "60分3,980円", "施術着は無料"],
-  "aroma-oil-kamata.html": ["オイルマッサージ", "アロマリンパ", "アロママッサージ", "個室仕様", "エレベーター", "60分4,980円", "6種の香り"]
+  "ashitsubo-fukurahagi.html": ["足裏マッサージ", "足つぼ", "ふくらはぎマッサージ", "足裏リフレクソロジー", "45分3,980円", "無料の足湯", "足裏マッサージ・足つぼの口コミを確認できます"],
+  "bodycare-kamata.html": ["蒲田でもみほぐし・整体ボディケア", "整体ボディケア", "個室仕様", "エレベーター", "60分3,980円", "施術着は無料", "整体・もみほぐしの口コミを確認できます"],
+  "aroma-oil-kamata.html": ["オイルマッサージ", "アロマリンパ", "アロママッサージ", "個室仕様", "エレベーター", "60分4,980円", "6種の香り", "アロママッサージ・オイルマッサージの口コミを確認できます"]
 };
 for (const [file, phrases] of Object.entries(jpExposureLocks)) requireFragments(file, indexableHtml[file], phrases, "Japanese money-keyword coverage");
 
