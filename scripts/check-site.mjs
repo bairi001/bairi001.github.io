@@ -90,6 +90,22 @@ for (const rel of ["index.html","shop.html","en/index.html","zh/index.html","ko/
   }
 }
 
+const officialHpbReviewUrl = "https://beauty.hotpepper.jp/kr/slnH000397723/review/";
+for (const [rel, phrases] of Object.entries({
+  "index.html": ["口コミ・外部評価", "Googleの口コミを確認", "HOT PEPPER Beautyの口コミを確認"],
+  "bodycare-kamata.html": ["整体・もみほぐしの口コミを確認できます"],
+  "ashitsubo-fukurahagi.html": ["足裏マッサージ・足つぼの口コミを確認できます"],
+  "aroma-oil-kamata.html": ["アロママッサージ・オイルマッサージの口コミを確認できます"]
+})) {
+  const html = await readFile(path.join(root, rel), "utf8");
+  for (const phrase of phrases) if (!html.includes(phrase)) report(path.join(root, rel), `review proof missing: ${phrase}`);
+  if (!html.includes(officialHpbReviewUrl)) report(path.join(root, rel), "verified HOT PEPPER Beauty review link missing");
+}
+const homeReviewHtml = await readFile(path.join(root, "index.html"), "utf8");
+if (/クチコミより一部引用|原文の一部を引用/.test(homeReviewHtml)) {
+  report(path.join(root, "index.html"), "homepage must link to third-party reviews instead of copying review excerpts");
+}
+
 const exactPlaceId = "ChIJkxCPDhmLGGARywOZywf8Bfw";
 for (const rel of [
   "index.html",
