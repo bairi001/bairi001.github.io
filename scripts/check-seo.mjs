@@ -86,7 +86,7 @@ const logoSvg = await read("assets/logo-square.svg");
 if (!/viewBox=["']0 0 512 512["']/.test(logoSvg) || !logoSvg.includes("身悠晏")) {
   fail("assets/logo-square.svg", "brand logo must remain a square 512-viewBox asset with the brand name");
 }
-for (const file of ["index.html", "shop.html", "en/index.html"]) {
+for (const file of ["index.html", "shop.html", "en/index.html", "zh/index.html", "ko/index.html"]) {
   const html = indexableHtml[file];
   if (!html.includes('"validFrom":"2027-01-01"') || !html.includes('"validThrough":"2027-01-01"')) {
     fail(file, "LocalBusiness structured data is missing January 1 closure override");
@@ -258,10 +258,10 @@ const expectedLastmod = {
   "https://shinyuuan.jp/aroma-oil-kamata.html": "2026-10-07",
   "https://shinyuuan.jp/kamata-late-night.html": "2026-10-07",
   "https://shinyuuan.jp/shop.html": "2026-10-06",
-  "https://shinyuuan.jp/faq.html": "2026-08-11",
+  "https://shinyuuan.jp/faq.html": "2026-10-07",
   "https://shinyuuan.jp/en/": "2026-09-29",
-  "https://shinyuuan.jp/zh/": "2026-09-29",
-  "https://shinyuuan.jp/ko/": "2026-09-29",
+  "https://shinyuuan.jp/zh/": "2026-10-07",
+  "https://shinyuuan.jp/ko/": "2026-10-07",
   "https://shinyuuan.jp/en/late-night-massage-kamata.html": "2026-10-07",
   "https://shinyuuan.jp/en/haneda-kamata-massage.html": "2026-10-07",
   "https://shinyuuan.jp/en/foot-massage-kamata.html": "2026-10-07",
