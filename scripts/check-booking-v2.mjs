@@ -70,12 +70,13 @@ requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("servi
 requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("origin", origin)', "origin parameter propagation");
 
 const bookingHtml = await read("booking.html");
-requireText("booking.html", bookingHtml, '{key:"none",price:0', "no-nomination booking option");
-requireText("booking.html", bookingHtml, '{key:"therapist",price:500', "therapist nomination at ¥500");
-forbidText("booking.html", bookingHtml, '{key:"manager",price:1000', "unavailable manager nomination option");
+forbidText("booking.html", bookingHtml, 'id="nominationOptions"', "staff nomination selector must not appear");
+forbidText("booking.html", bookingHtml, 'name="nomination"', "staff nomination radio controls must not appear");
+forbidText("booking.html", bookingHtml, 'const NOMINATIONS=', "staff nomination choices must not be offered");
+requireText("booking.html", bookingHtml, 'return "none";', "legacy Apps Script booking compatibility");
 const menuHtml = await read("menu.html");
-requireText("menu.html", menuHtml, "<th>スタッフ指名</th><td>500円</td>", "available staff nomination fee");
-forbidText("menu.html", menuHtml, "<th>店長指名</th>", "unavailable manager nomination advertised fee");
+forbidText("menu.html", menuHtml, "<th>スタッフ指名</th>", "unavailable staff nomination fee");
+forbidText("menu.html", menuHtml, "<th>店長指名</th>", "unavailable manager nomination fee");
 requireText("booking.html", bookingHtml, '<script src="assets/booking-mode.js"></script>', "booking-mode runtime include");
 requireText("booking.html", bookingHtml, "FORM_LIVE_TESTED = true", "live-tested web form lock");
 requireText("booking.html", bookingHtml, '<meta name="robots" content="noindex,follow">', "booking page remains noindex");
