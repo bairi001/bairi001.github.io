@@ -20,12 +20,14 @@
         }
         const documentWidth = doc.documentElement.scrollWidth;
         const bodyWidth = doc.body.scrollWidth;
-        const viewportWidth = doc.documentElement.clientWidth;
+        const viewportWidth = win.innerWidth;
+        const contentWidth = doc.documentElement.clientWidth;
         const values = {
           viewportWidth,
+          contentWidth,
           documentWidth,
           bodyWidth,
-          extraWidth:Math.max(documentWidth,bodyWidth)-viewportWidth,
+          extraWidth:Math.max(documentWidth,bodyWidth)-contentWidth,
           noSecondCourse:!doc.getElementById("secondCourse"),
           sameRoomShown:!doc.getElementById("sameRoomSection").hidden,
           dateControl:doc.getElementById("date")?.type === "date",
