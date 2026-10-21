@@ -12,7 +12,7 @@
 <div class="form-section"><div class="field-control"><select id="course"></select></div><p class="arrival-choice-note" data-i18n="arrivalChoiceNote">Aroma note</p></div>
 <div class="form-section date-time-grid"><div><input id="date" type="date"></div><div><select id="time"></select></div><p class="hint" data-i18n="hoursHint"></p><p id="latePhoneHint" hidden><span class="phone-copy"></span><a href="tel:0368746808">call</a></p><p id="sameDayCallHint" hidden><span class="phone-copy"></span><a href="tel:0368746808">call</a></p></div>
 <div id="guestButtons"><button type="button" data-guests="1">1</button><button type="button" data-guests="2">2</button><button type="button" data-guests="3">3</button></div>
-<div id="secondCourseSection" hidden><label><input id="secondCourseDifferent" type="checkbox"><span data-mobile-preview="diff"></span></label><div id="secondCourseChoice" hidden><label data-mobile-preview="label"></label><select id="secondCourse"></select></div></div><details id="extrasSection"><div id="addonsGrid"></div><div id="nominationOptions"></div></details>
+<details id="extrasSection"><div id="addonsGrid"></div><div id="nominationOptions"></div></details>
 <input id="name"><textarea id="note"></textarea>
 <div id="webFields"><input id="email" type="email"><input id="phone"><input id="privacyConsent" type="checkbox"></div>
 <input id="website"><p data-i18n="preview"></p><div id="preview"></div><div id="estimate"></div><button id="submitButton" type="submit"></button><div id="webSubmitMount"></div><div id="submitStatus"></div>
@@ -131,15 +131,12 @@ $("course").value = "body30";
 $("course").dispatchEvent(new Event("change", {bubbles:true}));
 document.documentElement.dataset.previewBodyNoteHidden = String(document.querySelector(".arrival-choice-note").hidden);
 document.querySelector('[data-guests="2"]')?.click();
-$("secondCourseDifferent").checked = true;
-$("secondCourseDifferent").dispatchEvent(new Event("change", {bubbles:true}));
-$("secondCourse").value = "aroma60";
-$("secondCourse").dispatchEvent(new Event("change", {bubbles:true}));
-document.documentElement.dataset.previewSecondVisible = String(!$("secondCourseChoice").hidden);
+document.documentElement.dataset.previewTwoGuests = String(guests === "2");
+document.documentElement.dataset.previewNoSecondField = String(!document.getElementById("secondCourse"));
+document.documentElement.dataset.previewNoteUnchanged = String(webPayload().note.includes("Second input"));
+$("course").value = "aroma60";
+$("course").dispatchEvent(new Event("change", {bubbles:true}));
 document.documentElement.dataset.previewAromaVisible = String(!document.querySelector(".arrival-choice-note").hidden);
-document.documentElement.dataset.previewSecondPayload = webPayload().note.replace(/\n/g,"|");
-document.documentElement.dataset.previewSecondMessage = messageText().replace(/\n/g,"|");
-document.documentElement.dataset.previewSecondSignature = webSubmissionSignatureValue();
 document.documentElement.dataset.previewNoSlots = String(!$("latePhoneHint").hidden);
 document.documentElement.dataset.previewUrgent = String(!$("sameDayCallHint").hidden);
 </script>
