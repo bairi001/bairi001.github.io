@@ -55,6 +55,7 @@ try {
     const html = result.stdout;
     requireText(html, 'data-test-ready="true"', `${language} ready marker`);
     requireText(html, `data-lang="${language}"`, `${language} language state`);
+    requireText(html, 'data-hours-clarified="true"', `${language} initial 23:30 booking limit copy`);
     requireText(html, `data-form-lead="${expectedLead[language]}"`, `${language} V3 form lead`);
     requireText(html, 'data-visible-channels="4"', `${language} four direct booking channels`);
     requireText(html, 'data-channel-list="web|whatsapp|line|phone"', `${language} exact channel list without HotPepper`);
