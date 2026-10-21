@@ -133,6 +133,7 @@ $("secondCourseDifferent").dispatchEvent(new Event("change", {bubbles:true}));
 $("secondCourse").value = "aroma60";
 $("secondCourse").dispatchEvent(new Event("change", {bubbles:true}));
 document.documentElement.dataset.previewSecondVisible = String(!$("secondCourseChoice").hidden);
+document.documentElement.dataset.previewAromaVisible = String(!document.querySelector(".arrival-choice-note").hidden);
 document.documentElement.dataset.previewSecondPayload = webPayload().note.replace(/\n/g,"|");
 document.documentElement.dataset.previewSecondMessage = messageText().replace(/\n/g,"|");
 document.documentElement.dataset.previewSecondSignature = webSubmissionSignatureValue();
