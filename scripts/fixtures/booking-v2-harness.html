@@ -9,7 +9,7 @@
 <header class="form-intro"><h1 data-i18n="formTitle"></h1><p data-i18n="formLead"></p></header>
 <section class="channel-panel"><h2 data-i18n="channelTitle"></h2><div id="channelActions" class="channel-actions"></div></section>
 <form id="bookingForm">
-<div class="form-section"><div class="field-control"><select id="course"></select></div></div>
+<div class="form-section"><div class="field-control"><select id="course"></select></div><p class="arrival-choice-note" data-i18n="arrivalChoiceNote">Aroma note</p></div>
 <div class="form-section date-time-grid"><div><input id="date" type="date"></div><div><select id="time"></select></div><p class="hint" data-i18n="hoursHint"></p><p id="latePhoneHint" hidden><span class="phone-copy"></span><a href="tel:0368746808">call</a></p><p id="sameDayCallHint" hidden><span class="phone-copy"></span><a href="tel:0368746808">call</a></p></div>
 <div id="guestButtons"><button type="button" data-guests="1">1</button><button type="button" data-guests="2">2</button><button type="button" data-guests="3">3</button></div>
 <div id="secondCourseSection" hidden><label><input id="secondCourseDifferent" type="checkbox"><span data-mobile-preview="diff"></span></label><div id="secondCourseChoice" hidden><label data-mobile-preview="label"></label><select id="secondCourse"></select></div></div><details id="extrasSection"><div id="addonsGrid"></div><div id="nominationOptions"></div></details>
@@ -40,7 +40,7 @@ for (const language of ["ja", "en", "zh", "ko"]) {
     selectCourse: "SELECT COURSE", selectTime: "SELECT TIME", optional: "optional", fillAll: "fill",
     estimateSingle: value => String(value), estimateGroup: value => String(value),
     groups: { popular: "Popular", body: "Body", foot: "Foot", aroma: "Aroma" },
-    storyTitle: "story", storyLead: "lead", formTitle: "form", formLead: "formlead", hoursHint: "hours", photoAlt: "photo", msgLabels:{name:"Name"}
+    storyTitle: "story", storyLead: "lead", formTitle: "form", formLead: "formlead", hoursHint: "hours", photoAlt: "photo", arrivalChoiceNote:"Aroma scent note",msgLabels:{name:"Name"}
   };
 }
 let lang = new URLSearchParams(location.search).get("lang") || "ja";
