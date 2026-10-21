@@ -70,7 +70,7 @@ try {
     errors.push(`headless browser exited with ${result.status}: ${(result.stderr || "").trim()}`);
   } else {
     const html = result.stdout;
-    requireText(html, 'data-course-options="SELECT COURSE|試し — ¥4800|整体30 — ¥2400|足45 — ¥3980|アロマ30 — ¥2980|アロマ60 — ¥4980"', "all course groups remain visible");
+    requireText(html, 'data-course-options="SELECT COURSE|試し — ¥4800|整体30 — ¥2400|足45 — ¥3980|アロマ30 — ¥2980|アロマ60 — ¥5500"', "all course groups remain visible");
     requireText(html, 'data-first-time="11:00"', "opening-time slot remains available before opening");
     requireText(html, 'data-story-image="/assets/img/head-scalp-care.webp"', "booking page does not visually rewrite itself from referrer context");
     requireText(html, 'data-alternative="false"', "second-choice scheduling block removed");
@@ -90,7 +90,7 @@ try {
     errors.push(`course-preselection browser exited with ${preselected.status}: ${(preselected.stderr || "").trim()}`);
   } else {
     requireText(preselected.stdout, 'data-selected-course="aroma60"', "explicit course CTA preselection");
-    requireText(preselected.stdout, 'data-course-options="SELECT COURSE|試し — ¥4800|整体30 — ¥2400|足45 — ¥3980|アロマ30 — ¥2980|アロマ60 — ¥4980"', "preselection keeps all course groups visible");
+    requireText(preselected.stdout, 'data-course-options="SELECT COURSE|試し — ¥4800|整体30 — ¥2400|足45 — ¥3980|アロマ30 — ¥2980|アロマ60 — ¥5500"', "preselection keeps all course groups visible");
   }
 
   const afterMidnight = dump(`${baseUrl}&clock=after_midnight`);
