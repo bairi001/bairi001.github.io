@@ -77,6 +77,8 @@ try {
     requireText(html, 'data-payload-note="Second input|origin: aroma-oil-kamata / cta: service_hero / service: aroma"', "web payload human-readable attribution");
     requireText(html, 'data-payload-utm-content="sy_o=aroma-oil-kamata;sy_c=service_hero;sy_s=aroma"', "web payload machine-readable attribution");
     requireText(html, 'data-preview-second-visible="true"', "guest 2 different-course selector visible");
+    requireText(html, 'data-preview-body-note-hidden="true"', "body-only booking hides aroma guidance");
+    requireText(html, 'data-preview-aroma-visible="true"', "aroma guest-two booking shows scent guidance");
     requireText(html, '2人目のコース: アロマ60 (¥5500)', "guest 2 course in stored note / WhatsApp");
     requireText(html, 'data-preview-no-slots="false"', "daytime slots present");
     requireText(html, 'data-preview-urgent="true"', "same-day call shortcut");
