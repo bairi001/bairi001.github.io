@@ -20,6 +20,13 @@ for (const file of ["assets/booking-mode.js", "assets/secondary-pages.js"]) {
 }
 
 const booking = await read("assets/booking-mode.js");
+const preview = await read("assets/booking-mobile-preview.js");
+const previewPath = fileURLToPath(new URL("../assets/booking-mobile-preview.js", import.meta.url));
+const previewSyntax = spawnSync(process.execPath, ["--check",previewPath], {encoding:"utf8"});
+if (previewSyntax.status !== 0) errors.push("preview JS syntax: " + previewSyntax.stderr.trim());
+for (const token of ["secondCourseId", "webSubmissionSignatureValue", "webPayload", "messageText", "latePhoneHint", "sameDayCallHint", "noSlots", "sameRoomHint"]) {
+  requireText("assets/booking-mobile-preview.js",preview,token,"preview enhancement " + token);
+}
 for (const [text, label] of [
   ["const order = [\"web\", \"whatsapp\", \"line\", \"phone\"]", "four always-visible direct booking channels"],
   ["requestedCourse", "explicit course preselection without filtering"],
@@ -70,6 +77,9 @@ requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("servi
 requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("origin", origin)', "origin parameter propagation");
 
 const bookingHtml = await read("booking.html");
+for (const marker of ['id="secondCourseSection"', 'id="secondCourseDifferent"', 'id="secondCourse"', 'id="latePhoneHint"', 'id="sameDayCallHint"', '<script src="assets/booking-mobile-preview.js"></script>']) {
+  requireText("booking.html",bookingHtml,marker,"preview UI element " + marker);
+}
 forbidText("booking.html", bookingHtml, 'id="nominationOptions"', "staff nomination selector must not appear");
 forbidText("booking.html", bookingHtml, 'name="nomination"', "staff nomination radio controls must not appear");
 forbidText("booking.html", bookingHtml, 'const NOMINATIONS=', "staff nomination choices must not be offered");
