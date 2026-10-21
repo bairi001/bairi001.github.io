@@ -34,16 +34,14 @@ jobs:
           <script>
           document.getElementById("demo").addEventListener("load",function(){
             const d=this.contentDocument, w=this.contentWindow;
-            const different=d.getElementById("secondCourseDifferent"), course=d.getElementById("secondCourse");
-            if(!different||!course)return;
-            different.checked=true;
-            different.dispatchEvent(new w.Event("change",{bubbles:true}));
-            course.value="aroma60";
-            course.dispatchEvent(new w.Event("change",{bubbles:true}));
+            const sameRoom=d.getElementById("sameRoom");
+            if(!sameRoom)return;
+            sameRoom.checked=true;
+            sameRoom.dispatchEvent(new w.Event("change",{bubbles:true}));
           });
           </script></body></html>
           HTML
-          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,1900 --virtual-time-budget=3500 --screenshot=booking-mobile-shots/04-japanese-guest2-different-course.png "http://127.0.0.1:18769/booking-mobile-showcase.html"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,1900 --virtual-time-budget=3500 --screenshot=booking-mobile-shots/04-japanese-two-guests-same-room.png "http://127.0.0.1:18769/booking-mobile-showcase.html"
           file booking-mobile-shots/*.png
       - name: Upload private review screenshots
         uses: actions/upload-artifact@v4
