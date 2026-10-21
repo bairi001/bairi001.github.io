@@ -67,6 +67,6 @@
   $("course").addEventListener("change", updateCourseHint);
   $("date").addEventListener("change", updatePhoneHints);
   $("time").addEventListener("change", updatePhoneHints);
-  updateCourseHint();
-  updatePhoneHints();
+  // Apply the copy on initial page load as well as subsequent language switches.
+  applyLanguage(lang);
 })();
