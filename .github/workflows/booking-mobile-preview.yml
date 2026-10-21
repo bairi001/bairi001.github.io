@@ -1,0 +1,35 @@
+name: Booking mobile preview screenshots (no deploy)
+on:
+  push:
+    branches:
+      - preview/booking-mobile-simplify-20261021
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out preview branch
+        uses: actions/checkout@v4
+      - name: Serve local preview only
+        run: |
+          python3 -m http.server 18769 --bind 127.0.0.1 > /tmp/preview-server.log 2>&1 &
+          sleep 2
+          mkdir -p booking-mobile-shots
+      - name: Capture mobile viewport (390x844)
+        run: |
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,844 --virtual-time-budget=3000 --screenshot=booking-mobile-shots/01-japanese-one-guest.png "http://127.0.0.1:18769/booking.html?lang=ja&course=body60"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,844 --virtual-time-budget=3000 --screenshot=booking-mobile-shots/02-japanese-two-guests.png "http://127.0.0.1:18769/booking.html?lang=ja&course=body60&guests=2"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,844 --virtual-time-budget=3000 --screenshot=booking-mobile-shots/03-chinese-two-guests.png "http://127.0.0.1:18769/booking.html?lang=zh&course=aroma60&guests=2"
+          file booking-mobile-shots/*.png
+      - name: Upload private review screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: booking-mobile-preview-390px
+          path: booking-mobile-shots/*.png
+          retention-days: 14
