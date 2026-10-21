@@ -94,9 +94,17 @@
     syncSecond();
     updatePreview();
   };
+  // The aroma scent note is relevant only if either guest selected an aroma course.
+  const updateAromaNote = () => {
+    const note = document.querySelector(".arrival-choice-note");
+    if (!note) return;
+    const isAroma = course => Boolean(course && course.key.toLowerCase().includes("aroma"));
+    note.hidden = !(isAroma(selectedCourse()) || isAroma(secondCourse()));
+  };
   const oldUpdatePreview = updatePreview;
   updatePreview = function() {
     oldUpdatePreview();
+    updateAromaNote();
     const missingSecond = guestTwoDiff() && !secondCourse();
     if (missingSecond) {
       $("submitButton").disabled = true;
