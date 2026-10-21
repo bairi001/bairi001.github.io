@@ -24,8 +24,26 @@ jobs:
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME"
           "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,844 --virtual-time-budget=3000 --screenshot=booking-mobile-shots/01-japanese-one-guest.png "http://127.0.0.1:18769/booking.html?lang=ja&course=body60"
-          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,844 --virtual-time-budget=3000 --screenshot=booking-mobile-shots/02-japanese-two-guests.png "http://127.0.0.1:18769/booking.html?lang=ja&course=body60&guests=2"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,1900 --virtual-time-budget=3000 --screenshot=booking-mobile-shots/02-japanese-two-guests.png "http://127.0.0.1:18769/booking.html?lang=ja&course=body60&guests=2"
           "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,844 --virtual-time-budget=3000 --screenshot=booking-mobile-shots/03-chinese-two-guests.png "http://127.0.0.1:18769/booking.html?lang=zh&course=aroma60&guests=2"
+          # This visual fixture is generated only in the ephemeral runner; it is never committed or published.
+          cat > booking-mobile-showcase.html <<'HTML'
+          <!doctype html><html lang="ja"><head><meta charset="utf-8"><title>Booking Preview Two Guests</title>
+          <style>html,body{margin:0;padding:0;background:white}iframe{width:390px;height:2100px;border:0;display:block}</style></head>
+          <body><iframe id="demo" src="/booking.html?lang=ja&course=body60&guests=2"></iframe>
+          <script>
+          document.getElementById("demo").addEventListener("load",function(){
+            const d=this.contentDocument, w=this.contentWindow;
+            const different=d.getElementById("secondCourseDifferent"), course=d.getElementById("secondCourse");
+            if(!different||!course)return;
+            different.checked=true;
+            different.dispatchEvent(new w.Event("change",{bubbles:true}));
+            course.value="aroma60";
+            course.dispatchEvent(new w.Event("change",{bubbles:true}));
+          });
+          </script></body></html>
+          HTML
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=410,1900 --virtual-time-budget=3500 --screenshot=booking-mobile-shots/04-japanese-guest2-different-course.png "http://127.0.0.1:18769/booking-mobile-showcase.html"
           file booking-mobile-shots/*.png
       - name: Upload private review screenshots
         uses: actions/upload-artifact@v4
