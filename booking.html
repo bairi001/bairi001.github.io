@@ -110,10 +110,6 @@ a{color:inherit;text-decoration:none}
 .form-section{padding:22px 0;border-bottom:1px solid var(--line)}
 .phone-hint{margin-top:11px;padding:12px 14px;background:#F6F8F4;border-left:3px solid var(--sea);font-size:.82rem;line-height:1.65}
 .phone-hint a{display:inline-block;min-height:44px;padding:9px 12px;margin-top:6px;background:var(--sea-deep);color:#fff;font-weight:700;text-decoration:none}
-.second-course-choice{margin-top:12px}
-.second-course-choice select{margin-top:7px}
-.second-course-check{display:flex;align-items:center;gap:10px;min-height:48px;font-size:.88rem;font-weight:600}
-.second-course-check input{flex:none}
 .field-label,.section-label{display:flex;align-items:baseline;gap:9px;margin-bottom:9px;font-family:var(--font-heading);font-size:.94rem;font-weight:700;letter-spacing:.025em}
 .required{color:var(--ink);font-family:var(--font-body);font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--leaf)}
 select,input[type="date"],input[type="text"],input[type="email"],input[type="tel"],textarea{width:100%;min-height:52px;padding:13px 16px;border:1px solid var(--line-strong);border-radius:3px;background:#F6F8F4;font-size:16px;line-height:1.5;box-shadow:none}
@@ -293,6 +289,7 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
         <div class="form-section">
           <label class="field-label" for="course"><span data-i18n="course">Course</span><span class="required" data-i18n="required">required</span></label>
           <div class="field-control"><select id="course" name="course" required></select></div>
+          <p class="hint" data-i18n="courseFlexHint">Select your preferred course as a guide. You may ask about changing it on arrival, depending on available staff and treatment time.</p>
           <p class="arrival-choice-note" data-i18n="arrivalChoiceNote">Choose your aroma scent when you arrive. Paid add-on care is offered after we confirm availability, price and additional time.</p>
         </div>
 
@@ -321,17 +318,9 @@ select:focus,input:focus,textarea:focus{outline:3px solid rgba(23,126,137,.18);b
           <p class="hint" data-i18n="groupHint">For two or more guests, we will confirm the available staff and start times in our reply.</p>
         </fieldset>
 
-        <div class="form-section" id="secondCourseSection" hidden>
-          <label class="addon-item second-course-check" for="secondCourseDifferent"><input id="secondCourseDifferent" type="checkbox"><span data-mobile-preview="diff">Guest 2 would like a different course</span></label>
-          <div class="second-course-choice" id="secondCourseChoice" hidden>
-            <label class="field-label" for="secondCourse" data-mobile-preview="label">Guest 2 course</label>
-            <select id="secondCourse" name="secondCourse" disabled></select>
-          </div>
-        </div>
-
         <div class="form-section" id="sameRoomSection" hidden>
           <label class="addon-item"><input type="checkbox" id="sameRoom" name="sameRoom"><span data-i18n="sameRoomLabel">Request same-room treatment for two</span></label>
-          <p class="hint" data-i18n="sameRoomHint">There is no extra room fee for a same-room request. Same-room treatment can be requested for any course, and the two guests may choose different courses. If you choose different courses, please enter the second guest's course in the Note field. We will check the room, two therapists and start time for your requested courses and time. Same-room use is confirmed only in our reply.</p>
+          <p class="hint" data-i18n="sameRoomHint">There is no extra room fee for a same-room request. Same-room treatment can be requested for any course, and the two guests may choose different courses. If you prefer different courses, you may mention them in Notes (optional). We will check the room, two therapists and start time for your requested courses and time. Same-room use is confirmed only in our reply.</p>
         </div>
 
         <details class="form-section" id="extrasSection">
@@ -536,10 +525,14 @@ Object.assign(I18N.ko,{
   accessTitle:"매장 찾아오는 길",accessAddress:"〒144-0052 도쿄도 오타구 가마타 5-12-3 기타지마 빌딩 4층",accessDirections:"JR 가마타역 동쪽 출구에서 도보 약 1분입니다. 빌딩에 들어간 뒤 안쪽으로 이동하여 입구 내부의 엘리베이터를 타고 4층으로 오세요.",openMap:"Google 지도에서 보기 →",accessPhotoAlt:"기타지마 빌딩 입구와 엘리베이터 안내"
 });
 
-Object.assign(I18N.en,{sameRoomLabel:"Request same-room treatment for two",sameRoomHint:"There is no extra room fee for a same-room request. Same-room treatment can be requested for any course, and the two guests may choose different courses. If you choose different courses, please enter the second guest's course in the Note field. We will check the room, two therapists and start time for your requested courses and time. Same-room use is confirmed only in our reply.",sameRoomPending:"Requested · pending confirmation"});
-Object.assign(I18N.ja,{sameRoomLabel:"2名同室を希望",sameRoomHint:"2名同室に追加料金はかかりません。すべてのコースで同室をリクエストでき、お二人で異なるコースも選べます。異なるコースをご希望の場合は、備考欄に2人目のコースをご記入ください。ご希望のコース・日時に合わせて、お部屋・2名分のスタッフ・開始時間を確認し、当店の返信で可否をお知らせします。予約申請時点では同室は確定しません。",sameRoomPending:"希望あり・未確定"});
-Object.assign(I18N.zh,{sameRoomLabel:"申请双人同室",sameRoomHint:"双人同室不收取额外房间费用。所有课程均可提出同室申请，两位客人也可以选择不同课程；如选择不同课程，请在备注栏填写第2位客人的课程。店铺会根据所选课程、时间、房间和两位工作人员的安排进行确认。提交申请不代表双人同室已经确认，以店铺回复为准。",sameRoomPending:"已提出需求・尚未确认"});
-Object.assign(I18N.ko,{sameRoomLabel:"2인 같은 공간 요청",sameRoomHint:"같은 공간 이용에 별도 객실 추가 요금은 없습니다. 모든 코스에서 같은 공간을 요청할 수 있고, 두 분이 서로 다른 코스를 선택할 수도 있습니다. 다른 코스를 원하시면 비고란에 두 번째 고객님의 코스를 적어 주세요. 선택하신 코스와 시간에 맞춰 공간, 두 명의 테라피스트 및 시작 가능 여부를 확인한 뒤 답변으로 안내합니다. 신청만으로 같은 공간 이용이 확정되지는 않습니다.",sameRoomPending:"요청됨 · 아직 미확정"});
+Object.assign(I18N.en,{sameRoomLabel:"Request same-room treatment for two",sameRoomHint:"There is no extra room fee for a same-room request. Same-room treatment can be requested for any course, and the two guests may choose different courses. If you prefer different courses, you may mention them in Notes (optional). We will check the room, two therapists and start time for your requested courses and time. Same-room use is confirmed only in our reply.",sameRoomPending:"Requested · pending confirmation"});
+Object.assign(I18N.ja,{sameRoomLabel:"2名同室を希望",sameRoomHint:"2名同室に追加料金はかかりません。すべてのコースで同室をリクエストでき、お二人で異なるコースも選べます。別々のコースをご希望の場合は、ご要望欄にご記入いただけます（任意）。ご希望のコース・日時に合わせて、お部屋・2名分のスタッフ・開始時間を確認し、当店の返信で可否をお知らせします。予約申請時点では同室は確定しません。",sameRoomPending:"希望あり・未確定"});
+Object.assign(I18N.zh,{sameRoomLabel:"申请双人同室",sameRoomHint:"双人同室不收取额外房间费用。所有课程均可提出同室申请，两位客人也可以选择不同课程；如需不同套餐，可在备注中说明（选填）。店铺会根据所选课程、时间、房间和两位工作人员的安排进行确认。提交申请不代表双人同室已经确认，以店铺回复为准。",sameRoomPending:"已提出需求・尚未确认"});
+Object.assign(I18N.ko,{sameRoomLabel:"2인 같은 공간 요청",sameRoomHint:"같은 공간 이용에 별도 객실 추가 요금은 없습니다. 모든 코스에서 같은 공간을 요청할 수 있고, 두 분이 서로 다른 코스를 선택할 수도 있습니다. 서로 다른 코스를 원하시면 메모에 남길 수 있습니다(선택 사항). 선택하신 코스와 시간에 맞춰 공간, 두 명의 테라피스트 및 시작 가능 여부를 확인한 뒤 답변으로 안내합니다. 신청만으로 같은 공간 이용이 확정되지는 않습니다.",sameRoomPending:"요청됨 · 아직 미확정"});
+Object.assign(I18N.en,{courseFlexHint:"Choose a preferred course as a guide. You can ask about changing it on arrival, subject to availability and treatment time."});
+Object.assign(I18N.ja,{courseFlexHint:"コースはご希望の目安です。ご来店時の変更もご相談いただけます（空き状況・所要時間によります）。"});
+Object.assign(I18N.zh,{courseFlexHint:"套餐仅作为预约时的参考，到店后可以商量调整（以人员安排和服务时间为准）。"});
+Object.assign(I18N.ko,{courseFlexHint:"코스는 예약 시 참고용입니다. 방문 후 변경은 직원 배정 및 소요 시간에 따라 상담 가능합니다."});
 Object.assign(I18N.en,{arrivalChoiceNote:"Choose your aroma scent when you arrive. Paid add-on care is offered after we confirm availability, price and additional time."});
 Object.assign(I18N.ja,{arrivalChoiceNote:"香りはご来店時にお選びいただけます。有料の追加ケアは、空き状況・料金・所要時間を確認のうえご案内します。"});
 Object.assign(I18N.zh,{arrivalChoiceNote:"香味可在到店后选择。付费追加护理会在确认当天空档、价格及所需时间后为您说明。"});
