@@ -114,6 +114,7 @@ document.querySelector('[data-guests="3"]')?.click();
 document.documentElement.dataset.guests = guests;
 document.documentElement.dataset.testReady = "true";
 document.documentElement.dataset.lang = lang;
+document.documentElement.dataset.hoursClarified = String(I18N[lang].hoursHint.includes("23:30") || I18N[lang].hoursHint.includes("11:30 PM"));
 document.documentElement.dataset.formLead = document.querySelector('[data-i18n="formLead"]')?.textContent || "";
 document.documentElement.dataset.courseOptions = [...$("course").options].map(option => option.textContent).join("|");
 document.documentElement.dataset.selectedCourse = $("course").value;
