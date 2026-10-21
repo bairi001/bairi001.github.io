@@ -21,6 +21,10 @@ for (const file of ["assets/booking-mode.js", "assets/secondary-pages.js"]) {
 
 const booking = await read("assets/booking-mode.js");
 const preview = await read("assets/booking-mobile-preview.js");
+for (const fragment of ["const updateAromaNote = () =>", "isAroma(selectedCourse()) || isAroma(secondCourse())", "note.hidden = !"]) {
+  requireText("assets/booking-mobile-preview.js",preview,fragment,"course-conditional aroma note: " + fragment);
+}
+
 const previewPath = fileURLToPath(new URL("../assets/booking-mobile-preview.js", import.meta.url));
 const previewSyntax = spawnSync(process.execPath, ["--check",previewPath], {encoding:"utf8"});
 if (previewSyntax.status !== 0) errors.push("preview JS syntax: " + previewSyntax.stderr.trim());
@@ -77,6 +81,9 @@ requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("servi
 requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("origin", origin)', "origin parameter propagation");
 
 const bookingHtml = await read("booking.html");
+requireText("booking.html",bookingHtml,'formTitle:"ご希望の日時を選択"',"short Japanese booking heading");
+requireText("booking.html",bookingHtml,'class="addon-item second-course-check"',"matching guest checkboxes");
+forbidText("booking.html",bookingHtml,"03-6874-6808 ↗","external-link arrow must not label phone dial");
 for (const marker of ['id="secondCourseSection"', 'id="secondCourseDifferent"', 'id="secondCourse"', 'id="latePhoneHint"', 'id="sameDayCallHint"', '<script src="assets/booking-mobile-preview.js"></script>']) {
   requireText("booking.html",bookingHtml,marker,"preview UI element " + marker);
 }
