@@ -177,12 +177,12 @@ for (const [file, phrases] of Object.entries(spaceWordingLocks)) requireFragment
 for (const phrase of ["個室仕様の施術スペース","Private treatment spaces","独立护理空间","독립형 관리 공간"]) if (!bookingMode.includes(phrase)) fail("assets/booking-mode.js", `booking runtime space wording missing: ${phrase}`);
 
 const sameRoomLocks = {
-  "index.html": ["2名同室は追加料金なし・全コースでリクエストできます", "お二人で異なるコースも選べます", "予約フォームで「2人目は別のコースを希望」を選び", "予約申請時点では同室は確定しません"],
-  "en/index.html": ["There is no extra room fee for a same-room request", "requested for any course", "may choose different courses", "Guest 2 would like a different course", "Same-room use is confirmed only in our reply"],
+  "index.html": ["2名同室は追加料金なし・全コースでリクエストできます", "コースはご希望の目安です", "備考への記入も可能です（任意）", "予約申請時点では同室は確定しません"],
+  "en/index.html": ["There is no extra room fee for a same-room request", "requested for any course", "selected course is a preference", "You may note different preferences", "Same-room use is confirmed only in our reply"],
   "zh/index.html": ["双人同室不收取额外房间费用", "所有课程均可提出同室申请", "两位客人也可以选择不同课程", "第二位客人选择不同套餐", "以店铺回复为准"],
   "ko/index.html": ["별도 객실 추가 요금은 없습니다", "모든 코스에서 같은 공간을 요청할 수 있고", "서로 다른 코스를 선택할 수도 있습니다", "두 번째 고객은 다른 코스를 원해요", "신청만으로 같은 공간 이용이 확정되지는 않습니다"],
-  "faq.html": ["2名で同じ部屋で施術を受けられますか？", "2名同室に追加料金はかかりません", "すべてのコースで同室をリクエスト", "お二人で異なるコースも選べます", "備考欄に2人目のコース", "予約申請時点では同室は確定しません"],
-  "shop.html": ["2名同室リクエスト可", "2名同室に追加料金はかかりません", "すべてのコースで同室をリクエスト", "お二人で異なるコースも選べます", "備考欄に2人目のコース", "予約申請時点では同室は確定しません"]
+  "faq.html": ["2名で同じ部屋で施術を受けられますか？", "2名同室に追加料金はかかりません", "すべてのコースで同室をリクエスト", "お二人で異なるコースも選べます", "備考への記入も可能です（任意）", "予約申請時点では同室は確定しません"],
+  "shop.html": ["2名同室リクエスト可", "2名同室に追加料金はかかりません", "すべてのコースで同室をリクエスト", "お二人で異なるコースも選べます", "備考への記入も可能です（任意）", "予約申請時点では同室は確定しません"]
 };
 for (const [file, phrases] of Object.entries(sameRoomLocks)) {
   const source = indexableHtml[file] || await read(file);
@@ -193,16 +193,16 @@ const bookingSameRoom = await read("booking.html");
 requireFragments("booking.html", bookingSameRoom, [
   "2名同室に追加料金はかかりません",
   "すべてのコースで同室をリクエストでき",
-  "備考欄に2人目のコース",
+  "ご要望欄にご記入いただけます（任意）",
   "There is no extra room fee for a same-room request",
   "requested for any course",
-  "second guest's course in the Note field",
+  "you may mention them in Notes (optional)",
   "双人同室不收取额外房间费用",
   "所有课程均可提出同室申请",
-  "备注栏填写第2位客人的课程",
+  "可在备注中说明（选填）",
   "별도 객실 추가 요금은 없습니다",
   "모든 코스에서 같은 공간을 요청할 수 있고",
-  "비고란에 두 번째 고객님의 코스"
+  "메모에 남길 수 있습니다(선택 사항)"
 ], "booking same-room business rules");
 
 const routing = await read("assets/language-routing.js");
