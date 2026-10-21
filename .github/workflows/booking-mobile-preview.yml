@@ -50,6 +50,13 @@ jobs:
           "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=900,850 --virtual-time-budget=7000 --dump-dom "http://127.0.0.1:18769/scripts/fixtures/booking-mobile-width-check.html" > /tmp/booking-mobile-check-output.html
           grep -q 'data-mobile-check="pass"' /tmp/booking-mobile-check-output.html || { grep -o 'data-mobile-details="[^"]*"' /tmp/booking-mobile-check-output.html || true; echo "Mobile width check failed"; exit 1; }
           echo "JA at 320/390 and ZH at 390 pixels: layout width and conditional same-room check passed."
+      - name: Test real booking submit with mock transport only
+        run: |
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=900,850 --virtual-time-budget=6500 --dump-dom "http://127.0.0.1:18769/scripts/fixtures/booking-mock-submit.html" > /tmp/booking-mock-submit-result.html
+          grep -q 'data-mock-submit="pass"' /tmp/booking-mock-submit-result.html || { grep -o 'data-mock-details="[^"]*"' /tmp/booking-mock-submit-result.html || true; grep -o 'data-mock-reason="[^"]*"' /tmp/booking-mock-submit-result.html || true; echo "Mock booking submission failed"; exit 1; }
+          echo "Mock transport POST: single course, two guests, same-room and idempotency lock passed."
       - name: Upload private review screenshots
         uses: actions/upload-artifact@v4
         with:
