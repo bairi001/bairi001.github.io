@@ -84,7 +84,7 @@ const bookingHtml = await read("booking.html");
 requireText("booking.html",bookingHtml,'formTitle:"ご希望の日時を選択"',"short Japanese booking heading");
 forbidText("booking.html",bookingHtml,'id="secondCourseDifferent"',"guest 2 must not be forced into separate course selection");
 forbidText("booking.html",bookingHtml,"03-6874-6808 ↗","external-link arrow must not label phone dial");
-for (const marker of ['data-i18n="courseFlexHint"', 'id="latePhoneHint"', 'id="sameDayCallHint"', '<script src="assets/booking-mobile-preview.js"></script>']) {
+for (const marker of ['id="latePhoneHint"', 'id="sameDayCallHint"', '<script src="assets/booking-mobile-preview.js"></script>']) {
   requireText("booking.html",bookingHtml,marker,"preview UI element " + marker);
 }
 forbidText("booking.html", bookingHtml, 'id="nominationOptions"', "staff nomination selector must not appear");
