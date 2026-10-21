@@ -24,16 +24,16 @@ for (const [needle, label] of [
 for (const [needle, label] of [
   ["2名同室に追加料金はかかりません", "Japanese no-room-fee rule"],
   ["すべてのコースで同室をリクエストでき", "Japanese all-course same-room rule"],
-  ["備考欄に2人目のコース", "Japanese different-course note guidance"],
+  ["ご要望欄にご記入いただけます（任意）", "Japanese different-course note guidance"],
   ["There is no extra room fee for a same-room request", "English no-room-fee rule"],
   ["requested for any course", "English all-course same-room rule"],
-  ["second guest's course in the Note field", "English different-course note guidance"],
+  ["you may mention them in Notes (optional)", "English different-course note guidance"],
   ["双人同室不收取额外房间费用", "Chinese no-room-fee rule"],
   ["所有课程均可提出同室申请", "Chinese all-course same-room rule"],
-  ["备注栏填写第2位客人的课程", "Chinese different-course note guidance"],
+  ["可在备注中说明（选填）", "Chinese different-course note guidance"],
   ["별도 객실 추가 요금은 없습니다", "Korean no-room-fee rule"],
   ["모든 코스에서 같은 공간을 요청할 수 있고", "Korean all-course same-room rule"],
-  ["비고란에 두 번째 고객님의 코스", "Korean different-course note guidance"]
+  ["메모에 남길 수 있습니다(선택 사항)", "Korean different-course note guidance"]
 ]) {
   assert.ok(booking.includes(needle), label);
 }
