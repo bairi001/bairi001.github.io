@@ -80,7 +80,7 @@ try {
     requireText(html, '2人目のコース: アロマ60 (¥5500)', "guest 2 course in stored note / WhatsApp");
     requireText(html, 'data-preview-no-slots="false"', "daytime slots present");
     requireText(html, 'data-preview-urgent="true"', "same-day call shortcut");
-    requireText(html, 'secondCourseId&amp;quot;', "guest 2 course in dedupe signature");
+    requireText(html, '&quot;secondCourseId&quot;:&quot;aroma60&quot;', "guest 2 course in dedupe signature");
     requireText(html, "booking_form_start:web", "deduplicated web form start");
     requireText(html, "booking_form_duplicate:", "duplicate submission event");
     const startCount = (html.match(/booking_form_start:web/g) || []).length;
