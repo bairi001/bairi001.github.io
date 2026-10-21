@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><title>Booking mobile width checks</title></head>
+<body style="margin:0">
+  <iframe id="j320" width="320" height="700" style="display:block;border:0" src="/booking.html?lang=ja&course=body60&guests=2" title="JA 320px"></iframe>
+  <iframe id="j390" width="390" height="700" style="display:block;border:0" src="/booking.html?lang=ja&course=body60&guests=2" title="JA 390px"></iframe>
+  <iframe id="z390" width="390" height="700" style="display:block;border:0" src="/booking.html?lang=zh&course=aroma60&guests=2" title="ZH 390px"></iframe>
+  <script>
+    (() => {
+      const targets = [{id:"j320",width:320},{id:"j390",width:390},{id:"z390",width:390}];
+      const outcome = {};
+      function inspect(frame,width) {
+        const doc = frame.contentDocument;
+        const win = frame.contentWindow;
+        doc.querySelector('[data-guests="2"]')?.click();
+        const field = doc.getElementById("sameRoom");
+        if (field) {
+          field.checked = true;
+          field.dispatchEvent(new win.Event("change",{bubbles:true}));
+        }
+        const documentWidth = doc.documentElement.scrollWidth;
+        const bodyWidth = doc.body.scrollWidth;
+        const viewportWidth = doc.documentElement.clientWidth;
+        const values = {
+          viewportWidth,
+          documentWidth,
+          bodyWidth,
+          extraWidth:Math.max(documentWidth,bodyWidth)-viewportWidth,
+          noSecondCourse:!doc.getElementById("secondCourse"),
+          sameRoomShown:!doc.getElementById("sameRoomSection").hidden,
+          dateControl:doc.getElementById("date")?.type === "date",
+          price:doc.getElementById("course").value === "body60" || doc.getElementById("course").value === "aroma60"
+        };
+        return {
+          ...values,
+          pass:viewportWidth===width && values.extraWidth<=0 && values.noSecondCourse &&
+            values.sameRoomShown && values.dateControl && values.price
+        };
+      }
+      targets.forEach(({id,width}) => {
+        const frame=document.getElementById(id);
+        frame.addEventListener("load",()=>{
+          setTimeout(()=>{
+            try { outcome[id]=inspect(frame,width); }
+            catch(error){ outcome[id]={pass:false,error:String(error)}; }
+            if(Object.keys(outcome).length===targets.length){
+              const passed=Object.values(outcome).every(item=>item.pass);
+              document.documentElement.dataset.mobileCheck=passed?"pass":"fail";
+              document.documentElement.dataset.mobileDetails=JSON.stringify(outcome);
+            }
+          },120);
+        },{once:true});
+      });
+    })();
+  </script>
+</body>
+</html>
