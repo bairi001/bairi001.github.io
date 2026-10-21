@@ -18,7 +18,7 @@ for (const [href, anchor] of [
 }
 
 const body = await read("bodycare-kamata.html");
-requireText("bodycare-kamata.html", body, "<title>蒲田のもみほぐし・整体ボディケア｜60分3,980円｜身悠晏</title>", "focused bodycare title");
+requireText("bodycare-kamata.html", body, "<title>蒲田のもみほぐし・整体ボディケア｜60分4,500円｜身悠晏</title>", "focused bodycare title");
 requireText("bodycare-kamata.html", body, "<h1>蒲田でもみほぐし・整体ボディケアをお探しの方へ</h1>", "focused bodycare H1");
 requireText("bodycare-kamata.html", body, "蒲田でもみほぐし・整体ボディケア", "focused 蒲田 body-care intent");
 if (/<title>[^<]*マッサージをお探しの方へ[^<]*<\/title>/i.test(body)) {
