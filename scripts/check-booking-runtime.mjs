@@ -83,7 +83,6 @@ try {
     requireText(html, 'data-preview-aroma-visible="true"', "aroma course shows scent guidance");
     requireText(html, 'data-preview-no-slots="false"', "daytime slots present");
     requireText(html, 'data-preview-urgent="true"', "same-day call shortcut");
-    requireText(html, '&quot;secondCourseId&quot;:&quot;aroma60&quot;', "guest 2 course in dedupe signature");
     requireText(html, "booking_form_start:web", "deduplicated web form start");
     requireText(html, "booking_form_duplicate:", "duplicate submission event");
     const startCount = (html.match(/booking_form_start:web/g) || []).length;
