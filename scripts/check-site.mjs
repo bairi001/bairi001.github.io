@@ -226,8 +226,8 @@ if (!/\.shop-info-table td\{[^}]*overflow-wrap:anywhere/i.test(shopMobileBlock))
 
 const homeMoneyLinks = [
   "足裏45分 3,980円・詳しく見る",
-  "整体60分 3,980円・詳しく見る",
-  "アロマ60分 4,980円・詳しく見る",
+  "整体60分 4,500円・詳しく見る",
+  "アロマ60分 5,500円・詳しく見る",
   "深夜2時まで・利用案内を見る"
 ];
 for (const marker of homeMoneyLinks) {
@@ -291,7 +291,7 @@ const secondaryPagesJs = await readFile(path.join(root, "assets", "secondary-pag
 const bodycareHtml = await readFile(path.join(root, "bodycare-kamata.html"), "utf8");
 const lateNightHtml = await readFile(path.join(root, "kamata-late-night.html"), "utf8");
 
-if (!/<title>蒲田のもみほぐし・整体ボディケア｜60分3,980円｜身悠晏<\/title>/.test(bodycareHtml)
+if (!/<title>蒲田のもみほぐし・整体ボディケア｜60分4,500円｜身悠晏<\/title>/.test(bodycareHtml)
     || !/course=body60[^"]*origin=bodycare-kamata[^"]*cta=service_hero/.test(bodycareHtml)) {
   report(path.join(root, "bodycare-kamata.html"), "Body Care final commercial-intent contract is missing");
 }

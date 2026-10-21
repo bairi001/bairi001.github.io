@@ -37,10 +37,10 @@ function htmlPattern(label, id) {
 }
 
 // Japanese menu: only assert entries that are rendered there.
-expect("menu.html", "整体60分价格不一致", /整体ボディケア[\s\S]{0,1200}?60分<\/th><td>3980円/i);
+expect("menu.html", "整体60分价格不一致", /整体ボディケア[\s\S]{0,1200}?60分<\/th><td>4500円/i);
 expect("menu.html", "足裏45分价格不一致", /足裏リフレクソロジー[\s\S]{0,1200}?45分<\/th><td>3980円/i);
 expect("menu.html", "足裏60分价格不一致", /足裏リフレクソロジー[\s\S]{0,1200}?60分<\/th><td>4980円/i);
-expect("menu.html", "香薰60分价格不一致", /アロマリンパ・オイル[\s\S]{0,1200}?60分<\/th><td>4980円/i);
+expect("menu.html", "香薰60分价格不一致", /アロマリンパ・オイル[\s\S]{0,1200}?60分<\/th><td>5500円/i);
 expect("menu.html", "香薰90分价格不一致", /アロマリンパ・オイル[\s\S]{0,1200}?90分<\/th><td>7800円/i);
 expect("menu.html", "香薰120分价格不一致", /アロマリンパ・オイル[\s\S]{0,1200}?120分<\/th><td>9980円/i);
 expect("menu.html", "香薰＋足裏90分价格不一致", /アロマオイル60分 \+ 足裏30分[\s\S]{0,100}?90分 7800円/i);
@@ -58,8 +58,8 @@ expect("menu.html", "Foot herbal cream option price mismatch", /和漢フット�
 
 expect("menu.html", "Set quick-book link mismatch", /course=trial60&amp;service=set&amp;origin=menu&amp;cta=course_quick[^>]*>おためし60分 4800円を予約/i);
 expect("menu.html", "Foot quick-book link mismatch", /course=foot45&amp;service=foot&amp;origin=menu&amp;cta=course_quick[^>]*>45分 3980円を予約/i);
-expect("menu.html", "Body quick-book link mismatch", /course=body60&amp;service=body&amp;origin=menu&amp;cta=course_quick[^>]*>60分 3980円を予約/i);
-expect("menu.html", "Aroma quick-book link mismatch", /course=aroma60&amp;service=aroma&amp;origin=menu&amp;cta=course_quick[^>]*>60分 4980円を予約/i);
+expect("menu.html", "Body quick-book link mismatch", /course=body60&amp;service=body&amp;origin=menu&amp;cta=course_quick[^>]*>60分 4500円を予約/i);
+expect("menu.html", "Aroma quick-book link mismatch", /course=aroma60&amp;service=aroma&amp;origin=menu&amp;cta=course_quick[^>]*>60分 5500円を予約/i);
 
 expect("aroma-oil-kamata.html", "Aroma scent inclusion missing", /6種の香りから選べるアロマオイル/i);
 expect("aroma-oil-kamata.html", "Aroma herbal oil price mismatch", /漢方オイルへ変更[\s\S]{0,80}?\+500円/i);
@@ -72,20 +72,20 @@ expect("ashitsubo-fukurahagi.html", "Foot herbal cream price mismatch", /和漢�
 for (const [course, price] of [["foot30","2800"],["foot45","3980"],["foot60","4980"]]) {
   expect("ashitsubo-fukurahagi.html", `Foot ${course} direct-book mismatch`, new RegExp(`${price}円[\\s\\S]{0,260}?course=${course}&amp;service=foot`, "i"));
 }
-for (const [course, price] of [["aroma30","2980"],["aroma60","4980"],["aroma90","7800"],["aroma120","9980"]]) {
+for (const [course, price] of [["aroma30","2980"],["aroma60","5500"],["aroma90","7800"],["aroma120","9980"]]) {
   expect("aroma-oil-kamata.html", `Aroma ${course} direct-book mismatch`, new RegExp(`${price}円[\\s\\S]{0,260}?course=${course}&amp;service=aroma`, "i"));
 }
 
 expect("bodycare-kamata.html", "Body Care 30 direct-book price mismatch", /course=body30[\s\S]{0,180}?2400円|30分[\s\S]{0,180}?2400円[\s\S]{0,240}?course=body30/i);
-expect("bodycare-kamata.html", "Body Care 60 direct-book price mismatch", /60分[\s\S]{0,180}?3980円[\s\S]{0,240}?course=body60/i);
+expect("bodycare-kamata.html", "Body Care 60 direct-book price mismatch", /60分[\s\S]{0,180}?4500円[\s\S]{0,240}?course=body60/i);
 expect("bodycare-kamata.html", "Body Care 90 direct-book price mismatch", /90分[\s\S]{0,180}?6800円[\s\S]{0,240}?course=body90/i);
 expect("bodycare-kamata.html", "Body Care 30 scope missing", /30分[\s\S]{0,220}?上半身または下半身/i);
 expect("menu.html", "Menu Body Care 30 scope missing", /id="bodycare"[\s\S]{0,1400}?30分（上半身／下半身どちらか）[\s\S]{0,100}?2400円/i);
 expect("booking.html", "Booking Japanese Body Care 30 scope missing", /key:"body30"[\s\S]{0,320}?ja:"整体ボディケア30分（上半身／下半身どちらか）"/i);
 
-expect("kamata-late-night.html", "Late-night Body Care 60 price mismatch", /整体ボディケア 60分[\s\S]{0,140}?3980円[\s\S]{0,240}?course=body60/i);
+expect("kamata-late-night.html", "Late-night Body Care 60 price mismatch", /整体ボディケア 60分[\s\S]{0,140}?4500円[\s\S]{0,240}?course=body60/i);
 expect("kamata-late-night.html", "Late-night Foot 45 price mismatch", /足裏 45分[\s\S]{0,140}?3980円[\s\S]{0,240}?course=foot45/i);
-expect("kamata-late-night.html", "Late-night Aroma 60 price mismatch", /アロマ 60分[\s\S]{0,140}?4980円[\s\S]{0,240}?course=aroma60/i);
+expect("kamata-late-night.html", "Late-night Aroma 60 price mismatch", /アロマ 60分[\s\S]{0,140}?5500円[\s\S]{0,240}?course=aroma60/i);
 expect("kamata-late-night.html", "Late-night final reception missing", /最終受付23:30/i);
 expect("kamata-late-night.html", "Late-night fee mismatch", /23:00以降[\s\S]{0,120}?800円/i);
 
@@ -111,7 +111,7 @@ expect("booking.html", "Chinese in-store option guidance missing", /香味可在
 expect("booking.html", "Korean in-store option guidance missing", /아로마 향은 방문 후 고르실 수 있습니다\. 유료 추가 케어는 당일 가능 여부, 요금, 추가 소요 시간을 확인한 뒤 안내드립니다\./);
 expect("booking.html", "English Body Care group name missing", /groups:\{popular:"Popular Set Courses",body:"Body Care",foot:"Foot Reflexology",aroma:"Aroma Oil Treatment"\}/);
 expect("booking.html", "Body Care 30 ID/price/duration or label mismatch", /key:"body30",min:30,price:2400,en:"Body Care 30 min \(upper or lower body\)",zh:"身体放松30分钟（上半身／下半身二选一）",ko:"바디 릴랙세이션 30분 \(상반신\/하반신 중 선택\)",ja:"整体ボディケア30分（上半身／下半身どちらか）"/);
-expect("booking.html", "Body Care 60 label mismatch", /key:"body60",min:60,price:3980,en:"Body Care 60 min"/);
+expect("booking.html", "Body Care 60 label mismatch", /key:"body60",min:60,price:4500,en:"Body Care 60 min"/);
 expect("booking.html", "Body Care 90 label mismatch", /key:"body90",min:90,price:6800,en:"Body Care 90 min"/);
 expect("booking.html", "Trial set Body Care label mismatch", /key:"trial60",min:60,price:4800,en:"Trial Course — Body Care 30 \+ Foot 30 \(60 min\)"/);
 expect("booking.html", "Recovery set Body Care label mismatch", /key:"recovery70",min:70,price:5500,en:"Recovery Course — Body Care 30 \+ Foot 30 \+ Head 10 \(70 min\)"/);
