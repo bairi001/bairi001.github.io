@@ -76,6 +76,11 @@ try {
     requireText(html, 'data-alternative="false"', "second-choice scheduling block removed");
     requireText(html, 'data-payload-note="Second input|origin: aroma-oil-kamata / cta: service_hero / service: aroma"', "web payload human-readable attribution");
     requireText(html, 'data-payload-utm-content="sy_o=aroma-oil-kamata;sy_c=service_hero;sy_s=aroma"', "web payload machine-readable attribution");
+    requireText(html, 'data-preview-second-visible="true"', "guest 2 different-course selector visible");
+    requireText(html, '2人目のコース: アロマ60 (¥5500)', "guest 2 course in stored note / WhatsApp");
+    requireText(html, 'data-preview-no-slots="false"', "daytime slots present");
+    requireText(html, 'data-preview-urgent="true"', "same-day call shortcut");
+    requireText(html, 'secondCourseId&amp;quot;', "guest 2 course in dedupe signature");
     requireText(html, "booking_form_start:web", "deduplicated web form start");
     requireText(html, "booking_form_duplicate:", "duplicate submission event");
     const startCount = (html.match(/booking_form_start:web/g) || []).length;
@@ -91,6 +96,15 @@ try {
   } else {
     requireText(preselected.stdout, 'data-selected-course="aroma60"', "explicit course CTA preselection");
     requireText(preselected.stdout, 'data-course-options="SELECT COURSE|試し — ¥4800|整体30 — ¥2400|足45 — ¥3980|アロマ30 — ¥2980|アロマ60 — ¥5500"', "preselection keeps all course groups visible");
+  }
+
+  const afterLastSlot = dump(`${baseUrl}&clock=after_last_slot`);
+  if (afterLastSlot.status !== 0) {
+    errors.push("after-last-slot browser exited with " + afterLastSlot.status);
+  } else {
+    requireText(afterLastSlot.stdout, 'data-preview-no-slots="true"', "call guidance when no same-day slots remain");
+    requireText(afterLastSlot.stdout, 'data-preview-urgent="false"', "urgent hint hidden when call fallback shown");
+    requireText(afterLastSlot.stdout, 'data-first-time=""', "no invented after-23:30 web slots");
   }
 
   const afterMidnight = dump(`${baseUrl}&clock=after_midnight`);
