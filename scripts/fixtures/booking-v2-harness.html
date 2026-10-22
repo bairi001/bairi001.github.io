@@ -9,8 +9,8 @@
 <header class="form-intro"><h1 data-i18n="formTitle"></h1><p data-i18n="formLead"></p></header>
 <section class="channel-panel"><h2 data-i18n="channelTitle"></h2><div id="channelActions" class="channel-actions"></div></section>
 <form id="bookingForm">
-<div class="form-section"><div class="field-control"><select id="course"></select></div></div>
-<div class="form-section date-time-grid"><div><input id="date" type="date"></div><div><select id="time"></select></div><p class="hint" data-i18n="hoursHint"></p></div>
+<div class="form-section"><div class="field-control"><select id="course"></select></div><p class="arrival-choice-note" data-i18n="arrivalChoiceNote">Aroma note</p></div>
+<div class="form-section date-time-grid"><div><input id="date" type="date"></div><div><select id="time"></select></div><p class="hint" data-i18n="hoursHint"></p><p id="latePhoneHint" hidden><span class="phone-copy"></span><a href="tel:0368746808">call</a></p><p id="sameDayCallHint" hidden><span class="phone-copy"></span><a href="tel:0368746808">call</a></p></div>
 <div id="guestButtons"><button type="button" data-guests="1">1</button><button type="button" data-guests="2">2</button><button type="button" data-guests="3">3</button></div>
 <details id="extrasSection"><div id="addonsGrid"></div><div id="nominationOptions"></div></details>
 <input id="name"><textarea id="note"></textarea>
@@ -24,7 +24,9 @@
   const clock = new URLSearchParams(location.search).get("clock");
   const fixed = clock === "after_midnight"
     ? new RealDate("2026-08-17T15:10:00Z")
-    : new RealDate("2026-08-18T00:00:00Z");
+    : clock === "after_last_slot"
+      ? new RealDate("2026-08-18T14:45:00Z")
+      : new RealDate("2026-08-18T00:00:00Z");
   class MockDate extends RealDate {
     constructor(...args) { super(...(args.length ? args : [fixed.getTime()])); }
     static now() { return fixed.getTime(); }
@@ -38,7 +40,7 @@ for (const language of ["ja", "en", "zh", "ko"]) {
     selectCourse: "SELECT COURSE", selectTime: "SELECT TIME", optional: "optional", fillAll: "fill",
     estimateSingle: value => String(value), estimateGroup: value => String(value),
     groups: { popular: "Popular", body: "Body", foot: "Foot", aroma: "Aroma" },
-    storyTitle: "story", storyLead: "lead", formTitle: "form", formLead: "formlead", hoursHint: "hours", photoAlt: "photo"
+    storyTitle: "story", storyLead: "lead", formTitle: "form", formLead: "formlead", hoursHint: "hours", photoAlt: "photo", arrivalChoiceNote:"Aroma scent note",msgLabels:{name:"Name"}
   };
 }
 let lang = new URLSearchParams(location.search).get("lang") || "ja";
@@ -63,6 +65,9 @@ function buildCourses() { $("course").innerHTML = '<option value="">SELECT</opti
 function buildTimes() { $("time").innerHTML = '<option value="">TIME</option>'; }
 function buildExtras() {}
 function buildChannels() {}
+function setGuests(next) { guests = String(next); };
+function currentPrice() { return selectedCourse()?.price || 0; }
+function webSubmissionSignatureValue() { return JSON.stringify({courseId:selectedCourse()?.key||"",guests,note:$("note").value}); }
 function updatePreview() {
   const complete = Boolean(selectedCourse() && $("date").value && $("time").value && $("name").value);
   $("submitButton").disabled = !complete;
@@ -83,7 +88,7 @@ function webPayload() { return { note: $("note").value }; }
 function submitWebForm() { trackEvent("booking_form_start", { channel: "web" }); trackEvent("booking_form_submit_success", { duplicate: false }); }
 function showWhatsAppStatus() {}
 for (const button of document.querySelectorAll("[data-guests]")) {
-  button.addEventListener("click", () => { guests = button.dataset.guests; updatePreview(); });
+  button.addEventListener("click", () => { setGuests(button.dataset.guests); updatePreview(); });
 }
 $("bookingForm").addEventListener("input", () => trackEvent("booking_form_start", { channel: "whatsapp" }), { once: true });
 $("bookingForm").addEventListener("submit", event => { event.preventDefault(); trackEvent("booking_whatsapp_open", { language: lang }); });
@@ -92,6 +97,7 @@ $("date").min = "2026-08-18";
 applyLanguage(lang);
 </script>
 <script src="/assets/booking-mode.js"></script>
+<script src="/assets/booking-mobile-preview.js"></script>
 <script>
 $("name").value = "Runtime Test";
 $("name").dispatchEvent(new Event("input", { bubbles: true }));
@@ -108,6 +114,7 @@ document.querySelector('[data-guests="3"]')?.click();
 document.documentElement.dataset.guests = guests;
 document.documentElement.dataset.testReady = "true";
 document.documentElement.dataset.lang = lang;
+document.documentElement.dataset.hoursClarified = String(I18N[lang].hoursHint.includes("23:30") || I18N[lang].hoursHint.includes("11:30 PM"));
 document.documentElement.dataset.formLead = document.querySelector('[data-i18n="formLead"]')?.textContent || "";
 document.documentElement.dataset.courseOptions = [...$("course").options].map(option => option.textContent).join("|");
 document.documentElement.dataset.selectedCourse = $("course").value;
@@ -121,6 +128,18 @@ const runtimePayload = webPayload();
 document.documentElement.dataset.payloadNote = String(runtimePayload.note || "").replace(/\n/g, "|");
 document.documentElement.dataset.payloadUtmContent = String(runtimePayload.utm_content || "");
 document.documentElement.dataset.events = window.__events.map(event => `${event.name}:${event.parameters.channel || ""}`).join("|");
+$("course").value = "body30";
+$("course").dispatchEvent(new Event("change", {bubbles:true}));
+document.documentElement.dataset.previewBodyNoteHidden = String(document.querySelector(".arrival-choice-note").hidden);
+document.querySelector('[data-guests="2"]')?.click();
+document.documentElement.dataset.previewTwoGuests = String(guests === "2");
+document.documentElement.dataset.previewNoSecondField = String(!document.getElementById("secondCourse"));
+document.documentElement.dataset.previewNoteUnchanged = String(webPayload().note.includes("Second input"));
+$("course").value = "aroma60";
+$("course").dispatchEvent(new Event("change", {bubbles:true}));
+document.documentElement.dataset.previewAromaVisible = String(!document.querySelector(".arrival-choice-note").hidden);
+document.documentElement.dataset.previewNoSlots = String(!$("latePhoneHint").hidden);
+document.documentElement.dataset.previewUrgent = String(!$("sameDayCallHint").hidden);
 </script>
 </body>
 </html>

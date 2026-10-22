@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><title>Booking mock transport validation (no live POST)</title></head>
+<body>
+<iframe id="frame" width="430" height="700" src="/booking.html?lang=ja&course=body60&guests=2&origin=mock-qa&cta=mock-submission" title="Booking form test"></iframe>
+<script>
+  document.getElementById("frame").addEventListener("load", () => {
+    const frame = document.getElementById("frame");
+    const doc = frame.contentDocument;
+    const win = frame.contentWindow;
+    const root = document.documentElement;
+    const seen = [];
+    const fail = error => {
+      root.dataset.mockSubmit = "fail";
+      root.dataset.mockReason = String(error);
+    };
+    try {
+      // The browser may only communicate with this in-memory fake endpoint.
+      win.fetch = async (_url, opts) => {
+        if (opts?.method !== "POST" || !opts?.body) throw new Error("Unexpected transport");
+        const payload = JSON.parse(opts.body);
+        seen.push(payload);
+        return {json:async () => ({ok:true,duplicate:false})};
+      };
+      const input = (id,value,eventName="input") => {
+        const el = doc.getElementById(id);
+        if (!el) throw new Error("Missing " + id);
+        el.value=value;
+        el.dispatchEvent(new win.Event(eventName,{bubbles:true}));
+        return el;
+      };
+      const today=doc.getElementById("date").min;
+      const date=doc.getElementById("date");
+      date.value=today;
+      date.dispatchEvent(new win.Event("change",{bubbles:true}));
+      if (doc.getElementById("time").options.length < 2) {
+        const [yy,mm,dd]=today.split("-").map(Number);
+        const tomorrow = new Date(Date.UTC(yy,mm-1,dd+1)).toISOString().slice(0,10);
+        input("date",tomorrow,"change");
+      }
+      const time = doc.getElementById("time");
+      if (time.options.length < 2) throw new Error("No usable start time");
+      time.value=time.options[1].value;
+      time.dispatchEvent(new win.Event("change",{bubbles:true}));
+      input("course","body60","change");
+      input("name","Preview Only");
+      input("email","preview-smoke@example.invalid");
+      input("note","mock transport test; do not create an actual booking");
+      const room = doc.getElementById("sameRoom");
+      if (!room || room.closest("#sameRoomSection").hidden) throw new Error("Two guest same-room hidden");
+      room.checked = true;
+      room.dispatchEvent(new win.Event("change",{bubbles:true}));
+      const consent=doc.getElementById("privacyConsent");
+      consent.checked=true;
+      consent.dispatchEvent(new win.Event("change",{bubbles:true}));
+      const submit = doc.getElementById("webSubmitButton");
+      if (!submit || submit.disabled) throw new Error("Web submit button unavailable");
+      submit.click();
+      setTimeout(() => {
+        try {
+          const p=seen[0];
+          const ok=seen.length===1 && p?.courseId==="body60" && p?.guests==="2" &&
+            p?.sameRoomRequested === true && p?.note?.includes("mock transport test") &&
+            p?.submissionId && !Object.hasOwn(p,"secondCourseId") &&
+            doc.getElementById("webSubmitButton").disabled;
+          root.dataset.mockSubmit=ok?"pass":"fail";
+          root.dataset.mockDetails=JSON.stringify({
+            attempts:seen.length,course:p?.courseId,guests:p?.guests,
+            sameRoom:p?.sameRoomRequested,submissionId:!!p?.submissionId,
+            note:!!p?.note,noSecondCourse:!Object.hasOwn(p||{},"secondCourseId"),
+            buttonLocked:doc.getElementById("webSubmitButton").disabled
+          });
+        }catch(error){fail(error);}
+      },300);
+    }catch(error){fail(error);}
+  },{once:true});
+</script>
+</body></html>
