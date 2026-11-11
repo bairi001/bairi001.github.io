@@ -115,13 +115,13 @@
   };
   // Presentation only: keep each option's original value for WhatsApp and Apps Script.
   const englishClock = label => {
-    const match = String(label || "").match(/^(\\d{2}):(\\d{2})/);
+    const match = String(label || "").match(/^(\d{2}):(\d{2})/);
     if (!match) return "";
     const hour = Number(match[1]);
     return `${hour % 12 || 12}:${match[2]} ${hour >= 12 ? "PM" : "AM"}`;
   };
   const englishActualDate = (selectedDate, label) => {
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(selectedDate || "")) return null;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(selectedDate || "")) return null;
     const [year, month, day] = selectedDate.split("-").map(Number);
     const date = new Date(Date.UTC(year, month - 1, day));
     if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
