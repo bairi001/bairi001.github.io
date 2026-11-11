@@ -86,7 +86,7 @@ expect("booking.html", "Booking Japanese Body Care 30 scope missing", /key:"body
 expect("kamata-late-night.html", "Late-night Body Care 60 price mismatch", /整体ボディケア 60分[\s\S]{0,140}?4500円[\s\S]{0,240}?course=body60/i);
 expect("kamata-late-night.html", "Late-night Foot 45 price mismatch", /足裏 45分[\s\S]{0,140}?3980円[\s\S]{0,240}?course=foot45/i);
 expect("kamata-late-night.html", "Late-night Aroma 60 price mismatch", /アロマ 60分[\s\S]{0,140}?5500円[\s\S]{0,240}?course=aroma60/i);
-expect("kamata-late-night.html", "Late-night final reception missing", /最終受付23:30/i);
+expect("kamata-late-night.html", "Web booking 23:30 time window disclosure missing", /ウェブ予約ページで選べる希望開始時刻は23:30まで/i);
 expect("kamata-late-night.html", "Late-night fee mismatch", /23:00以降[\s\S]{0,120}?800円/i);
 
 // English page intentionally does not list every course.

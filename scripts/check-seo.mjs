@@ -101,8 +101,8 @@ for (const file of ["zh/index.html", "ko/index.html"]) {
 const multilingualClarityChecks = {
   "zh/index.html": ["支付方式：</strong>现金、信用卡、PayPay", "1月1日休息"],
   "ko/index.html": ["결제 방법:</strong> 현금, 신용카드, PayPay", "1월 1일 휴무"],
-  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Latest start 11:30 PM", "If you have about 30 minutes", "For a morning flight, visit the evening before", "select 2 guests", "mode=whatsapp", "about a 10-minute walk away", "Keikyu Kamata Asuto shopping street", "Walking route from Keikyu Kamata"],
-  "en/late-night-massage-kamata.html": ["in-store salon in Kamata", "do not provide hotel or outcall services", "Latest appointment start time is 11:30 PM"]
+  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Online start-time choices through 11:30 PM", "If you have about 30 minutes", "For a morning flight, visit the evening before", "select 2 guests", "mode=whatsapp", "about a 10-minute walk away", "Keikyu Kamata Asuto shopping street", "Walking route from Keikyu Kamata"],
+  "en/late-night-massage-kamata.html": ["in-store salon in Kamata", "do not provide hotel or outcall services", "The online booking form offers requested start times through 11:30 PM"]
 };
 for (const [file, phrases] of Object.entries(multilingualClarityChecks)) {
   for (const phrase of phrases) {
@@ -113,8 +113,8 @@ for (const [file, phrases] of Object.entries(multilingualClarityChecks)) {
 const lateNightChecks = {
   "menu.html": "深夜料金（23:00以降にご来店の場合）",
   "kamata-late-night.html": "23:00以降にご来店の場合",
-  "en/late-night-massage-kamata.html": "Latest appointment start time is 11:30 PM",
-  "en/haneda-kamata-massage.html": "Latest start 11:30 PM"
+  "en/late-night-massage-kamata.html": "The online booking form offers requested start times through 11:30 PM",
+  "en/haneda-kamata-massage.html": "Online start-time choices through 11:30 PM"
 };
 for (const [file, phrase] of Object.entries(lateNightChecks)) {
   if (!indexableHtml[file]?.includes(phrase)) fail(file, `late-night arrival rule missing: ${phrase}`);
