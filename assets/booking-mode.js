@@ -19,7 +19,7 @@
   Object.assign(I18N.en, {
     formLead: "Choose any course and preferred time, then send your request on this website or via WhatsApp. We will check availability and reply to confirm your appointment.",
     channelTitle: "Choose how to send your booking request",
-    hoursHint: "Hours: 11:00 AM–2:00 AM (closed January 1). Online request start times: through 11:30 PM. For later times, call to ask about availability (not guaranteed). An ¥800 late-night fee applies only if you arrive at or after 11:00 PM. All times are JST.",
+    hoursHint: "Hours: 11:00 AM–2:00 AM (closed January 1). Online request start times: up to 1:00 AM the next day for shorter courses, or earlier for longer courses and add-ons. All requests must finish by 2:00 AM; we confirm availability by reply. An ¥800 late-night fee applies only if you arrive at or after 11:00 PM. All times are JST.",
     trustHours: "Hours",
     trustHoursSub: "11:00 AM–2:00 AM · Closed January 1",
     trustSpace: "Private treatment spaces",
@@ -28,7 +28,7 @@
   Object.assign(I18N.zh, {
     formLead: "可自由选择全部套餐和希望时间，再通过本网页或WhatsApp发送预约申请。收到店铺回复后，预约才正式成立。",
     channelTitle: "选择预约申请的发送方式",
-    hoursHint: "营业时间11:00～次日2:00（1月1日休息）。网页表单可选的希望开始时间截至23:30；更晚时段请电话询问空位（不保证可接待）。仅在实际23:00或之后到店时加收800日元深夜费用。所有时间均为日本标准时间（JST）。",
+    hoursHint: "营业时间11:00～次日2:00（1月1日休息）。网页可按套餐及附加项目时长选择最晚至次日01:00的开始时段，须在02:00前结束；实际空位以店铺回复为准。仅在实际23:00或之后到店时加收800日元深夜费用。所有时间均为日本标准时间（JST）。",
     trustHours: "营业时间",
     trustHoursSub: "11:00－次日2:00 · 1月1日休息",
     trustSpace: "独立护理空间",
@@ -37,7 +37,7 @@
   Object.assign(I18N.ja, {
     formLead: "すべてのコースから自由に選び、ご希望日時を入力して、ウェブまたはWhatsAppから予約リクエストを送信できます。空き状況を確認後、当店からの返信をもって予約確定となります。",
     channelTitle: "予約リクエストの送信方法を選ぶ",
-    hoursHint: "営業時間11:00〜翌2:00（1月1日休み）。ウェブで選べる希望開始時刻は23:30までです。それ以降はお電話で空き状況をご確認ください（ご案内は保証できません）。23:00以降に実際にご来店の場合のみ深夜料金800円。すべて日本標準時（JST）です。",
+    hoursHint: "営業時間11:00〜翌2:00（1月1日休み）。ウェブではコース・追加オプションの所要時間に応じて翌1:00開始まで選べます。施術は翌2:00までに終了し、ご案内は当店の返信で確定します。23:00以降に実際にご来店の場合のみ深夜料金800円。すべて日本標準時（JST）です。",
     trustHours: "営業時間",
     trustHoursSub: "11:00〜翌2:00 · 1月1日休み",
     trustSpace: "個室仕様の施術スペース",
@@ -46,7 +46,7 @@
   Object.assign(I18N.ko, {
     formLead: "모든 코스에서 자유롭게 선택하고 희망 시간을 입력한 뒤 웹페이지 또는 WhatsApp으로 예약 신청을 보낼 수 있습니다. 매장의 답변을 받은 뒤 예약이 확정됩니다.",
     channelTitle: "예약 신청을 보낼 방법을 선택하세요",
-    hoursHint: "영업시간은 11:00~다음 날 2:00이며 1월 1일은 휴무입니다. 웹 신청서에서 선택할 수 있는 희망 시작 시간은 23:30까지입니다. 이후 시간은 전화로 가능 여부를 문의해 주세요(예약 보장 불가). 실제 23시 이후 도착 시에만 심야 요금 800엔이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다.",
+    hoursHint: "영업시간은 11:00~다음 날 2:00이며 1월 1일은 휴무입니다. 웹 신청서에서는 코스와 추가 옵션 시간에 따라 다음 날 오전 1시 시작까지 선택할 수 있습니다. 시술은 오전 2시 전에 끝나야 하며, 매장의 답변으로 예약이 확정됩니다. 실제 23시 이후 도착 시에만 심야 요금 800엔이 추가됩니다. 모든 시간은 일본 표준시(JST)입니다.",
     trustHours: "영업시간",
     trustHoursSub: "11:00~다음 날 2:00 · 1월 1일 휴무",
     trustSpace: "독립형 관리 공간",
@@ -80,6 +80,15 @@
     };
   };
   const roundUp = (value, step) => Math.ceil(value / step) * step;
+  // Appointment requests must fit before closing at 26:00 JST; the salon still confirms availability.
+  const closingMinutes = 26 * 60;
+  const requestedTreatmentMinutes = () =>
+    (selectedCourse()?.min || 30) + selectedAddons().reduce((total, addon) => total + addon.min, 0);
+  const lateNightSlots = () => [
+    { minutes: 1440, label: "00:00 (next day)" },
+    { minutes: 1470, label: "00:30 (next day)" },
+    { minutes: 1500, label: "01:00 (next day)" }
+  ];
   const baseTimes = () => {
     const times = [];
     for (let hour = 11; hour <= 23; hour += 1) {
@@ -87,7 +96,8 @@
         times.push({ minutes: hour * 60 + minute, label: `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}` });
       }
     }
-    return times;
+    return [...times, ...lateNightSlots()]
+      .filter(item => item.minutes + requestedTreatmentMinutes() <= closingMinutes);
   };
   const availableTimesFor = dateValue => {
     const now = tokyoParts();
@@ -95,7 +105,16 @@
     if (dateValue < now.date) return [];
     if (dateValue > now.date) return baseTimes();
     const earliest = roundUp(now.minutes + 1, 30);
-    return baseTimes().filter(item => item.minutes >= earliest);
+    // After midnight, today 00:30/01:00 belong to the current calendar day.
+    // The same date also offers next-day late slots, explicitly marked "next day".
+    const tonight = now.minutes < 120 ? [
+      { minutes: 0, label: "00:00 (today)" },
+      { minutes: 30, label: "00:30 (today)" },
+      { minutes: 60, label: "01:00 (today)" }
+    ].filter(item =>
+      item.minutes >= earliest && item.minutes + requestedTreatmentMinutes() <= 120
+    ) : [];
+    return [...tonight, ...baseTimes().filter(item => item.minutes >= earliest)];
   };
   const fillTimeSelect = (select, dateValue, placeholder) => {
     if (!select) return;
@@ -330,7 +349,8 @@
     buildTimes();
     updatePreview();
   });
-  $("course")?.addEventListener("change", updatePreview);
+  $("course")?.addEventListener("change", () => { buildTimes(); updatePreview(); });
+  $("extrasSection")?.addEventListener("change", () => { buildTimes(); updatePreview(); });
   $("bookingForm").addEventListener("submit", event => {
     if (bookingMode !== "web") return;
     event.preventDefault();
