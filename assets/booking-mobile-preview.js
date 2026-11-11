@@ -13,7 +13,7 @@
     en: {
       noSlots: "There are no selectable web booking times left today. Please call to check whether a later visit can be arranged.",
       urgent: "Need to visit today? Call to check availability.",
-      hours: "The last requested start time is 1:00 AM the next day (25:00) for all courses, subject to our confirmation. Hours: 11 AM–2 AM (closed January 1). An ¥800 late-night fee applies if you actually arrive at or after 11 PM. All times are JST.",
+      hours: "Hours: 11 AM–2 AM · Latest requested start: 1 AM (next day)\nJapan time (JST) · Confirmation by reply · ¥800/person for arrivals from 11 PM",
       room: "There is no extra charge for requesting the same room. You can mention different course preferences in Notes (optional). Room, staff and time are subject to our confirmation."
     },
     zh: {
@@ -59,7 +59,10 @@
     I18N[lang].sameRoomHint = copy[lang].room;
     const hours = document.querySelector('[data-i18n="hoursHint"]');
     const room = document.querySelector('[data-i18n="sameRoomHint"]');
-    if (hours) hours.textContent = copy[lang].hours;
+    if (hours) {
+      hours.textContent = copy[lang].hours;
+      hours.style.whiteSpace = lang === "en" ? "pre-line" : "";
+    }
     if (room) room.textContent = copy[lang].room;
     updateCourseHint();
     updatePhoneHints();
