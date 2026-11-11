@@ -65,6 +65,19 @@ try {
     requireText(html, 'data-guests="3"', `${language} multi-guest interaction`);
   }
 
+  const english = dump(`${rootUrl}&lang=en`);
+  if (english.status !== 0) {
+    errors.push(`English date display browser exited with ${english.status}`);
+  } else {
+    requireText(english.stdout, 'data-first-time="11:00 AM"', "English daytime options use AM/PM");
+    requireText(english.stdout, 'data-noon-display="12:00 PM"', "English noon displays PM");
+    requireText(english.stdout, 'data-night-display="1:00 AM · Aug 19 (next day)"', "English next-day option shows the actual date");
+    requireText(english.stdout, 'data-night-submitted-value="1500|01:00 (next day)"', "English visible label does not change Apps Script payload");
+    requireText(english.stdout, 'data-night-summary="Wednesday, August 19, 2026 at 1:00 AM (JST)"', "English summary shows real next-day date");
+    requireText(english.stdout, 'data-rollover-display="1:00 AM · Jan 1 (next day)"', "Dec 31 dropdown rolls into January 1");
+    requireText(english.stdout, 'data-rollover-summary="Friday, January 1, 2027 at 1:00 AM (JST)"', "December-to-January full-date summary");
+  }
+
   const baseUrl = `${rootUrl}&lang=ja`;
   const result = dump(baseUrl);
   if (result.status !== 0) {
@@ -119,6 +132,14 @@ try {
     requireText(afterMidnight.stdout, 'data-first-time="00:30"', "00:10 JST can request current-calendar 00:30");
     requireText(afterMidnight.stdout, 'data-first-value="30|00:30"', "backend accepts current-calendar HH:MM without next-day suffix");
     requireText(afterMidnight.stdout, 'data-last-time="01:00 (next day)"', "00:10 JST also offers next day 25:00");
+  }
+  const englishAfterMidnight = dump(`${rootUrl}&lang=en&clock=after_midnight`);
+  if (englishAfterMidnight.status !== 0) {
+    errors.push(`English after-midnight browser exited with ${englishAfterMidnight.status}`);
+  } else {
+    requireText(englishAfterMidnight.stdout, 'data-first-time="12:30 AM · Aug 18"', "current-day early-morning shows actual date");
+    requireText(englishAfterMidnight.stdout, 'data-first-value="30|00:30"', "current-day midnight backend time remains unchanged");
+    requireText(englishAfterMidnight.stdout, 'data-night-display="1:00 AM · Aug 19 (next day)"', "next-day late booking remains distinct");
   }
 } finally {
   server.kill("SIGTERM");
