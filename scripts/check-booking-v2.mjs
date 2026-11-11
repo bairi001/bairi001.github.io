@@ -44,7 +44,7 @@ for (const [text, label] of [
   ["service: ${bookingContext.service}", "human-readable service attribution fallback"],
   ["booking_form_duplicate", "duplicate submission analytics separation"],
   ["roundUp", "elapsed-time-only same-day slot filtering"],
-  ["最終受付は23:30です", "23:30 final reception wording"],
+  ["ウェブで選べる希望開始時刻は23:30までです", "Web-only 23:30 start-time wording"],
   ["23:00以降に実際にご来店の場合のみ深夜料金800円", "arrival-based late-night fee wording"],
   ["originalTrackEvent(\"booking_form_duplicate\", eventParameters);\n      return;", "duplicate event early return"]
 ]) requireText("assets/booking-mode.js", booking, text, label);
