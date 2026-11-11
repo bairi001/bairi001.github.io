@@ -113,12 +113,50 @@
     }
     return baseTimes().filter(item => item.minutes >= earliest);
   };
+  // Presentation only: keep each option's original value for WhatsApp and Apps Script.
+  const englishClock = label => {
+    const match = String(label || "").match(/^(\d{2}):(\d{2})/);
+    if (!match) return "";
+    const hour = Number(match[1]);
+    return `${hour % 12 || 12}:${match[2]} ${hour >= 12 ? "PM" : "AM"}`;
+  };
+  const englishActualDate = (selectedDate, label) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(selectedDate || "")) return null;
+    const [year, month, day] = selectedDate.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
+    if (String(label).includes("(next day)")) date.setUTCDate(date.getUTCDate() + 1);
+    return date;
+  };
+  const englishOptionLabel = (label, selectedDate) => {
+    const clock = englishClock(label);
+    if (!clock) return label;
+    const earlyMorning = /^(?:00|01):/.test(label);
+    const date = earlyMorning ? englishActualDate(selectedDate, label) : null;
+    if (!date) return clock + (label.includes("(next day)") ? " (next day)" : "");
+    const month = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short" }).format(date);
+    return `${clock} · ${month} ${date.getUTCDate()}${label.includes("(next day)") ? " (next day)" : ""}`;
+  };
+  const englishSelectedStart = () => {
+    const dateValue = $("date")?.value;
+    const raw = $("time")?.value || "";
+    const label = raw.split("|")[1] || "";
+    const date = englishActualDate(dateValue, label);
+    const clock = englishClock(label);
+    if (!date || !clock) return null;
+    const fullDate = new Intl.DateTimeFormat("en-US", {
+      timeZone: "UTC", weekday: "long", year: "numeric", month: "long", day: "numeric"
+    }).format(date);
+    return { date: fullDate, time: clock, summary: `${fullDate} at ${clock} (JST)` };
+  };
+  window.syaBookingEnglishStart = englishSelectedStart;
+
   const fillTimeSelect = (select, dateValue, placeholder) => {
     if (!select) return;
     const current = select.value;
     const available = availableTimesFor(dateValue);
     select.innerHTML = `<option value="">${placeholder}</option>` + available.map(item =>
-      `<option value="${item.minutes}|${item.label}">${item.label}</option>`
+      `<option value="${item.minutes}|${item.label}">${lang === "en" ? englishOptionLabel(item.label, dateValue) : item.label}</option>`
     ).join("");
     select.disabled = false;
     if (current && [...select.options].some(option => option.value === current)) select.value = current;

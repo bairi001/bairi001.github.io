@@ -83,6 +83,18 @@ requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("servi
 requireText("assets/secondary-pages.js", secondary, 'url.searchParams.set("origin", origin)', "origin parameter propagation");
 
 const bookingHtml = await read("booking.html");
+for (const [file, source] of [["booking.html", bookingHtml], ["assets/booking-mobile-preview.js", preview]]) {
+  requireText(file, source, "Hours: 11 AM–2 AM · Latest requested start: 1 AM (next day)", "concise English hours headline");
+  requireText(file, source, "Japan time (JST) · Confirmation by reply · ¥800/person for arrivals from 11 PM", "concise English fee and confirmation copy");
+}
+requireText("booking.html", bookingHtml, 'id="enSelectedStart"', "English full-date selection confirmation");
+requireText("booking.html", bookingHtml, 'window.syaBookingEnglishStart()', "English preview uses the actual date");
+requireText("booking.html", bookingHtml, 'time:timeLabel().slice(0,40)', "original Apps Script time payload preserved");
+requireText("assets/booking-mode.js", booking, 'window.syaBookingEnglishStart = englishSelectedStart', "selected start date formatter");
+requireText("assets/booking-mode.js", booking, 'lang === "en" ? englishOptionLabel(item.label, dateValue) : item.label', "English-only display formatting");
+requireText("assets/booking-mode.js", booking, '<option value="${item.minutes}|${item.label}">', "unchanged time submission value");
+requireText("assets/booking-mobile-preview.js", preview, 'hours.style.whiteSpace = lang === "en" ? "pre-line" : ""', "English two-line display only");
+
 requireText("booking.html",bookingHtml,'formTitle:"ご希望の日時を選択"',"short Japanese booking heading");
 forbidText("booking.html",bookingHtml,'id="secondCourseDifferent"',"guest 2 must not be forced into separate course selection");
 forbidText("booking.html",bookingHtml,"03-6874-6808 ↗","external-link arrow must not label phone dial");
