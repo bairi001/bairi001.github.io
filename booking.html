@@ -677,7 +677,7 @@ function applyLanguage(next,{persist=false}={}){
   document.querySelectorAll("[data-i18n]").forEach(el=>{const value=I18N[lang][el.dataset.i18n];if(typeof value==="string")el.innerHTML=value});
   document.querySelectorAll("[data-i18n-html]").forEach(el=>{const value=I18N[lang][el.dataset.i18nHtml];if(typeof value==="string")el.innerHTML=value});
   document.querySelectorAll("[data-alt-key]").forEach(el=>{el.alt=I18N[lang][el.dataset.altKey]});
-  document.querySelectorAll("[data-lang]").forEach(button=>{const active=button.dataset.lang===lang;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active))});
+  document.querySelectorAll(".language-switch [data-lang]").forEach(button=>{const active=button.dataset.lang===lang;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active))});
   $("jaHpbBanner").hidden=lang!=="ja";
   $("name").placeholder=I18N[lang].namePh;
   $("note").placeholder=I18N[lang].notePh;
@@ -912,7 +912,7 @@ async function submitWebForm(){
   }
 }
 
-document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>{
+document.querySelectorAll(".language-switch [data-lang]").forEach(button=>button.addEventListener("click",()=>{
   const previous=lang;
   applyLanguage(button.dataset.lang,{persist:true});
   trackEvent("language_switch",{from_language:previous,to_language:lang,source:"booking"});
