@@ -116,6 +116,7 @@ try {
     errors.push(`after-midnight browser exited with ${afterMidnight.status}: ${(afterMidnight.stderr || "").trim()}`);
   } else {
     requireText(afterMidnight.stdout, 'data-first-time="00:30 (today)"', "00:10 JST: current-calendar 00:30 does not get misdated as tomorrow");
+    requireText(afterMidnight.stdout, 'data-first-value="30|00:30"', "00:10 JST backend payload uses accepted HH:MM without a today suffix");
   }
   for (const [scenario, expected] of [
     ["short60", "00:00 (next day)|00:30 (next day)|01:00 (next day)"],
