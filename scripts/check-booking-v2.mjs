@@ -44,7 +44,11 @@ for (const [text, label] of [
   ["service: ${bookingContext.service}", "human-readable service attribution fallback"],
   ["booking_form_duplicate", "duplicate submission analytics separation"],
   ["roundUp", "elapsed-time-only same-day slot filtering"],
-  ["ウェブで選べる希望開始時刻は23:30までです", "Web-only 23:30 start-time wording"],
+  ["currentDayEarlyTimes", "after-midnight current-calendar slots"],
+  ["00:00 (next day)", "24:00 next-day booking request"],
+  ["00:30 (next day)", "24:30 next-day booking request"],
+  ["01:00 (next day)", "25:00 next-day booking request"],
+  ["全コースの最終希望開始時刻は翌1:00（25:00）です", "All-course 25:00 final requested start wording"],
   ["23:00以降に実際にご来店の場合のみ深夜料金800円", "arrival-based late-night fee wording"],
   ["originalTrackEvent(\"booking_form_duplicate\", eventParameters);\n      return;", "duplicate event early return"]
 ]) requireText("assets/booking-mode.js", booking, text, label);
@@ -61,10 +65,8 @@ for (const [text, label] of [
   ["channelHpb", "HotPepper booking-page channel"],
   ["booking-v2-other-channels", "collapsed secondary booking channels"],
   ["preferred = (lang ===", "language-specific channel hiding"],
-  ["currentDayEarlyTimes", "after-midnight booking slots"],
-  ["00:00 (next day)", "next-day midnight booking slot"],
-  ["00:30 (next day)", "next-day 00:30 booking slot"],
-  ["01:00 (next day)", "next-day 01:00 booking slot"]
+  ["closingMinutes", "no per-course closing-time restriction"],
+  ["requestedTreatmentMinutes", "no per-course length filtering"]
 ]) forbidText("assets/booking-mode.js", booking, text, label);
 
 const secondary = await read("assets/secondary-pages.js");
