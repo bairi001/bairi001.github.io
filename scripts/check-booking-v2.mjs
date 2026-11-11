@@ -49,7 +49,7 @@ for (const [text, label] of [
   ["00:00 (next day)", "next-day midnight request"],
   ["00:30 (today)", "after-midnight same-day request"],
   ["01:00 (next day)", "25:00 short-course request"],
-  ["ウェブではコース・追加オプションの時間に応じて翌1:00開始まで選べます", "Late-night course-fit time wording"],
+  ["ウェブではコース・追加オプションの所要時間に応じて翌1:00開始まで選べます", "Late-night course-fit time wording"],
   ["23:00以降に実際にご来店の場合のみ深夜料金800円", "arrival-based late-night fee wording"],
   ["originalTrackEvent(\"booking_form_duplicate\", eventParameters);\n      return;", "duplicate event early return"]
 ]) requireText("assets/booking-mode.js", booking, text, label);
