@@ -55,7 +55,7 @@ try {
     const html = result.stdout;
     requireText(html, 'data-test-ready="true"', `${language} ready marker`);
     requireText(html, `data-lang="${language}"`, `${language} language state`);
-    requireText(html, 'data-hours-clarified="true"', `${language} initial 23:30 booking limit copy`);
+    requireText(html, 'data-hours-clarified="true"', `${language} conditional 25:00 booking time guidance`);
     requireText(html, `data-form-lead="${expectedLead[language]}"`, `${language} V3 form lead`);
     requireText(html, 'data-visible-channels="4"', `${language} four direct booking channels`);
     requireText(html, 'data-channel-list="web|whatsapp|line|phone"', `${language} exact channel list without HotPepper`);
@@ -105,16 +105,34 @@ try {
   if (afterLastSlot.status !== 0) {
     errors.push("after-last-slot browser exited with " + afterLastSlot.status);
   } else {
-    requireText(afterLastSlot.stdout, 'data-preview-no-slots="true"', "call guidance when no same-day slots remain");
-    requireText(afterLastSlot.stdout, 'data-preview-urgent="false"', "urgent hint hidden when call fallback shown");
-    requireText(afterLastSlot.stdout, 'data-first-time=""', "no invented after-23:30 web slots");
+    requireText(afterLastSlot.stdout, 'data-preview-no-slots="false"', "overnight web requests remain possible at 23:45 JST");
+    requireText(afterLastSlot.stdout, 'data-preview-urgent="true"', "same-day call guidance remains supplemental");
+    requireText(afterLastSlot.stdout, 'data-first-time="00:00 (next day)"', "first after-midnight request after 23:45");
+    requireText(afterLastSlot.stdout, 'data-night-slots="00:00 (next day)|00:30 (next day)|01:00 (next day)"', "30-minute requests may start through 25:00");
   }
 
   const afterMidnight = dump(`${baseUrl}&clock=after_midnight`);
   if (afterMidnight.status !== 0) {
     errors.push(`after-midnight browser exited with ${afterMidnight.status}: ${(afterMidnight.stderr || "").trim()}`);
   } else {
-    requireText(afterMidnight.stdout, 'data-first-time="11:00"', "after midnight, the next selectable slot starts from 11:00 because final reception is 23:30");
+    requireText(afterMidnight.stdout, 'data-first-time="00:30 (today)"', "00:10 JST: current-calendar 00:30 does not get misdated as tomorrow");
+  }
+  for (const [scenario, expected] of [
+    ["short60", "00:00 (next day)|00:30 (next day)|01:00 (next day)"],
+    ["long90", "00:00 (next day)|00:30 (next day)"],
+    ["long120", "00:00 (next day)"],
+    ["addon70", "00:00 (next day)|00:30 (next day)"],
+    ["overlong150", ""]
+  ]) {
+    const checked = dump(`${baseUrl}&clock=after_last_slot&scenario=${scenario}`);
+    if (checked.status !== 0) {
+      errors.push(`${scenario} overnight test browser failed with status ${checked.status}`);
+      continue;
+    }
+    requireText(checked.stdout, `data-night-slots="${expected}"`, `${scenario} cannot exceed the 26:00 close`);
+    if (scenario === "overlong150") {
+      requireText(checked.stdout, 'data-scenario-no-slots="true"', "no impossible after-midnight requests for 150-minute service");
+    }
   }
 } finally {
   server.kill("SIGTERM");
@@ -124,4 +142,4 @@ if (errors.length) {
   console.error(`Booking Simple Recovery runtime check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log("Booking Simple Recovery runtime check passed in headless Chromium for ja/en/zh/ko, four direct channels, mode switching, guest selection, course preselection and the 23:30 final reception rule.");
+console.log("Booking Simple Recovery runtime check passed in headless Chromium for ja/en/zh/ko, four direct channels, mode switching, guest selection, course preselection and conditional after-midnight 25:00 course/addon closing guard.");
