@@ -12,7 +12,7 @@
 <div class="form-section"><div class="field-control"><select id="course"></select></div><p class="arrival-choice-note" data-i18n="arrivalChoiceNote">Aroma note</p></div>
 <div class="form-section date-time-grid"><div><input id="date" type="date"></div><div><select id="time"></select></div><p class="hint" data-i18n="hoursHint"></p><p id="latePhoneHint" hidden><span class="phone-copy"></span><a href="tel:0368746808">call</a></p><p id="sameDayCallHint" hidden><span class="phone-copy"></span><a href="tel:0368746808">call</a></p></div>
 <div id="guestButtons"><button type="button" data-guests="1">1</button><button type="button" data-guests="2">2</button><button type="button" data-guests="3">3</button></div>
-<details id="extrasSection"><div id="addonsGrid"></div><div id="nominationOptions"></div></details>
+<details id="extrasSection"><div id="addonsGrid"><input type="checkbox" data-addon="head10"></div><div id="nominationOptions"></div></details>
 <input id="name"><textarea id="note"></textarea>
 <div id="webFields"><input id="email" type="email"><input id="phone"><input id="privacyConsent" type="checkbox"></div>
 <input id="website"><p data-i18n="preview"></p><div id="preview"></div><div id="estimate"></div><button id="submitButton" type="submit"></button><div id="webSubmitMount"></div><div id="submitStatus"></div>
@@ -47,15 +47,15 @@ let lang = new URLSearchParams(location.search).get("lang") || "ja";
 let guests = "1";
 const WEB_FORM_ENABLED = true;
 const COURSE_GROUPS = [
-  { key: "popular", items: [{ key: "trial60", price: 4800, ja: "試し", en: "Trial", zh: "体验", ko: "체험" }] },
-  { key: "body", items: [{ key: "body30", price: 2400, ja: "整体30", en: "Body30", zh: "身体30", ko: "바디30" }] },
-  { key: "foot", items: [{ key: "foot45", price: 3980, ja: "足45", en: "Foot45", zh: "足45", ko: "발45" }] },
+  { key: "popular", items: [{ key: "trial60", min: 60, price: 4800, ja: "試し", en: "Trial", zh: "体验", ko: "체험" }] },
+  { key: "body", items: [{ key: "body30", min: 30, price: 2400, ja: "整体30", en: "Body30", zh: "身体30", ko: "바디30" }] },
+  { key: "foot", items: [{ key: "foot45", min: 45, price: 3980, ja: "足45", en: "Foot45", zh: "足45", ko: "발45" }] },
   { key: "aroma", items: [
-    { key: "aroma30", price: 2980, ja: "アロマ30", en: "Aroma30", zh: "精油30", ko: "아로마30" },
-    { key: "aroma60", price: 5500, ja: "アロマ60", en: "Aroma60", zh: "精油60", ko: "아로마60" }
+    { key: "aroma30", min: 30, price: 2980, ja: "アロマ30", en: "Aroma30", zh: "精油30", ko: "아로마30" },
+    { key: "aroma60", min: 60, price: 5500, ja: "アロマ60", en: "Aroma60", zh: "精油60", ko: "아로마60" }
   ] }
 ];
-const ADDONS = [];
+const ADDONS = [{ key: "head10", min: 10, price: 1000, ja: "頭10", en: "Head10", zh: "头10", ko: "헤드10" }];
 const NOMINATIONS = [{ key: "none", price: 0, ja: "なし", en: "none", zh: "无", ko: "없음" }];
 const $ = id => document.getElementById(id);
 const money = value => `¥${value}`;
@@ -103,6 +103,16 @@ $("name").value = "Runtime Test";
 $("name").dispatchEvent(new Event("input", { bubbles: true }));
 $("note").value = "Second input";
 $("note").dispatchEvent(new Event("input", { bubbles: true }));
+const scenario = new URLSearchParams(location.search).get("scenario") || "";
+if (["long90", "long120", "overlong150", "addon70", "short60"].includes(scenario)) {
+  const sample = COURSE_GROUPS[0].items[0];
+  sample.min = scenario === "long90" ? 90 : scenario === "long120" ? 120 : scenario === "overlong150" ? 150 : 60;
+  if (scenario === "addon70") document.querySelector('[data-addon="head10"]').checked = true;
+  $("course").value = "trial60";
+  $("course").dispatchEvent(new Event("change", { bubbles: true }));
+}
+document.documentElement.dataset.nightSlots = [...$("time").options].slice(1).filter(o => o.textContent.includes("(next day)")).map(o => o.textContent).join("|");
+document.documentElement.dataset.scenarioNoSlots = String(!$("latePhoneHint").hidden);
 trackEvent("booking_form_submit_success", { duplicate: true });
 const whatsappLink = document.querySelector('[data-channel="whatsapp"]');
 const webLink = document.querySelector('[data-channel="web"]');
@@ -114,7 +124,7 @@ document.querySelector('[data-guests="3"]')?.click();
 document.documentElement.dataset.guests = guests;
 document.documentElement.dataset.testReady = "true";
 document.documentElement.dataset.lang = lang;
-document.documentElement.dataset.hoursClarified = String(I18N[lang].hoursHint.includes("23:30") || I18N[lang].hoursHint.includes("11:30 PM"));
+document.documentElement.dataset.hoursClarified = String(/(?:1:00 AM|翌1:00|次日01:00|오전 1시)/.test(I18N[lang].hoursHint));
 document.documentElement.dataset.formLead = document.querySelector('[data-i18n="formLead"]')?.textContent || "";
 document.documentElement.dataset.courseOptions = [...$("course").options].map(option => option.textContent).join("|");
 document.documentElement.dataset.selectedCourse = $("course").value;
