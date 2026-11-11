@@ -65,6 +65,8 @@
     updatePhoneHints();
   };
   $("course").addEventListener("change", updateCourseHint);
+  $("course").addEventListener("change", updatePhoneHints);
+  $("extrasSection")?.addEventListener("change", updatePhoneHints);
   $("date").addEventListener("change", updatePhoneHints);
   $("time").addEventListener("change", updatePhoneHints);
   // Apply the copy on initial page load as well as subsequent language switches.
