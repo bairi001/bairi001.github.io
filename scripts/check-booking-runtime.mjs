@@ -55,7 +55,7 @@ try {
     const html = result.stdout;
     requireText(html, 'data-test-ready="true"', `${language} ready marker`);
     requireText(html, `data-lang="${language}"`, `${language} language state`);
-    requireText(html, 'data-hours-clarified="true"', `${language} initial 23:30 booking limit copy`);
+    requireText(html, 'data-hours-clarified="true"', `${language} unified 25:00 final requested start wording`);
     requireText(html, `data-form-lead="${expectedLead[language]}"`, `${language} V3 form lead`);
     requireText(html, 'data-visible-channels="4"', `${language} four direct booking channels`);
     requireText(html, 'data-channel-list="web|whatsapp|line|phone"', `${language} exact channel list without HotPepper`);
@@ -105,16 +105,20 @@ try {
   if (afterLastSlot.status !== 0) {
     errors.push("after-last-slot browser exited with " + afterLastSlot.status);
   } else {
-    requireText(afterLastSlot.stdout, 'data-preview-no-slots="true"', "call guidance when no same-day slots remain");
-    requireText(afterLastSlot.stdout, 'data-preview-urgent="false"', "urgent hint hidden when call fallback shown");
-    requireText(afterLastSlot.stdout, 'data-first-time=""', "no invented after-23:30 web slots");
+    requireText(afterLastSlot.stdout, 'data-preview-no-slots="false"', "late-night 24:00 to 25:00 slots are available");
+    requireText(afterLastSlot.stdout, 'data-preview-urgent="true"', "same-day urgent hint remains visible");
+    requireText(afterLastSlot.stdout, 'data-first-time="00:00 (next day)"', "first start at 24:00 after 23:45 JST");
+    requireText(afterLastSlot.stdout, 'data-last-time="01:00 (next day)"', "last start at 25:00 for every course");
+    requireText(afterLastSlot.stdout, 'data-long-course-same-last="true"', "120-minute course shares 25:00 last start");
   }
 
   const afterMidnight = dump(`${baseUrl}&clock=after_midnight`);
   if (afterMidnight.status !== 0) {
     errors.push(`after-midnight browser exited with ${afterMidnight.status}: ${(afterMidnight.stderr || "").trim()}`);
   } else {
-    requireText(afterMidnight.stdout, 'data-first-time="11:00"', "after midnight, the next selectable slot starts from 11:00 because final reception is 23:30");
+    requireText(afterMidnight.stdout, 'data-first-time="00:30"', "00:10 JST can request current-calendar 00:30");
+    requireText(afterMidnight.stdout, 'data-first-value="30|00:30"', "backend accepts current-calendar HH:MM without next-day suffix");
+    requireText(afterMidnight.stdout, 'data-last-time="01:00 (next day)"', "00:10 JST also offers next day 25:00");
   }
 } finally {
   server.kill("SIGTERM");
@@ -124,4 +128,4 @@ if (errors.length) {
   console.error(`Booking Simple Recovery runtime check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log("Booking Simple Recovery runtime check passed in headless Chromium for ja/en/zh/ko, four direct channels, mode switching, guest selection, course preselection and the 23:30 final reception rule.");
+console.log("Booking Simple Recovery runtime check passed in headless Chromium for ja/en/zh/ko, four direct channels, mode switching, guest selection, course preselection and the unified 25:00 final requested start for all courses.");
