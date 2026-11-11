@@ -108,9 +108,9 @@
     // After midnight, today 00:30/01:00 belong to the current calendar day.
     // The same date also offers next-day late slots, explicitly marked "next day".
     const tonight = now.minutes < 120 ? [
-      { minutes: 0, label: "00:00 (today)" },
-      { minutes: 30, label: "00:30 (today)" },
-      { minutes: 60, label: "01:00 (today)" }
+      { minutes: 0, label: "00:00 (today)", submitLabel: "00:00" },
+      { minutes: 30, label: "00:30 (today)", submitLabel: "00:30" },
+      { minutes: 60, label: "01:00 (today)", submitLabel: "01:00" }
     ].filter(item =>
       item.minutes >= earliest && item.minutes + requestedTreatmentMinutes() <= 120
     ) : [];
@@ -121,7 +121,7 @@
     const current = select.value;
     const available = availableTimesFor(dateValue);
     select.innerHTML = `<option value="">${placeholder}</option>` + available.map(item =>
-      `<option value="${item.minutes}|${item.label}">${item.label}</option>`
+      `<option value="${item.minutes}|${item.submitLabel || item.label}">${item.label}</option>`
     ).join("");
     select.disabled = false;
     if (current && [...select.options].some(option => option.value === current)) select.value = current;
