@@ -61,6 +61,7 @@ const $ = id => document.getElementById(id);
 const money = value => `¥${value}`;
 const allCourses = () => COURSE_GROUPS.flatMap(group => group.items);
 const selectedCourse = () => allCourses().find(item => item.key === $("course").value);
+const selectedAddons = () => ADDONS.filter(item => document.querySelector(`[data-addon="${item.key}"]`)?.checked);
 function buildCourses() { $("course").innerHTML = '<option value="">SELECT</option>'; }
 function buildTimes() { $("time").innerHTML = '<option value="">TIME</option>'; }
 function buildExtras() {}
