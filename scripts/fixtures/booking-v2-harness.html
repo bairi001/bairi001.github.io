@@ -130,6 +130,7 @@ document.documentElement.dataset.formLead = document.querySelector('[data-i18n="
 document.documentElement.dataset.courseOptions = [...$("course").options].map(option => option.textContent).join("|");
 document.documentElement.dataset.selectedCourse = $("course").value;
 document.documentElement.dataset.firstTime = $("time").options[1]?.textContent || "";
+document.documentElement.dataset.firstValue = $("time").options[1]?.value || "";
 document.documentElement.dataset.storyImage = document.querySelector(".story-photo img")?.getAttribute("src") || "";
 document.documentElement.dataset.alternative = String(Boolean($("bookingAlternative")));
 document.documentElement.dataset.visibleChannels = String(document.querySelectorAll("#channelActions > .channel-button").length);
