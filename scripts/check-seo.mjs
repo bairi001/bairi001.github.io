@@ -101,7 +101,7 @@ for (const file of ["zh/index.html", "ko/index.html"]) {
 const multilingualClarityChecks = {
   "zh/index.html": ["支付方式：</strong>现金、信用卡、PayPay", "1月1日休息"],
   "ko/index.html": ["결제 방법:</strong> 현금, 신용카드, PayPay", "1월 1일 휴무"],
-  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Latest requested start: 1:00 AM (25:00)", "Popular courses and prices", "Getting here from Haneda Airport", "the evening before an early flight", "select 2 guests", "mode=whatsapp", "about a 10-minute walk away", "Keikyu Kamata Asuto shopping street", "Walking route from Keikyu Kamata"],
+  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Latest requested start: 1:00 AM (25:00)", "Popular courses and prices", "Getting here from Haneda Airport", "the evening before a morning flight", "select 2 guests", "mode=whatsapp", "about a 10-minute walk away", "Keikyu Kamata Asuto shopping street", "Walking route from Keikyu Kamata"],
   "en/late-night-massage-kamata.html": ["in-store salon in Kamata", "do not provide hotel or outcall services", "All courses can request a start time through 1:00 AM the next day (25:00)"]
 };
 for (const [file, phrases] of Object.entries(multilingualClarityChecks)) {
