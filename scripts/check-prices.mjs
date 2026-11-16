@@ -152,7 +152,7 @@ for (const [file, origin, courseIds] of [
   ["en/late-night-massage-kamata.html", "en/late-night-massage-kamata", ["body60", "foot60", "aroma60"]],
   ["en/foot-massage-kamata.html", "en/foot-massage-kamata", ["foot30", "foot45", "foot60"]]
 ]) {
-  const cards = [...files[file].matchAll(/<article class="course-book-card">([\\s\\S]*?)<\\/article>/g)].map(m => m[1]);
+  const cards = [...files[file].matchAll(/<article class="course-book-card">([\s\S]*?)<\/article>/g)].map(m => m[1]);
   for (const id of courseIds) {
     const card = cards.find(x => x.includes(`course=${id}&amp;origin=${origin}&amp;cta=`));
     if (!card) { errors.push(`${file}: missing preselected ${id} price card`); continue; }
