@@ -101,12 +101,34 @@ for (const file of ["zh/index.html", "ko/index.html"]) {
 const multilingualClarityChecks = {
   "zh/index.html": ["支付方式：</strong>现金、信用卡、PayPay", "1月1日休息"],
   "ko/index.html": ["결제 방법:</strong> 현금, 신용카드, PayPay", "1월 1일 휴무"],
-  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Latest requested start: 1:00 AM (25:00)", "If you have about 30 minutes", "For a morning flight, visit the evening before", "select 2 guests", "mode=whatsapp", "about a 10-minute walk away", "Keikyu Kamata Asuto shopping street", "Walking route from Keikyu Kamata"],
+  "en/haneda-kamata-massage.html": ["in-store relaxation salon in Kamata", "do not provide hotel or outcall services", "the evening before a flight", "Latest requested start: 1:00 AM (25:00)", "Popular courses and prices", "Getting here from Haneda Airport", "the evening before a morning flight", "select 2 guests", "mode=whatsapp", "about a 10-minute walk away", "Keikyu Kamata Asuto shopping street", "Walking route from Keikyu Kamata"],
   "en/late-night-massage-kamata.html": ["in-store salon in Kamata", "do not provide hotel or outcall services", "All courses can request a start time through 1:00 AM the next day (25:00)"]
 };
 for (const [file, phrases] of Object.entries(multilingualClarityChecks)) {
   for (const phrase of phrases) {
     if (!indexableHtml[file]?.includes(phrase)) fail(file, `multilingual clarity missing: ${phrase}`);
+  }
+}
+
+
+// English CRO: persistent booking actions must stay in one mobile row, with
+// course-prefilled booking paths and an accessible international phone link.
+const enPageCss = await read("assets/secondary-pages.css");
+if (!/\.en-page\.secondary-page\s+\.mobile-fixed-cta\s*\{grid-template-columns:/.test(enPageCss)) {
+  fail("assets/secondary-pages.css", "three-column mobile CTA grid missing for English secondary pages");
+}
+for (const [file, origin, courses, heroWhatsApp] of [
+  ["en/haneda-kamata-massage.html", "en/haneda-kamata-massage", ["body60", "foot60", "aroma60", "recovery70"], false],
+  ["en/late-night-massage-kamata.html", "en/late-night-massage-kamata", ["body60", "foot60", "aroma60"], true],
+  ["en/foot-massage-kamata.html", "en/foot-massage-kamata", ["foot30", "foot45", "foot60"], true]
+]) {
+  const html = indexableHtml[file] || "";
+  if (!html.includes('href="tel:+81368746808"')) fail(file, "international dial URI missing");
+  if (heroWhatsApp && !html.includes(`mode=whatsapp&amp;service=${file.includes("late-night") ? "late" : "foot"}&amp;origin=${origin}&amp;cta=hero_whatsapp`)) {
+    fail(file, "hero WhatsApp route or source tracking missing");
+  }
+  for (const id of courses) {
+    if (!html.includes(`course=${id}&amp;origin=${origin}&amp;cta=`)) fail(file, `course-prefilled booking source missing: ${id}`);
   }
 }
 
