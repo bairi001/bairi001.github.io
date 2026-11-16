@@ -42,3 +42,7 @@
   .secondary-page .intent-facts{gap:6px}
   .secondary-page .intent-facts span{font-size:.74rem}
 }
+@media(max-width:760px){
+  /* English intent pages show Web, WhatsApp and Call on one compact row. */
+  .en-page.secondary-page .mobile-fixed-cta{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(56px,.6fr)}
+}
