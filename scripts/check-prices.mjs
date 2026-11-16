@@ -5,7 +5,7 @@ const root = new URL("../", import.meta.url);
 const prices = JSON.parse(await readFile(new URL("data/prices.json", root), "utf8"));
 const files = Object.fromEntries(
   await Promise.all(
-    ["menu.html", "aroma-oil-kamata.html", "ashitsubo-fukurahagi.html", "bodycare-kamata.html", "kamata-late-night.html", "en/index.html", "en/foot-massage-kamata.html", "booking.html", "zh/index.html", "ko/index.html"].map(async file => [
+    ["menu.html", "aroma-oil-kamata.html", "ashitsubo-fukurahagi.html", "bodycare-kamata.html", "kamata-late-night.html", "en/index.html", "en/foot-massage-kamata.html", "en/late-night-massage-kamata.html", "en/haneda-kamata-massage.html", "booking.html", "zh/index.html", "ko/index.html"].map(async file => [
       file,
       await readFile(new URL(file, root), "utf8")
     ])
@@ -143,6 +143,26 @@ expect("en/index.html", "English herbal oil option missing", /Herbal Oil \+¥500
 expect("en/index.html", "English Hot Stone timing/price missing", /Hot Stone \+10 min ¥1000 \/ \+20 min ¥2000/i);
 expect("en/index.html", "English foot bath timing missing", /foot bath of about 3–5 minutes[\s\S]{0,120}?not counted in your treatment time/i);
 expect("en/index.html", "English shared free-value note missing", /Treatment wear is provided free of charge[\s\S]{0,180}?Hot or cold tea/i);
+
+// English intent-page cards must quote their real course price and preserve
+// the course preselection ID (including the 70-minute set).
+const extraVisiblePrices = { foot30: 2800, recovery70: 5500 };
+for (const [file, origin, courseIds] of [
+  ["en/haneda-kamata-massage.html", "en/haneda-kamata-massage", ["body60", "foot60", "aroma60", "recovery70"]],
+  ["en/late-night-massage-kamata.html", "en/late-night-massage-kamata", ["body60", "foot60", "aroma60"]],
+  ["en/foot-massage-kamata.html", "en/foot-massage-kamata", ["foot30", "foot45", "foot60"]]
+]) {
+  const cards = [...files[file].matchAll(/<article class="course-book-card">([\\s\\S]*?)<\\/article>/g)].map(m => m[1]);
+  for (const id of courseIds) {
+    const card = cards.find(x => x.includes(`course=${id}&amp;origin=${origin}&amp;cta=`));
+    if (!card) { errors.push(`${file}: missing preselected ${id} price card`); continue; }
+    const expected = byId[id]?.price ?? extraVisiblePrices[id];
+    if (expected == null || !card.includes(`¥${expected.toLocaleString("en-US")}`)) {
+      errors.push(`${file}: ${id} displayed price does not match current course price`);
+    }
+  }
+}
+
 expect("en/foot-massage-kamata.html", "English foot guide free foot bath timing missing", /Free foot bath · about 3–5 min[\s\S]{0,260}?not counted in your treatment time/i);
 expect("en/foot-massage-kamata.html", "English foot guide herbal cream option missing", /Herbal Foot Cream \+¥500/i);
 
