@@ -160,7 +160,7 @@ const hanedaHtml = await read("en/haneda-kamata-massage.html");
 requireText("en/haneda-kamata-massage.html", hanedaHtml, "Airport Limited Express (Airport Kaitoku)", "non-stopping airport train warning");
 requireText("en/haneda-kamata-massage.html", hanedaHtml, "Keikyu Kamata Station (KK11)", "correct airport train destination");
 requireText("booking.html", bookingHtml, 'id="whatsappSendHint"', "WhatsApp send-again notice at submit button");
-requireText("assets/booking-mode.js", booking, '$("whatsappSendHint").hidden = webMode;', "WhatsApp-only notice visibility");
+requireText("assets/booking-mode.js", booking, 'if (whatsappHint) whatsappHint.hidden = webMode;', "WhatsApp-only notice visibility");
 for (const language of ["en", "zh", "ja", "ko"]) {
   const start = bookingHtml.indexOf(`Object.assign(I18N.${language},{`);
   const end = bookingHtml.indexOf("\n});", start);
