@@ -155,6 +155,19 @@ for (const [text, label] of [
   ['data.guests !== "2"', "same-room request rejected unless exactly two guests"]
 ]) requireText("docs/google-apps-script/Code.gs", backend, text, label);
 
+// English CRO final QA: avoid a silent WhatsApp non-send and trains skipping Keikyu Kamata.
+const hanedaHtml = await read("en/haneda-kamata-massage.html");
+requireText("en/haneda-kamata-massage.html", hanedaHtml, "Airport Limited Express (Airport Kaitoku)", "non-stopping airport train warning");
+requireText("en/haneda-kamata-massage.html", hanedaHtml, "Keikyu Kamata Station (KK11)", "correct airport train destination");
+requireText("booking.html", bookingHtml, 'id="whatsappSendHint"', "WhatsApp send-again notice at submit button");
+requireText("assets/booking-mode.js", booking, '$("whatsappSendHint").hidden = webMode;', "WhatsApp-only notice visibility");
+for (const language of ["en", "zh", "ja", "ko"]) {
+  const start = bookingHtml.indexOf(`Object.assign(I18N.${language},{`);
+  const end = bookingHtml.indexOf("\n});", start);
+  const i18nBlock = start < 0 || end < 0 ? "" : bookingHtml.slice(start, end);
+  requireText("booking.html", i18nBlock, "whatsappSendHint:", `${language} translated WhatsApp send notice`);
+}
+
 if (errors.length) {
   console.error(`Booking Simple Recovery check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);

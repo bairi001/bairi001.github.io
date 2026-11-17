@@ -265,6 +265,7 @@
     if (previewLabel) previewLabel.hidden = webMode;
     $("preview").hidden = webMode;
     $("submitButton").hidden = webMode;
+    $("whatsappSendHint").hidden = webMode;
     $("webSubmitMount").hidden = !webMode;
     $("submitStatus").textContent = "";
 
