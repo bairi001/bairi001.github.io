@@ -427,6 +427,24 @@ for (const marker of ["pull_request:", "runs-on:", "node scripts/check-site.mjs"
   if (!workflow.includes(marker)) report(workflowPath, `missing workflow marker: ${marker}`);
 }
 
+// Keep on-site Google review claims consistent with owner-verified 4.8 / 417 (Nov 17, 2026).
+// Rounded "400+" is deliberate, so new reviews do not require daily code edits.
+for (const [file, markers] of [
+  ["index.html", ["<strong>400+</strong><span>クチコミ件数", "Googleクチコミ 400件以上"]],
+  ["en/index.html", ["★4.8 · 400+ Google reviews"]]
+]) {
+  const html = await readFile(path.join(root, file), "utf8");
+  for (const marker of markers) {
+    if (!html.includes(marker)) report(path.join(root, file), `Google review proof missing: ${marker}`);
+  }
+}
+for (const file of htmlFiles) {
+  const html = await readFile(file, "utf8");
+  if (/\b300\+\s*(?:Google reviews|<\/strong><span>クチコミ件数)|Googleクチコミ\s*300件以上/i.test(html)) {
+    report(file, "outdated Google review count: 300+");
+  }
+}
+
 if (errors.length) {
   console.error(`Site check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
