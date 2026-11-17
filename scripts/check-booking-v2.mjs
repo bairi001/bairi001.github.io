@@ -157,7 +157,7 @@ for (const [text, label] of [
 
 // English CRO final QA: avoid a silent WhatsApp non-send and trains skipping Keikyu Kamata.
 const hanedaHtml = await read("en/haneda-kamata-massage.html");
-requireText("en/haneda-kamata-massage.html", hanedaHtml, "Airport Limited Express (Airport Kaitoku)", "non-stopping airport train warning");
+requireText("en/haneda-kamata-massage.html", hanedaHtml, "Airport Limited Express (エアポート快特 / Airport Kaitoku)", "non-stopping airport train warning");
 requireText("en/haneda-kamata-massage.html", hanedaHtml, "Keikyu Kamata Station (KK11)", "correct airport train destination");
 requireText("booking.html", bookingHtml, 'id="whatsappSendHint"', "WhatsApp send-again notice at submit button");
 requireText("assets/booking-mode.js", booking, 'if (whatsappHint) whatsappHint.hidden = webMode;', "WhatsApp-only notice visibility");
