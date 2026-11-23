@@ -20,7 +20,7 @@
         if (opts?.method !== "POST" || !opts?.body) throw new Error("Unexpected transport");
         const payload = JSON.parse(opts.body);
         seen.push(payload);
-        return {json:async () => ({ok:true,duplicate:false})};
+        return {json:async () => ({ok:true,recorded:true,duplicate:false})};
       };
       const input = (id,value,eventName="input") => {
         const el = doc.getElementById(id);

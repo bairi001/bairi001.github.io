@@ -78,7 +78,7 @@ for (const marker of [
 ]) {
   if (!bookingHtml.includes(marker)) report(path.join(root, "booking.html"), `booking analytics diagnostic missing: ${marker}`);
 }
-if (!/if\(!duplicate\)\{[\s\S]{0,260}?trackEvent\("generate_lead"/.test(bookingHtml)) {
+if (!/if\(recorded\)\{[\s\S]{0,260}?trackEvent\("generate_lead"/.test(bookingHtml)) {
   report(path.join(root, "booking.html"), "generate_lead must only fire for non-duplicate successful submissions");
 }
 

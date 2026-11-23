@@ -599,21 +599,39 @@ function resolveLanguage(){
   return "en";
 }
 
+function entryUtm(){
+  const params=new URLSearchParams(location.search);
+  const value={};
+  for(const name of ["utm_source","utm_medium","utm_campaign","utm_content"]){
+    value[name]=(params.get(name)||"").trim().slice(0,120);
+  }
+  return value;
+}
+
+const ENTRY_UTM=entryUtm();
 function captureFirstUtm(){
   try{
     const key="sya_first_utm";
-    if(sessionStorage.getItem(key))return JSON.parse(sessionStorage.getItem(key));
-    const params=new URLSearchParams(location.search);
-    const value={};
-    ["utm_source","utm_medium","utm_campaign","utm_content"].forEach(name=>{value[name]=(params.get(name)||"").slice(0,120)});
-    if(Object.values(value).some(Boolean))sessionStorage.setItem(key,JSON.stringify(value));
-    return value;
-  }catch(_){
-    return {};
-  }
+    const saved=sessionStorage.getItem(key);
+    if(saved)return JSON.parse(saved)||ENTRY_UTM;
+    if(Object.values(ENTRY_UTM).some(Boolean))sessionStorage.setItem(key,JSON.stringify(ENTRY_UTM));
+  }catch(_){}
+  return ENTRY_UTM;
 }
 
 const FIRST_UTM=captureFirstUtm();
+function bookingUtm(){
+  // Campaign labels are declared by the URL. They do not authenticate an ad click.
+  const key="sya_booking_latest_utm";
+  const complete=Boolean(ENTRY_UTM.utm_source && ENTRY_UTM.utm_medium &&
+    ENTRY_UTM.utm_campaign && ENTRY_UTM.utm_content);
+  try{
+    if(complete)sessionStorage.setItem(key,JSON.stringify(ENTRY_UTM));
+    else return JSON.parse(sessionStorage.getItem(key))||FIRST_UTM;
+  }catch(_){}
+  return complete?ENTRY_UTM:FIRST_UTM;
+}
+const BOOKING_UTM=bookingUtm();
 
 function buildCourses(){
   const current=$("course").value;
@@ -830,10 +848,10 @@ function webPayload(){
     nomination:webNominationValue().slice(0,40),
     nominationLabel:webNominationLabel().slice(0,160),
     lang,
-    utm_source:(FIRST_UTM.utm_source||"").slice(0,120),
-    utm_medium:(FIRST_UTM.utm_medium||"").slice(0,120),
-    utm_campaign:(FIRST_UTM.utm_campaign||"").slice(0,120),
-    utm_content:(FIRST_UTM.utm_content||"").slice(0,120),
+    utm_source:(BOOKING_UTM.utm_source||"").slice(0,120),
+    utm_medium:(BOOKING_UTM.utm_medium||"").slice(0,120),
+    utm_campaign:(BOOKING_UTM.utm_campaign||"").slice(0,120),
+    utm_content:(BOOKING_UTM.utm_content||"").slice(0,120),
     submissionId:stableWebSubmissionId(),
     startedAt:FORM_STARTED_AT,
     website:$("website").value.slice(0,120)
@@ -911,9 +929,12 @@ async function submitWebForm(){
     }
     webSubmissionSucceeded=true;
     $("submitStatus").textContent=I18N[lang].webSentLocked;
-    const duplicate=Boolean(result?.duplicate);
+    const duplicate=result.duplicate===true;
+    const recorded=result.recorded===true && result.duplicate===false;
+    // Legacy and intentionally opaque acknowledgements keep the existing UI.
+    if(!duplicate && !recorded)return;
     trackEvent("booking_form_submit_success",{language:lang,channel:"web",duplicate,submission_id:payload.submissionId});
-    if(!duplicate){
+    if(recorded){
       trackEvent("generate_lead",{language:lang,channel:"web",lead_source:"website_booking_request",submission_id:payload.submissionId});
     }
   }catch(error){

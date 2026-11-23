@@ -12,7 +12,6 @@ var SERVICE_VERSION = "5";
 var MAX_PAYLOAD_BYTES = 20000;
 var MIN_FORM_AGE_MS = 2000;
 var MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
-var SUBMISSION_CACHE_SECONDS = 21600;
 var DUPLICATE_WINDOW_SECONDS = 300;
 var BOOKING_SHEET_NAME = "工作表1";
 var STATUS_LOG_SHEET_NAME = "Booking_Status_Log";
@@ -106,7 +105,7 @@ function doPost(e) {
 
     // 蜜罐命中时返回表面成功，但不写表格、不发邮件。
     if (sanitizeText_(raw.website, 120)) {
-      return jsonResponse_({ ok: true });
+      return jsonResponse_({ ok: true, duplicate: true });
     }
 
     var payload = validatePayload_(raw);
@@ -128,25 +127,20 @@ function doPost(e) {
       }
 
       var booking = appendBookingRow_(payload, config);
+      // Commit the primary row while the script lock is held, before notification.
+      SpreadsheetApp.flush();
       var mailStatus = sendBookingMail_(payload, config);
-      booking.sheet.getRange(booking.row, 17, 1, 2).setValues([[
-        mailStatus,
-        mailStatus === "sent" ? "recorded_mail_sent" : "recorded_mail_failed"
-      ]]);
-
-      // 客户预约主记录与邮件结果是主链路；created 日志失败不能让客户预约失败或重发。
-      appendCreatedStatusLogBestEffort_(booking, payload, config);
-
-      if (mailStatus === "sent") {
-        CacheService.getScriptCache().put(
-          "submission:" + payload.submissionId,
-          "1",
-          SUBMISSION_CACHE_SECONDS
-        );
-        rememberBooking_(payload);
+      try {
+        booking.sheet.getRange(booking.row, 17, 1, 2).setValues([[
+          mailStatus,
+          mailStatus === "sent" ? "recorded_mail_sent" : "recorded_mail_failed"
+        ]]);
+        SpreadsheetApp.flush();
+      } catch (statusError) {
+        console.error("Booking recorded; notification status update failed");
       }
-
-      return jsonResponse_({ ok: true });
+      appendCreatedStatusLogBestEffort_(booking, payload, config);
+      return jsonResponse_({ ok: true, recorded: true, duplicate: false });
     } finally {
       lock.releaseLock();
     }
@@ -311,18 +305,13 @@ function getStatusLogSheet_(spreadsheet) {
 }
 
 function isDuplicateSubmission_(submissionId, sheetId) {
-  if (CacheService.getScriptCache().get("submission:" + submissionId) === "1") return true;
   var sheet = getBookingSheet_(SpreadsheetApp.openById(sheetId));
-  if (sheet.getLastRow() < 2) return false;
-  var matches = sheet
-    .getRange(2, 1, sheet.getLastRow() - 1, 1)
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return false;
+  return Boolean(sheet.getRange(2, 1, lastRow - 1, 1)
     .createTextFinder(submissionId)
     .matchEntireCell(true)
-    .findAll();
-  for (var index = 0; index < matches.length; index++) {
-    if (isHandledMailStatus_(sheet.getRange(matches[index].getRow(), 17).getValue())) return true;
-  }
-  return false;
+    .findNext());
 }
 
 function normalizeBookingKey_(value) {
@@ -334,44 +323,66 @@ function normalizeSameRoomKey_(value) {
   return normalized === "true" || normalized === "yes" || normalized === "1" ? "true" : "false";
 }
 
-function isHandledMailStatus_(value) {
-  var status = normalizeBookingKey_(value);
-  return status === "sent" || status === "pending";
+// Only remove the final machine-generated line corroborated by that entry's
+// own utm_content token. Keep preceding lines, including lookalike customer text.
+function customerBookingNote_(note, content) {
+  var text = String(note || "");
+  var token = String(content || "").split("|")[0];
+  var match = /^sy_o=([a-z0-9_./-]+);sy_c=([a-z0-9_./-]+);sy_s=([a-z0-9_./-]+)$/i.exec(token);
+  var start = text.lastIndexOf("\n") + 1;
+  var tail = text.slice(start);
+  if (match) {
+    var suffix = "origin: " + match[1] + " / cta: " + match[2] + " / service: " + match[3];
+    // booking-mode.js caps the combined note at 300; validatePayload_ trims it.
+    if (tail === suffix.slice(0, 300 - start).trimEnd()) return text.slice(0, Math.max(0, start - 1));
+  }
+  // Even when the token is capped at 120, a complete note line can corroborate it.
+  if (token.length === 120) {
+    var line = /^origin: ([a-z0-9_./-]+) \/ cta: ([a-z0-9_./-]+) \/ service: ([a-z0-9_./-]+)$/i.exec(tail);
+    if (line && ("sy_o=" + line[1] + ";sy_c=" + line[2] + ";sy_s=" + line[3]).slice(0, 120) === token) {
+      return text.slice(0, Math.max(0, start - 1));
+    }
+  }
+  return text;
 }
 
-function bookingFingerprint_(payload) {
-  var source = [
-    normalizeBookingKey_(payload.email),
-    normalizeBookingKey_(payload.date),
-    normalizeBookingKey_(payload.time),
-    normalizeBookingKey_(payload.courseId),
-    normalizeBookingKey_(payload.guests),
-    normalizeBookingKey_(payload.addons),
-    normalizeBookingKey_(payload.nomination || "none"),
-    normalizeSameRoomKey_(payload.sameRoomRequested),
-    normalizeBookingKey_(payload.name)
-  ].join("|");
-  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, source, Utilities.Charset.UTF_8).map(function(byte) {
-    var value = (byte + 256) % 256;
-    return ("0" + value.toString(16)).slice(-2);
-  }).join("");
+function phoneSheetValue_(value) {
+  var phone = String(value || "");
+  // Keep leading zeros when a new phone would otherwise be parsed as a number.
+  return /^0[0-9]+$/.test(phone) ? "'" + phone : sanitizeSheetValue_(phone);
+}
+
+function bookingDateKey_(value, format) {
+  return Object.prototype.toString.call(value) === "[object Date]"
+    ? Utilities.formatDate(value, "Asia/Tokyo", format)
+    : normalizeBookingKey_(value);
 }
 
 function bookingRowMatches_(row, payload) {
+  var phone = String(row[10] || "");
+  var storedNote = String(row[11] || "");
+  var incomingNote = customerBookingNote_(payload.note, payload.utm_content);
+  // Compare the two possible read representations without stripping customer
+  // punctuation or globally unescaping the incoming text.
+  var note = customerBookingNote_(storedNote, row[15]);
+  var noteMatches = note === incomingNote;
+  if (!noteMatches && /^'[=+@-]/.test(storedNote) && /^[=+@-]/.test(incomingNote)) {
+    noteMatches = customerBookingNote_(storedNote.slice(1), row[15]) === incomingNote;
+  }
   return normalizeBookingKey_(row[3]) === normalizeBookingKey_(payload.courseId) &&
-    normalizeBookingKey_(row[5]) === normalizeBookingKey_(payload.date) &&
-    normalizeBookingKey_(row[6]) === normalizeBookingKey_(payload.time) &&
+    bookingDateKey_(row[5], "yyyy-MM-dd") === normalizeBookingKey_(payload.date) &&
+    bookingDateKey_(row[6], "HH:mm") === normalizeBookingKey_(payload.time) &&
     normalizeBookingKey_(row[7]) === normalizeBookingKey_(payload.guests) &&
     normalizeBookingKey_(row[8]) === normalizeBookingKey_(payload.name) &&
     normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email) &&
+    (phone === String(payload.phone || "") || phone === phoneSheetValue_(payload.phone)) &&
+    noteMatches &&
     normalizeBookingKey_(row[18]) === normalizeBookingKey_(payload.addons) &&
     normalizeBookingKey_(row[20] || "none") === normalizeBookingKey_(payload.nomination || "none") &&
     normalizeSameRoomKey_(row[22]) === normalizeSameRoomKey_(payload.sameRoomRequested);
 }
 
 function isDuplicateBooking_(payload, config) {
-  var cacheKey = "booking:" + bookingFingerprint_(payload);
-  if (CacheService.getScriptCache().get(cacheKey) === "1") return true;
   var sheet = getBookingSheet_(SpreadsheetApp.openById(config.sheetId));
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
@@ -380,15 +391,12 @@ function isDuplicateBooking_(payload, config) {
   var cutoff = Date.now() - DUPLICATE_WINDOW_SECONDS * 1000;
   for (var index = rows.length - 1; index >= 0; index--) {
     var receivedText = String(rows[index][1] || "").trim();
-    var receivedAt = Date.parse(receivedText.replace(" ", "T") + "+09:00");
+    var receivedAt = Object.prototype.toString.call(rows[index][1]) === "[object Date]"
+      ? rows[index][1].getTime() : Date.parse(receivedText.replace(" ", "T") + "+09:00");
     if (!Number.isFinite(receivedAt) || receivedAt < cutoff) continue;
-    if (bookingRowMatches_(rows[index], payload) && isHandledMailStatus_(rows[index][16])) return true;
+    if (bookingRowMatches_(rows[index], payload)) return true;
   }
   return false;
-}
-
-function rememberBooking_(payload) {
-  CacheService.getScriptCache().put("booking:" + bookingFingerprint_(payload), "1", DUPLICATE_WINDOW_SECONDS);
 }
 
 function checkRateLimit_(maxPerHour) {
@@ -444,6 +452,7 @@ function appendBookingRow_(payload, config) {
     ""
   ].map(sanitizeSheetValue_);
 
+  row[10] = phoneSheetValue_(payload.phone);
   sheet.appendRow(row);
   return {
     sheet: sheet,
