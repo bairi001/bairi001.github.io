@@ -12,7 +12,6 @@ var SERVICE_VERSION = "5";
 var MAX_PAYLOAD_BYTES = 20000;
 var MIN_FORM_AGE_MS = 2000;
 var MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
-var SUBMISSION_CACHE_SECONDS = 21600;
 var DUPLICATE_WINDOW_SECONDS = 300;
 var BOOKING_SHEET_NAME = "工作表1";
 var STATUS_LOG_SHEET_NAME = "Booking_Status_Log";
@@ -106,7 +105,7 @@ function doPost(e) {
 
     // 蜜罐命中时返回表面成功，但不写表格、不发邮件。
     if (sanitizeText_(raw.website, 120)) {
-      return jsonResponse_({ ok: true });
+      return jsonResponse_({ ok: true, duplicate: true });
     }
 
     var payload = validatePayload_(raw);
@@ -128,25 +127,20 @@ function doPost(e) {
       }
 
       var booking = appendBookingRow_(payload, config);
+      // Commit the primary row while the script lock is held, before notification.
+      SpreadsheetApp.flush();
       var mailStatus = sendBookingMail_(payload, config);
-      booking.sheet.getRange(booking.row, 17, 1, 2).setValues([[
-        mailStatus,
-        mailStatus === "sent" ? "recorded_mail_sent" : "recorded_mail_failed"
-      ]]);
-
-      // 客户预约主记录与邮件结果是主链路；created 日志失败不能让客户预约失败或重发。
-      appendCreatedStatusLogBestEffort_(booking, payload, config);
-
-      if (mailStatus === "sent") {
-        CacheService.getScriptCache().put(
-          "submission:" + payload.submissionId,
-          "1",
-          SUBMISSION_CACHE_SECONDS
-        );
-        rememberBooking_(payload);
+      try {
+        booking.sheet.getRange(booking.row, 17, 1, 2).setValues([[
+          mailStatus,
+          mailStatus === "sent" ? "recorded_mail_sent" : "recorded_mail_failed"
+        ]]);
+        SpreadsheetApp.flush();
+      } catch (statusError) {
+        console.error("Booking recorded; notification status update failed");
       }
-
-      return jsonResponse_({ ok: true });
+      appendCreatedStatusLogBestEffort_(booking, payload, config);
+      return jsonResponse_({ ok: true, recorded: true, duplicate: false });
     } finally {
       lock.releaseLock();
     }
@@ -311,18 +305,13 @@ function getStatusLogSheet_(spreadsheet) {
 }
 
 function isDuplicateSubmission_(submissionId, sheetId) {
-  if (CacheService.getScriptCache().get("submission:" + submissionId) === "1") return true;
   var sheet = getBookingSheet_(SpreadsheetApp.openById(sheetId));
-  if (sheet.getLastRow() < 2) return false;
-  var matches = sheet
-    .getRange(2, 1, sheet.getLastRow() - 1, 1)
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return false;
+  return Boolean(sheet.getRange(2, 1, lastRow - 1, 1)
     .createTextFinder(submissionId)
     .matchEntireCell(true)
-    .findAll();
-  for (var index = 0; index < matches.length; index++) {
-    if (isHandledMailStatus_(sheet.getRange(matches[index].getRow(), 17).getValue())) return true;
-  }
-  return false;
+    .findNext());
 }
 
 function normalizeBookingKey_(value) {
@@ -334,29 +323,6 @@ function normalizeSameRoomKey_(value) {
   return normalized === "true" || normalized === "yes" || normalized === "1" ? "true" : "false";
 }
 
-function isHandledMailStatus_(value) {
-  var status = normalizeBookingKey_(value);
-  return status === "sent" || status === "pending";
-}
-
-function bookingFingerprint_(payload) {
-  var source = [
-    normalizeBookingKey_(payload.email),
-    normalizeBookingKey_(payload.date),
-    normalizeBookingKey_(payload.time),
-    normalizeBookingKey_(payload.courseId),
-    normalizeBookingKey_(payload.guests),
-    normalizeBookingKey_(payload.addons),
-    normalizeBookingKey_(payload.nomination || "none"),
-    normalizeSameRoomKey_(payload.sameRoomRequested),
-    normalizeBookingKey_(payload.name)
-  ].join("|");
-  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, source, Utilities.Charset.UTF_8).map(function(byte) {
-    var value = (byte + 256) % 256;
-    return ("0" + value.toString(16)).slice(-2);
-  }).join("");
-}
-
 function bookingRowMatches_(row, payload) {
   return normalizeBookingKey_(row[3]) === normalizeBookingKey_(payload.courseId) &&
     normalizeBookingKey_(row[5]) === normalizeBookingKey_(payload.date) &&
@@ -364,14 +330,14 @@ function bookingRowMatches_(row, payload) {
     normalizeBookingKey_(row[7]) === normalizeBookingKey_(payload.guests) &&
     normalizeBookingKey_(row[8]) === normalizeBookingKey_(payload.name) &&
     normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email) &&
+    String(row[10] || "") === String(payload.phone || "") &&
+    String(row[11] || "") === String(payload.note || "") &&
     normalizeBookingKey_(row[18]) === normalizeBookingKey_(payload.addons) &&
     normalizeBookingKey_(row[20] || "none") === normalizeBookingKey_(payload.nomination || "none") &&
     normalizeSameRoomKey_(row[22]) === normalizeSameRoomKey_(payload.sameRoomRequested);
 }
 
 function isDuplicateBooking_(payload, config) {
-  var cacheKey = "booking:" + bookingFingerprint_(payload);
-  if (CacheService.getScriptCache().get(cacheKey) === "1") return true;
   var sheet = getBookingSheet_(SpreadsheetApp.openById(config.sheetId));
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
@@ -382,13 +348,9 @@ function isDuplicateBooking_(payload, config) {
     var receivedText = String(rows[index][1] || "").trim();
     var receivedAt = Date.parse(receivedText.replace(" ", "T") + "+09:00");
     if (!Number.isFinite(receivedAt) || receivedAt < cutoff) continue;
-    if (bookingRowMatches_(rows[index], payload) && isHandledMailStatus_(rows[index][16])) return true;
+    if (bookingRowMatches_(rows[index], payload)) return true;
   }
   return false;
-}
-
-function rememberBooking_(payload) {
-  CacheService.getScriptCache().put("booking:" + bookingFingerprint_(payload), "1", DUPLICATE_WINDOW_SECONDS);
 }
 
 function checkRateLimit_(maxPerHour) {

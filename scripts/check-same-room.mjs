@@ -90,12 +90,6 @@ assert.throws(
 
 context.a = valid;
 context.b = { ...valid, sameRoomRequested: false };
-assert.notEqual(
-  vm.runInContext("bookingFingerprint_(a)", context),
-  vm.runInContext("bookingFingerprint_(b)", context),
-  "same-room choice changes duplicate fingerprint"
-);
-
 const row = Array(29).fill("");
 row[3] = valid.courseId;
 row[5] = valid.date;
@@ -103,6 +97,8 @@ row[6] = valid.time;
 row[7] = valid.guests;
 row[8] = valid.name;
 row[9] = valid.email;
+row[10] = valid.phone;
+row[11] = valid.note;
 row[18] = valid.addons;
 row[20] = valid.nomination;
 row[22] = "TRUE";
