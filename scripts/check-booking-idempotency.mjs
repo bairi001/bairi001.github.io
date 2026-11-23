@@ -49,7 +49,12 @@ function fixture(fault) {
     },
     CacheService: {getScriptCache: () => ({get: k => cache.get(k), put: (k,v) => cache.set(k,v)})},
     Utilities: {getUuid: randomUUID, newBlob: s => ({getBytes: () => Buffer.from(s)}),
-      formatDate: (d,tz,fmt) => new Date(d.valueOf()+9*3600000).toISOString().replace("T"," ").slice(0,fmt.endsWith("ss") ? 19 : 16)}
+      formatDate: (d,tz,fmt) => {
+        const local = new Date(d.valueOf()+9*3600000).toISOString().replace("T"," ");
+        if (fmt === "yyyy-MM-dd") return local.slice(0,10);
+        if (fmt === "HH:mm") return local.slice(11,16);
+        return local.slice(0,fmt.endsWith("ss") ? 19 : 16);
+      }}
   });
   vm.runInContext(source, ctx);
   Object.assign(ctx, {
@@ -96,3 +101,52 @@ for (const change of [{name:"Second guest"}, {time:"14:00"}, {note:"Separate int
   assert.deepEqual(intent.post({...payload,submissionId:randomUUID(),...change}), fresh);
 }
 console.log("PASS write failure, opaque acknowledgement, short-window duplicate and distinct intentions");
+
+// Two independent IDs can be a retry from different links. Production builds
+// the two attribution strings in assets/booking-mode.js.
+function entry(note, origin, cta, campaign = "first") {
+  const suffix = "origin: " + origin + " / cta: " + cta + " / service: aroma";
+  const token = ("sy_o=" + origin + ";sy_c=" + cta + ";sy_s=aroma").slice(0, 120);
+  return {...payload, submissionId:randomUUID(), phone:"+819000000001",
+    note:[note,suffix].filter(Boolean).join("\n").slice(0,300),
+    utm_content:(token + "|" + campaign).slice(0,120)};
+}
+for (const readMode of ["prefix retained","prefix consumed"]) {
+  for (const phone of ["09000000001","+819000000001"]) {
+    for (const note of ["", "+希望", "-希望", "=希望", "@希望", "ordinary", "長".repeat(280),
+      "first line\norigin: home / cta: top / service: aroma"]) {
+      const f = fixture();
+      assert.deepEqual(f.post({...entry(note,"home","top"),phone}),fresh);
+      const row = f.rows[1];
+      assert.equal(row[10], "'" + phone);
+      if (/^[=+@-]/.test(note)) assert.ok(row[11].startsWith("'" + note));
+      if (readMode === "prefix consumed") {
+        row[10] = row[10].replace(/^'/,"");
+        row[11] = row[11].replace(/^'(?=[=+@-])/,"");
+      }
+      for (const next of [entry(note,"home","bottom"), entry(note,"menu","top"),
+        entry(note,"home","top","second")]) {
+        assert.deepEqual(f.post({...next,phone}),duplicate);
+      }
+      assert.deepEqual(f.post({...entry(note+"別","menu","bottom"),phone}),fresh);
+      assert.equal(f.rows.length-1,2);
+    }
+  }
+  console.log("PASS attribution-only changes, distinct notes, domestic/international phones:",readMode);
+}
+const longEntry = fixture();
+assert.deepEqual(longEntry.post(entry("hello","x".repeat(80),"y".repeat(80))),fresh);
+assert.deepEqual(longEntry.post(entry("hello","menu","top")),duplicate);
+const legacy = fixture();
+assert.deepEqual(legacy.post({...payload,note:"origin: a / cta: b / service: c"}),fresh);
+assert.deepEqual(legacy.post({...payload,submissionId:randomUUID(),note:""}),fresh);
+console.log("PASS long marketing token and uncorroborated customer text");
+
+const typed = fixture();
+assert.deepEqual(typed.post(payload), fresh);
+const typedRow = typed.rows[1];
+typedRow[1] = new Date();
+typedRow[5] = new Date(payload.date + "T00:00:00+09:00");
+typedRow[6] = new Date("2000-01-01T" + payload.time + ":00+09:00");
+assert.deepEqual(typed.post({...payload,submissionId:randomUUID()}), duplicate);
+console.log("PASS date-valued spreadsheet reads");

@@ -323,15 +323,60 @@ function normalizeSameRoomKey_(value) {
   return normalized === "true" || normalized === "yes" || normalized === "1" ? "true" : "false";
 }
 
+// Only remove the final machine-generated line corroborated by that entry's
+// own utm_content token. Keep preceding lines, including lookalike customer text.
+function customerBookingNote_(note, content) {
+  var text = String(note || "");
+  var token = String(content || "").split("|")[0];
+  var match = /^sy_o=([a-z0-9_./-]+);sy_c=([a-z0-9_./-]+);sy_s=([a-z0-9_./-]+)$/i.exec(token);
+  var start = text.lastIndexOf("\n") + 1;
+  var tail = text.slice(start);
+  if (match) {
+    var suffix = "origin: " + match[1] + " / cta: " + match[2] + " / service: " + match[3];
+    // booking-mode.js caps the combined note at 300; validatePayload_ trims it.
+    if (tail === suffix.slice(0, 300 - start).trimEnd()) return text.slice(0, Math.max(0, start - 1));
+  }
+  // Even when the token is capped at 120, a complete note line can corroborate it.
+  if (token.length === 120) {
+    var line = /^origin: ([a-z0-9_./-]+) \/ cta: ([a-z0-9_./-]+) \/ service: ([a-z0-9_./-]+)$/i.exec(tail);
+    if (line && ("sy_o=" + line[1] + ";sy_c=" + line[2] + ";sy_s=" + line[3]).slice(0, 120) === token) {
+      return text.slice(0, Math.max(0, start - 1));
+    }
+  }
+  return text;
+}
+
+function phoneSheetValue_(value) {
+  var phone = String(value || "");
+  // Keep leading zeros when a new phone would otherwise be parsed as a number.
+  return /^0[0-9]+$/.test(phone) ? "'" + phone : sanitizeSheetValue_(phone);
+}
+
+function bookingDateKey_(value, format) {
+  return Object.prototype.toString.call(value) === "[object Date]"
+    ? Utilities.formatDate(value, "Asia/Tokyo", format)
+    : normalizeBookingKey_(value);
+}
+
 function bookingRowMatches_(row, payload) {
+  var phone = String(row[10] || "");
+  var storedNote = String(row[11] || "");
+  var incomingNote = customerBookingNote_(payload.note, payload.utm_content);
+  // Compare the two possible read representations without stripping customer
+  // punctuation or globally unescaping the incoming text.
+  var note = customerBookingNote_(storedNote, row[15]);
+  var noteMatches = note === incomingNote;
+  if (!noteMatches && /^'[=+@-]/.test(storedNote) && /^[=+@-]/.test(incomingNote)) {
+    noteMatches = customerBookingNote_(storedNote.slice(1), row[15]) === incomingNote;
+  }
   return normalizeBookingKey_(row[3]) === normalizeBookingKey_(payload.courseId) &&
-    normalizeBookingKey_(row[5]) === normalizeBookingKey_(payload.date) &&
-    normalizeBookingKey_(row[6]) === normalizeBookingKey_(payload.time) &&
+    bookingDateKey_(row[5], "yyyy-MM-dd") === normalizeBookingKey_(payload.date) &&
+    bookingDateKey_(row[6], "HH:mm") === normalizeBookingKey_(payload.time) &&
     normalizeBookingKey_(row[7]) === normalizeBookingKey_(payload.guests) &&
     normalizeBookingKey_(row[8]) === normalizeBookingKey_(payload.name) &&
     normalizeBookingKey_(row[9]) === normalizeBookingKey_(payload.email) &&
-    String(row[10] || "") === String(payload.phone || "") &&
-    String(row[11] || "") === String(payload.note || "") &&
+    (phone === String(payload.phone || "") || phone === phoneSheetValue_(payload.phone)) &&
+    noteMatches &&
     normalizeBookingKey_(row[18]) === normalizeBookingKey_(payload.addons) &&
     normalizeBookingKey_(row[20] || "none") === normalizeBookingKey_(payload.nomination || "none") &&
     normalizeSameRoomKey_(row[22]) === normalizeSameRoomKey_(payload.sameRoomRequested);
@@ -346,7 +391,8 @@ function isDuplicateBooking_(payload, config) {
   var cutoff = Date.now() - DUPLICATE_WINDOW_SECONDS * 1000;
   for (var index = rows.length - 1; index >= 0; index--) {
     var receivedText = String(rows[index][1] || "").trim();
-    var receivedAt = Date.parse(receivedText.replace(" ", "T") + "+09:00");
+    var receivedAt = Object.prototype.toString.call(rows[index][1]) === "[object Date]"
+      ? rows[index][1].getTime() : Date.parse(receivedText.replace(" ", "T") + "+09:00");
     if (!Number.isFinite(receivedAt) || receivedAt < cutoff) continue;
     if (bookingRowMatches_(rows[index], payload)) return true;
   }
@@ -406,6 +452,7 @@ function appendBookingRow_(payload, config) {
     ""
   ].map(sanitizeSheetValue_);
 
+  row[10] = phoneSheetValue_(payload.phone);
   sheet.appendRow(row);
   return {
     sheet: sheet,
